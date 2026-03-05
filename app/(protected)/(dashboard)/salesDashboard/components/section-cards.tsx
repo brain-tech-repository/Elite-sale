@@ -23,8 +23,8 @@ const cardsData = [
     color: "bg-blue-50",
   },
   {
-    title: "Returning Customers",
-    value: "1,234",
+    title: "Return Customers",
+    value: "123",
     trend: -20,
     message: "Needs attention",
     footer: "Down 20%",
@@ -32,8 +32,8 @@ const cardsData = [
   },
   {
     title: "Active Accounts",
-    value: "45,678",
-    trend: 12.5,
+    value: "4,567",
+    trend: 1.5,
     message: "Exceeds target",
     footer: "Strong retention",
     color: "bg-green-50",
@@ -99,7 +99,7 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 
 export function SectionCards() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 shadow-lg">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       {cardsData.map((card, index) => {
         const isPositive = card.trend > 0
         const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown
@@ -107,7 +107,7 @@ export function SectionCards() {
         return (
           <AnimatedCard key={index}>
             <Card
-              className={`p-4 shadow-md hover:shadow-xl transition-all duration-300 rounded-xl border ${card.color}`}
+              className={`p-4 shadow-md hover:shadow-xl transition-all duration-300 rounded-xl border  shadow-lg ${card.color}`}
             >
               <CardHeader className="p-2 flex justify-between items-start">
                 <div className="space-y-1">
