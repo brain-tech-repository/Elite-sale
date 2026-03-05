@@ -4,7 +4,6 @@ import { motion, useAnimation } from "framer-motion"
 import { useState } from "react"
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
 
-import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardDescription,
@@ -78,38 +77,6 @@ const cardsData = [
     footer: "Slight increase",
     color: "bg-yellow-50",
   },
-  {
-    title: "Completed Orders",
-    value: "5,640",
-    trend: 15,
-    message: "Excellent performance",
-    footer: "High completion rate",
-    color: "bg-cyan-50",
-  },
-  {
-    title: "Cart Abandonment",
-    value: "23%",
-    trend: -3,
-    message: "Improving checkout",
-    footer: "Lower abandonment",
-    color: "bg-orange-50",
-  },
-  {
-    title: "Website Visitors",
-    value: "120K",
-    trend: 18,
-    message: "Traffic spike",
-    footer: "Marketing success",
-    color: "bg-sky-50",
-  },
-  {
-    title: "Conversion Rate",
-    value: "3.8%",
-    trend: 1.2,
-    message: "Optimized funnel",
-    footer: "Better conversions",
-    color: "bg-violet-50",
-  },
 ]
 
 function AnimatedCard({ children }: { children: React.ReactNode }) {
@@ -120,7 +87,7 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
     setHovered(true)
     await controls.start({
       rotateY: 360,
-      transition: { duration: 2, ease: "easeInOut" },
+      transition: { duration: 1.8, ease: "easeInOut" },
     })
     controls.set({ rotateY: 0 })
   }
@@ -137,8 +104,8 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
       animate={controls}
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
-      whileHover={{ scale: 1.03 }}
-      className="transition-shadow hover:shadow-lg"
+      whileHover={{ scale: 1.04 }}
+      className="transition-shadow hover:shadow-xl rounded-xl"
     >
       {children}
     </motion.div>
@@ -147,39 +114,42 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 
 export function SectionCards() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
       {cardsData.map((card, index) => {
         const isPositive = card.trend > 0
         const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown
 
         return (
           <AnimatedCard key={index}>
-            <Card className={`p-3  shadow-lg ${card.color}`}>
-              <CardHeader className="p-2 flex justify-between items-start">
-                <div>
-                  <CardDescription className="text-xs">
-                    {card.title}
-                  </CardDescription>
+            <Card
+              className={`p-5 rounded-xl border shadow-sm hover:shadow-xl transition-all shadow-lg ${card.color}`}
+            >
+              <CardHeader className="p-0 space-y-2">
+                <CardDescription className="text-sm font-medium text-muted-foreground">
+                  {card.title}
+                </CardDescription>
 
-                  <CardTitle className="text-lg font-semibold tabular-nums">
-                    {card.value}
-                  </CardTitle>
-                </div>
-
-                <Badge variant="outline" className="text-xs px-2 py-0.5">
-                  <TrendIcon className="size-3 mr-1" />
-                  {card.trend > 0 ? "+" : ""}
-                  {card.trend}%
-                </Badge>
+                <CardTitle className="text-3xl font-bold tabular-nums">
+                  {card.value}
+                </CardTitle>
               </CardHeader>
 
-              <CardFooter className="flex-col items-start gap-1 text-xs p-2">
-                <div className="flex gap-1 font-medium">
-                  {card.footer}
-                  <TrendIcon className="size-3" />
+              <CardFooter className="flex flex-col items-start gap-2 text-sm mt-4 p-0">
+                <div
+                  className={`flex items-center gap-1 font-semibold ${
+                    isPositive ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  <TrendIcon className="size-4" />
+                  {card.trend > 0 ? "+" : ""}
+                  {card.trend}%
                 </div>
 
-                <div className="text-muted-foreground">
+                <div className="text-muted-foreground text-xs">
+                  {card.footer}
+                </div>
+
+                <div className="text-muted-foreground text-xs">
                   {card.message}
                 </div>
               </CardFooter>

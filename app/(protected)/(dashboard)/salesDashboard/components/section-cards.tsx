@@ -72,7 +72,7 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
     setHovered(true)
     await controls.start({
       rotateY: 360,
-      transition: { duration: 0.8, ease: "easeInOut" },
+      transition: { duration: 0.7, ease: "easeInOut" },
     })
     controls.set({ rotateY: 0 })
   }
@@ -89,8 +89,8 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
       animate={controls}
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
-      whileHover={{ scale: 1.03 }}
-      className="transition-shadow hover:shadow-lg"
+      whileHover={{ scale: 1.04 }}
+      className="transition-all duration-200 hover:shadow-xl rounded-lg"
     >
       {children}
     </motion.div>
@@ -99,34 +99,47 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 
 export function SectionCards() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 shadow-lg">
       {cardsData.map((card, index) => {
         const isPositive = card.trend > 0
         const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown
 
         return (
           <AnimatedCard key={index}>
-            <Card className={`p-3  shadow-lg ${card.color}`}>
+            <Card
+              className={`p-4 shadow-md hover:shadow-xl transition-all duration-300 rounded-xl border ${card.color}`}
+            >
               <CardHeader className="p-2 flex justify-between items-start">
-                <div>
-                  <CardDescription className="text-xs">
+                <div className="space-y-1">
+                  <CardDescription className="text-sm font-medium text-muted-foreground">
                     {card.title}
                   </CardDescription>
 
-                  <CardTitle className="text-lg font-semibold tabular-nums">
+                  <CardTitle className="text-2xl font-bold tabular-nums tracking-tight">
                     {card.value}
                   </CardTitle>
                 </div>
 
-                <Badge variant="outline" className="text-xs px-2 py-0.5">
-                  <TrendIcon className="size-3 mr-1" />
+                <Badge
+                  variant="outline"
+                  className={`text-xs px-2 py-1 flex items-center gap-1 ${
+                    isPositive
+                      ? "text-green-600 border-green-200"
+                      : "text-red-600 border-red-200"
+                  }`}
+                >
+                  <TrendIcon className="size-3" />
                   {card.trend > 0 ? "+" : ""}
                   {card.trend}%
                 </Badge>
               </CardHeader>
 
-              <CardFooter className="flex-col items-start gap-1 text-xs p-2">
-                <div className="flex gap-1 font-medium">
+              <CardFooter className="flex-col items-start gap-1 text-xs p-1 mt-1">
+                <div
+                  className={`flex items-center gap-1 font-medium ${
+                    isPositive ? "text-green-600" : "text-red-600"
+                  }`}
+                >
                   {card.footer}
                   <TrendIcon className="size-3" />
                 </div>
