@@ -14,6 +14,8 @@ import {
   SquareTerminal,
 } from "lucide-react"
 
+import Link from "next/link"
+
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
@@ -59,16 +61,18 @@ const data = {
       items: [
         {
           title: "Sales Dashboard",
-          url: "/dashboard/salesDashboard",
+          url: "/salesDashboard",
            icon: Bot,
         },
-        {
-          title: "Starred",
-          url: "/dashboard",
+         {
+          title: "Finance Dashboard",
+          url: "/financeDashboard",
+           icon: Bot,
         },
-        {
-          title: "Settings",
-          url: "#",
+         {
+          title: "Customers Dashboard",
+          url: "/customerDashboard",
+           icon: Bot,
         },
       ],
     },

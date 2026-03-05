@@ -14,6 +14,10 @@ import LineCharts1 from "@/components/charts/lineChart1";
 import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart";
 import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart";
 import { salesColumns } from "./components/columns"
+import { AnimatedHatchedPatternAreaChart } from "@/components/ui/animated-hatched-pattern-chart";
+import { HighlightedMultipleBarChart } from "@/components/ui/highlighted-multiple-bar-chart";
+import AreaChartFillByValue from "@/components/ui/areaChartFillByValue";
+import { DuotoneBarMultipleChart } from "@/components/ui/duotone-bar-multiple-chart";
 
 type Sale = {
   id: string;
@@ -58,14 +62,11 @@ export default function Salesdashboa() {
         <div className="@container/main flex flex-1 flex-col">
 
           {/* PAGE HEADER */}
-          <div className="px-6 py-6">
-            <DataTableHeader title="Finance Dashboard" />
+          <div className=" py-6">
+            <DataTableHeader title="Sales Dashboard" />
           </div>
 
-          {/* FILTERS */}
-          <div className="px-6 pb-4">
-            <MyForm />
-          </div>
+        
 
           {/* KPI CARDS */}
           <div className="px-6 pb-6">
@@ -73,57 +74,14 @@ export default function Salesdashboa() {
           </div>
 
           {/* TOP CHARTS */}
-          <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
+          <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-2">
             <GlowingLineChart />
-            <RainbowGlowGradientLineChart />
-            <GaugePieChartCard />
+            <AnimatedHatchedPatternAreaChart />
+            <HighlightedMultipleBarChart />
+            <AreaChartFillByValue/>
+          < DuotoneBarMultipleChart/>
+          <RoundedPieChart/>
           </section>
-
-          {/* SECTION 1 */}
-          <div className="px-6 pb-8">
-            <DataTableSubHeader title="Sales Overview" />
-
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              </div>
-
-              <RoundedPieChart />
-
-              <LineCharts />
-            </section>
-          </div>
-
-          {/* SECTION 2 */}
-          <div className="px-6 pb-8">
-            <DataTableSubHeader title="Regional Sales" />
-
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              </div>
-
-              <GlowingRadialChart />
-
-              <LineCharts1 />
-            </section>
-          </div>
-
-          {/* SECTION 3 */}
-          <div className="px-6 pb-10">
-            <DataTableSubHeader title="Growth Analytics" />
-
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              </div>
-
-              <IncreaseSizePieChart />
-
-              <RainbowGlowGradientLineChart />
-            </section>
-          </div>
-
         </div>
       </div>
     </>
