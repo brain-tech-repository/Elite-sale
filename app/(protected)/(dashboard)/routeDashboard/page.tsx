@@ -1,6 +1,7 @@
 "use client"
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
+import MyForm1 from "./components/filter1";
 import { SectionCards } from "./components/section-cards";
 import { GlowingLineChart } from "@/components/ui/glowing-line";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
@@ -15,8 +16,9 @@ import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart";
 import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart";
 import { salesColumns } from "./components/columns"
 import { Card } from "@/components/ui/card";
-
-
+import VerticalComposedChart from "@/components/ui/VerticalComposedChart";
+import { HighlightedMultipleBarChart } from "@/components/ui/highlighted-double-bar-chart";
+import { RainbowGlowGradientLineCharts } from "@/components/ui/rainbow-glow-gradient-lines";
 type Sale = {
   id: string;
   customer: string;
@@ -61,11 +63,11 @@ export default function Salesdashboa() {
 
           {/* PAGE HEADER */}
           <div className=" py-6">
-            <DataTableHeader title="Sales Dashboard" />
+            <DataTableHeader title="Route Dashboard" />
           </div>
           {/* FILTERS */}
           <div className="px-6 pb-4">
-           <Card className="shadow-lg"> <MyForm /></Card>
+            <Card className="shadow-lg"> <MyForm /></Card>
           </div>
           {/* KPI CARDS */}
           <div className="px-6 pb-6">
@@ -73,43 +75,52 @@ export default function Salesdashboa() {
           </div>
           {/* TOP CHARTS */}
           <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
+            <VerticalComposedChart />
+            <HighlightedMultipleBarChart />
             <GlowingLineChart />
-            <RainbowGlowGradientLineChart />
-            <GaugePieChartCard />
+
           </section>
           {/* SECTION 1 */}
           <div className="px-6 pb-8">
-            <DataTableSubHeader title="Sales Overview" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              <RoundedPieChart />
-              <LineCharts />
-            </section>
-          </div>
-          {/* SECTION 2 */}
-          <div className="px-6 pb-8">
-            <DataTableSubHeader title="Regional Sales" />
 
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              </div>
-              <GlowingRadialChart />
-              <LineCharts1 />
-            </section>
-          </div>
-          {/* SECTION 3 */}
-          <div className="px-6 pb-10">
-            <DataTableSubHeader title="Growth Analytics" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              </div>
-              <IncreaseSizePieChart />
+
+            <Card className="shadow-lg"> <MyForm1 /></Card>
+
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
+              <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+
               <RainbowGlowGradientLineChart />
             </section>
           </div>
+        
 
+          {/* SECTION 3 */}
+          <div className="px-6 pb-10">
+            <DataTableSubHeader title="Route Expense Analysis" />
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
+              <div className="lg:col-span-1">
+                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+              </div>
+
+              <RainbowGlowGradientLineCharts />
+            </section>
+          </div>
+          <div className="px-6 pb-10">
+            <DataTableSubHeader title="Route Wise Sales Report" />
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
+              <div className="lg:col-span-1">
+                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+              </div>
+            </section>
+          </div>
+          <div className="px-6 pb-10">
+            <DataTableSubHeader title="Route Efficency Overview" />
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
+              <div className="lg:col-span-1">
+                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </>

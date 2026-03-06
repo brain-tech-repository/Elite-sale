@@ -17,7 +17,8 @@ import { salesColumns } from "./components/columns"
 import { AnimatedHatchedPatternAreaChart } from "@/components/ui/animated-hatched-pattern-chart";
 import { HighlightedMultipleBarChart } from "@/components/ui/highlighted-multiple-bar-chart";
 import AreaChartFillByValue from "@/components/ui/areaChartFillByValue";
-import { DuotoneBarMultipleChart } from "@/components/ui/duotone-bar-multiple-chart";
+import { DuotoneVerticalBarMultipleChart } from "@/components/ui/duotone-bar-multiple-chart";
+
 
 type Sale = {
   id: string;
@@ -63,7 +64,7 @@ export default function Salesdashboa() {
 
           {/* PAGE HEADER */}
           <div className=" py-6">
-            <DataTableHeader title="Sales Dashboard" />
+            <DataTableHeader title="Finance Dashboard" />
           </div>
 
 
@@ -79,8 +80,9 @@ export default function Salesdashboa() {
             <AnimatedHatchedPatternAreaChart />
             <HighlightedMultipleBarChart />
             <AreaChartFillByValue />
-            < DuotoneBarMultipleChart />
+            < DuotoneVerticalBarMultipleChart/>
             <RoundedPieChart />
+            <></>
           </section>
         </div>
       </div>

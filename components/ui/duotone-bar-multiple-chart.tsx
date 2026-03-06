@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, XAxis } from "recharts";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -37,7 +37,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function DuotoneBarMultipleChart() {
+export function DuotoneVerticalBarMultipleChart() {
   return (
     <Card className="shadow-lg">
       <CardHeader>
@@ -53,19 +53,22 @@ export function DuotoneBarMultipleChart() {
         </CardTitle>
         <CardDescription>January - June 2025</CardDescription>
       </CardHeader>
+
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart data={chartData}>
             <rect
               x="0"
               y="0"
               width="100%"
-              height="85%"
+              height="100%"
               fill="url(#default-multiple-pattern-dots)"
             />
+
             <defs>
               <DottedBackgroundPattern />
             </defs>
+
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -73,17 +76,21 @@ export function DuotoneBarMultipleChart() {
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 3)}
             />
+
+            <YAxis tickLine={false} axisLine={false} tickMargin={10} />
+
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="dashed" hideLabel />}
             />
+
             <Bar
               dataKey="desktop"
-              color="var(--chart-1)"
               fill="var(--color-desktop)"
               shape={<CustomDuotoneBarMultiple />}
               radius={4}
             />
+
             <Bar
               dataKey="mobile"
               fill="var(--color-mobile)"
@@ -113,9 +120,9 @@ const CustomDuotoneBarMultiple = (
         stroke="none"
         fill={`url(#duotone-bar-pattern-${dataKey})`}
       />
+
       <defs>
         <linearGradient
-          key={dataKey}
           id={`duotone-bar-pattern-${dataKey}`}
           x1="0"
           y1="0"

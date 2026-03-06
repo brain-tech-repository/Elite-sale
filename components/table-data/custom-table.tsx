@@ -57,7 +57,7 @@ export function CommonDataTable<T>({
 
 	return (
 		<div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-lg">
-			<div className="overflow-x-auto">
+			<div className="overflow-x-auto rounded-t-xl">
 				<table className="w-full border-collapse text-sm">
 					{/* Header */}
 					<thead className="sticky top-0 bg-gradient-to-r from-pink-100 via-white to-sky-200 text-gray-800">
@@ -129,7 +129,7 @@ export function CommonDataTable<T>({
 			</div>
 
 			{/* Pagination */}
-			<div className="flex items-center justify-between border-gray-200 border-t bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3">
+			<div className="flex items-center justify-between rounded-b-xl border-gray-200 border-t bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3">
 				<span className="text-gray-600 text-sm">
 					Page {pagination.pageIndex + 1} of {table.getPageCount()}
 				</span>

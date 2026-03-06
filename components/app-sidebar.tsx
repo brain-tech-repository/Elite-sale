@@ -74,6 +74,26 @@ const data = {
           url: "/customerDashboard",
            icon: Bot,
         },
+         {
+          title: "Route Dashboard",
+          url: "/routeDashboard",
+           icon: Bot,
+        },
+          {
+          title: "Order Dashboard",
+          url: "/orderDashboard",
+           icon: Bot,
+        },
+         {
+          title: "Survey Dashboard",
+          url: "/surveyDashboard",
+           icon: Bot,
+        },
+        {
+          title: "Material Dashboard",
+          url: "/materialDashboard",
+           icon: Bot,
+        },
       ],
     },
     // {

@@ -61,54 +61,102 @@ export default function Salesdashboa() {
 
           {/* PAGE HEADER */}
           <div className=" py-6">
-            <DataTableHeader title="Sales Dashboard" />
+            <DataTableHeader title="Material Dashboard" />
           </div>
           {/* FILTERS */}
           <div className="px-6 pb-4">
-           <Card className="shadow-lg"> <MyForm /></Card>
+            <Card className="shadow-lg"> <MyForm /></Card>
           </div>
           {/* KPI CARDS */}
           <div className="px-6 pb-6">
             <SectionCards />
           </div>
           {/* TOP CHARTS */}
-          <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
-            <GlowingLineChart />
-            <RainbowGlowGradientLineChart />
-            <GaugePieChartCard />
-          </section>
-          {/* SECTION 1 */}
-          <div className="px-6 pb-8">
-            <DataTableSubHeader title="Sales Overview" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              <RoundedPieChart />
-              <LineCharts />
-            </section>
-          </div>
+
+
           {/* SECTION 2 */}
           <div className="px-6 pb-8">
-            <DataTableSubHeader title="Regional Sales" />
 
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
+
+              {/* Table 1 */}
+              <div className="lg:col-span-1 space-y-2">
+                <DataTableSubHeader title="Top Material By Volume
+" />
+                <CommonDataTable
+                  columns={salesColumns}
+                  data={data}
+                  pageSize={5}
+                />
               </div>
-              <GlowingRadialChart />
-              <LineCharts1 />
+
+              {/* Table 2 */}
+              <div className="lg:col-span-1 space-y-2">
+                <DataTableSubHeader title="Material Performance" />
+                <CommonDataTable
+                  columns={salesColumns}
+                  data={data}
+                  pageSize={5}
+                />
+              </div>
+
             </section>
           </div>
           {/* SECTION 3 */}
           <div className="px-6 pb-10">
             <DataTableSubHeader title="Growth Analytics" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
               <div className="lg:col-span-1">
                 <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
               </div>
-              <IncreaseSizePieChart />
+            </section>
+          </div>
+
+          <div className="px-6 pb-10">
+            <DataTableSubHeader title="Material Volume Growth" />
+
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
+              <RainbowGlowGradientLineChart />
+              <RainbowGlowGradientLineChart />
               <RainbowGlowGradientLineChart />
             </section>
           </div>
+
+          <div className="px-6 pb-10">
+            <DataTableSubHeader title="Material Volue Growth" />
+
+            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
+              <RainbowGlowGradientLineChart />
+              <RainbowGlowGradientLineChart />
+              <RainbowGlowGradientLineChart />
+            </section>
+          </div>
+
+          <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
+
+            {/* Table 1 */}
+            <div className="lg:col-span-1 space-y-2">
+              <DataTableSubHeader title="Active SKUs (Last 2 Weeks)
+" />
+              <CommonDataTable
+                columns={salesColumns}
+                data={data}
+                pageSize={5}
+              />
+            </div>
+
+            {/* Table 2 */}
+            <div className="lg:col-span-1 space-y-2">
+              <DataTableSubHeader title="Inactive SKUs (Last 2 Weeks)" />
+              <CommonDataTable
+                columns={salesColumns}
+                data={data}
+                pageSize={5}
+              />
+            </div>
+
+          </section>
 
         </div>
       </div>
