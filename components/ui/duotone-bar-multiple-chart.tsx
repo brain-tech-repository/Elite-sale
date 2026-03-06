@@ -39,7 +39,7 @@ const chartConfig = {
 
 export function DuotoneBarMultipleChart() {
   return (
-    <Card>
+    <Card className="shadow-lg">
       <CardHeader>
         <CardTitle>
           Bar Chart - Multiple

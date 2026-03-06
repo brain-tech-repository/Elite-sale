@@ -100,12 +100,12 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 
   return (
     <motion.div
-      style={{ perspective: 1000 }}
-      animate={controls}
-      onHoverStart={handleHoverStart}
-      onHoverEnd={handleHoverEnd}
-      whileHover={{ scale: 1.04 }}
-      className="transition-shadow hover:shadow-xl rounded-xl"
+      // style={{ perspective: 1000 }}
+      // animate={controls}
+      // onHoverStart={handleHoverStart}
+      // onHoverEnd={handleHoverEnd}
+      // whileHover={{ scale: 1.04 }}
+      // className="transition-shadow hover:shadow-xl rounded-xl"
     >
       {children}
     </motion.div>
@@ -114,7 +114,7 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 
 export function SectionCards() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {cardsData.map((card, index) => {
         const isPositive = card.trend > 0
         const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown
@@ -122,9 +122,9 @@ export function SectionCards() {
         return (
           <AnimatedCard key={index}>
             <Card
-              className={`p-5 rounded-xl border shadow-sm hover:shadow-xl transition-all shadow-lg ${card.color}`}
+              className={`p-3 rounded-xl border shadow-sm hover:shadow-xl transition-all shadow-lg ${card.color}`}
             >
-              <CardHeader className="p-0 space-y-2">
+              <CardHeader className="p-0 space-y-1">
                 <CardDescription className="text-sm font-medium text-muted-foreground">
                   {card.title}
                 </CardDescription>
@@ -134,7 +134,7 @@ export function SectionCards() {
                 </CardTitle>
               </CardHeader>
 
-              <CardFooter className="flex flex-col items-start gap-2 text-sm mt-4 p-0">
+              <CardFooter className="flex flex-col items-start gap-2 text-sm mt-1 p-0">
                 <div
                   className={`flex items-center gap-1 font-semibold ${
                     isPositive ? "text-green-600" : "text-red-600"

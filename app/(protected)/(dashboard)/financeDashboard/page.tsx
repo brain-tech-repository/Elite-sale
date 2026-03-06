@@ -7,7 +7,7 @@ import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradi
 import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { CommonDataTable } from "@/components/table-data/common-tables";
+import { CommonDataTable } from "@/components/table-data/custom-table";
 import { RoundedPieChart } from "@/components/ui/rounded-pie-chart";
 import LineCharts from "@/components/charts/linechart";
 import LineCharts1 from "@/components/charts/lineChart1";
@@ -66,7 +66,7 @@ export default function Salesdashboa() {
             <DataTableHeader title="Sales Dashboard" />
           </div>
 
-        
+
 
           {/* KPI CARDS */}
           <div className="px-6 pb-6">
@@ -78,9 +78,9 @@ export default function Salesdashboa() {
             <GlowingLineChart />
             <AnimatedHatchedPatternAreaChart />
             <HighlightedMultipleBarChart />
-            <AreaChartFillByValue/>
-          < DuotoneBarMultipleChart/>
-          <RoundedPieChart/>
+            <AreaChartFillByValue />
+            < DuotoneBarMultipleChart />
+            <RoundedPieChart />
           </section>
         </div>
       </div>

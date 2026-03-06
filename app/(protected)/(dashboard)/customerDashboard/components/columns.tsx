@@ -1,61 +1,56 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { Section } from "../types/index"
+import { Badge } from "@/components/ui/badge"
+import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react"
 
-export type Sale = {
-  id: string
-  customer: string
-  product: string
-  amount: number
-  status: "Completed" | "Pending" | "Cancelled"
-  date: string
-}
+export const sectionColumns: ColumnDef<Section>[] = [
+  {
+    accessorKey: "header",
+    header: "Header",
+  },
 
-export const salesColumns: ColumnDef<Sale>[] = [
   {
-    accessorKey: "id",
-    header: "Order ID",
-  },
-  {
-    accessorKey: "customer",
-    header: "Customer",
-  },
-  {
-    accessorKey: "product",
-    header: "Product",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount (₹)",
+    accessorKey: "type",
+    header: "Type",
     cell: ({ row }) => (
-      <span className="font-medium text-emerald-600">
-        ₹{row.original.amount.toLocaleString()}
-      </span>
+      <Badge variant="outline">
+        {row.original.type}
+      </Badge>
     ),
   },
+
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status
+    cell: ({ row }) => (
+      <Badge variant="outline" className="flex gap-2 items-center">
 
-      return (
-        <span
-          className={`px-2 py-1 text-xs rounded-md font-medium ${
-            status === "Completed"
-              ? "bg-emerald-100 text-emerald-700"
-              : status === "Pending"
-              ? "bg-pink-100 text-pink-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {status}
-        </span>
-      )
-    },
+        {row.original.status === "Done" ? (
+          <IconCircleCheckFilled className="text-green-500 size-4" />
+        ) : (
+          <IconLoader className="size-4 animate-spin" />
+        )}
+
+        {row.original.status}
+
+      </Badge>
+    ),
   },
+
   {
-    accessorKey: "date",
-    header: "Date",
+    accessorKey: "target",
+    header: "Target",
+  },
+
+  {
+    accessorKey: "limit",
+    header: "Limit",
+  },
+
+  {
+    accessorKey: "reviewer",
+    header: "Reviewer",
   },
 ]

@@ -99,12 +99,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+
 
 export const schema = z.object({
   id: z.number(),
@@ -416,7 +411,7 @@ export function DataTable({
       className="max-w-sm"
     />
 
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 shadow-lg">
       
       {/* Column Selector */}
       <DropdownMenu>

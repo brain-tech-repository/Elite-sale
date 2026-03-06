@@ -85,12 +85,12 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 
   return (
     <motion.div
-      style={{ perspective: 1000 }}
-      animate={controls}
-      onHoverStart={handleHoverStart}
-      onHoverEnd={handleHoverEnd}
-      whileHover={{ scale: 1.04 }}
-      className="transition-all duration-200 hover:shadow-xl rounded-lg"
+      // style={{ perspective: 1000 }}
+      // animate={controls}
+      // onHoverStart={handleHoverStart}
+      // onHoverEnd={handleHoverEnd}
+      // whileHover={{ scale: 1.04 }}
+      // className="transition-all duration-200 hover:shadow-xl rounded-lg"
     >
       {children}
     </motion.div>

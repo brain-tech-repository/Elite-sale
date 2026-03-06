@@ -7,13 +7,15 @@ import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradi
 import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { ColumnDef } from "@tanstack/react-table";
-import { CommonDataTable } from "@/components/table-data/common-tables";
+import { CommonDataTable } from "@/components/table-data/custom-table";
 import { RoundedPieChart } from "@/components/ui/rounded-pie-chart";
 import LineCharts from "@/components/charts/linechart";
 import LineCharts1 from "@/components/charts/lineChart1";
 import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart";
 import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart";
 import { salesColumns } from "./components/columns"
+import { Card } from "@/components/ui/card";
+
 
 type Sale = {
   id: string;
@@ -58,42 +60,32 @@ export default function Salesdashboa() {
         <div className="@container/main flex flex-1 flex-col">
 
           {/* PAGE HEADER */}
-          <div className="px-6 py-6">
+          <div className=" py-6">
             <DataTableHeader title="Finance Dashboard" />
           </div>
-
           {/* FILTERS */}
           <div className="px-6 pb-4">
-            <MyForm />
+           <Card className="shadow-lg"> <MyForm /></Card>
           </div>
-
           {/* KPI CARDS */}
           <div className="px-6 pb-6">
             <SectionCards />
           </div>
-
           {/* TOP CHARTS */}
           <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
             <GlowingLineChart />
             <RainbowGlowGradientLineChart />
             <GaugePieChartCard />
           </section>
-
           {/* SECTION 1 */}
           <div className="px-6 pb-8">
             <DataTableSubHeader title="Sales Overview" />
-
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
-              </div>
-
+              <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
               <RoundedPieChart />
-
               <LineCharts />
             </section>
           </div>
-
           {/* SECTION 2 */}
           <div className="px-6 pb-8">
             <DataTableSubHeader title="Regional Sales" />
@@ -102,24 +94,18 @@ export default function Salesdashboa() {
               <div className="lg:col-span-1">
                 <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
               </div>
-
               <GlowingRadialChart />
-
               <LineCharts1 />
             </section>
           </div>
-
           {/* SECTION 3 */}
           <div className="px-6 pb-10">
             <DataTableSubHeader title="Growth Analytics" />
-
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
               <div className="lg:col-span-1">
                 <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
               </div>
-
               <IncreaseSizePieChart />
-
               <RainbowGlowGradientLineChart />
             </section>
           </div>
