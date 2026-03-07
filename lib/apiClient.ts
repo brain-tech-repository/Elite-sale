@@ -2,7 +2,6 @@
 import axios from "axios";
 import { CookieManager } from "./cookieUtils";
 
-
 const api = axios.create({
   baseURL: "/api", // your backend URL
   withCredentials: true, // send cookies automatically

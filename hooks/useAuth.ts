@@ -21,7 +21,7 @@ export function useLogin() {
 
       if (res.data.token) {
         // Save JWT token in cookie
-        CookieManager.set("token", res.data.token, { path: "/", maxAge: 3600 });
+        // CookieManager.set("token", res.data.token, { path: "/", maxAge: 3600 });
         // Optionally save user info in sessionStorage
         sessionStorage.setItem("user", JSON.stringify(res.data.user));
       }
