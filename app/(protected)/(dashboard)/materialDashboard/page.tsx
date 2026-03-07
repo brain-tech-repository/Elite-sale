@@ -2,21 +2,11 @@
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
-import { GlowingLineChart } from "@/components/ui/glowing-line";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
-import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
-import { ColumnDef } from "@tanstack/react-table";
 import { CommonDataTable } from "@/components/table-data/custom-table";
-import { RoundedPieChart } from "@/components/ui/rounded-pie-chart";
-import LineCharts from "@/components/charts/linechart";
-import LineCharts1 from "@/components/charts/lineChart1";
-import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart";
-import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart";
 import { salesColumns } from "./components/columns"
 import { Card } from "@/components/ui/card";
-
-
 type Sale = {
   id: string;
   customer: string;
@@ -72,12 +62,8 @@ export default function Salesdashboa() {
             <SectionCards />
           </div>
           {/* TOP CHARTS */}
-
-
           {/* SECTION 2 */}
           <div className="px-6 pb-8">
-
-
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
 
               {/* Table 1 */}
@@ -112,20 +98,16 @@ export default function Salesdashboa() {
               </div>
             </section>
           </div>
-
           <div className="px-6 pb-10">
             <DataTableSubHeader title="Material Volume Growth" />
-
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
               <RainbowGlowGradientLineChart />
               <RainbowGlowGradientLineChart />
               <RainbowGlowGradientLineChart />
             </section>
           </div>
-
           <div className="px-6 pb-10">
             <DataTableSubHeader title="Material Volue Growth" />
-
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
               <RainbowGlowGradientLineChart />
               <RainbowGlowGradientLineChart />
@@ -145,7 +127,6 @@ export default function Salesdashboa() {
                 pageSize={5}
               />
             </div>
-
             {/* Table 2 */}
             <div className="lg:col-span-1 space-y-2">
               <DataTableSubHeader title="Inactive SKUs (Last 2 Weeks)" />
@@ -155,9 +136,7 @@ export default function Salesdashboa() {
                 pageSize={5}
               />
             </div>
-
           </section>
-
         </div>
       </div>
     </>

@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 
 import { sectionColumns } from "./components/columns";
 import { CommonDataTable } from "@/components/table-data/common-table";
+import { GlowingBarVerticalChart } from "@/components/ui/glowing-bar-vertical-chart";
 export default function Salesdashboa() {
   return (
     <>
@@ -39,7 +40,7 @@ export default function Salesdashboa() {
             {/* Chart */}
             <div className="grid grid-cols-1 gap-6">
               <div className="h-full">
-                <HighlightedBarChart />
+                <GlowingBarVerticalChart />
               </div>
             </div>
           </section>

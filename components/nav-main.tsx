@@ -17,6 +17,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
 
 export function NavMain({
   items,
@@ -32,6 +34,8 @@ export function NavMain({
     }[]
   }[]
 }) {
+
+  const pathname = usePathname()
   return (
     <SidebarGroup>
       {/* <SidebarGroupLabel>Dashboards</SidebarGroupLabel> */}
@@ -45,7 +49,10 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  className="transition-all duration-200 hover:bg-blue-100 hover:text-blue-600 data-[active=true]:bg-pink-100 data-[active=true]:text-pink-600 rounded-md"
+                >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -55,10 +62,16 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                      <SidebarMenuSubButton
+                        asChild
+                        className="transition-all duration-200 hover:bg-blue-100 hover:text-blue-600 data-[active=true]:bg-pink-100 data-[active=true]:text-pink-600 rounded-md"
+                      >
+                        <Link
+                          href={subItem.url}
+                          className={pathname === subItem.url ? "bg-sky-300 text-white rounded-md" : ""}
+                        >
                           <span>{subItem.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
