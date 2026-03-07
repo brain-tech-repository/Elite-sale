@@ -18,6 +18,7 @@ import { AnimatedHatchedPatternAreaChart } from "@/components/ui/animated-hatche
 import { HighlightedMultipleBarChart } from "@/components/ui/highlighted-multiple-bar-chart";
 import AreaChartFillByValue from "@/components/ui/areaChartFillByValue";
 import { DuotoneVerticalBarMultipleChart } from "@/components/ui/duotone-bar-multiple-chart";
+import BarChart from "@/components/ui/BarChart";
 
 
 type Sale = {
@@ -78,7 +79,7 @@ export default function Salesdashboa() {
           <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-2">
             <GlowingLineChart />
             <AnimatedHatchedPatternAreaChart />
-            <HighlightedMultipleBarChart />
+            <BarChart />
             <AreaChartFillByValue />
             < DuotoneVerticalBarMultipleChart/>
             <RoundedPieChart />
