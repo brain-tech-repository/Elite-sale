@@ -71,18 +71,25 @@ export default function Salesdashboa() {
 
 
           {/* KPI CARDS */}
-          <div className="px-6 pb-6">
+          <div className="lg:px-6 px-1 pb-6">
             <SectionCards />
           </div>
 
           {/* TOP CHARTS */}
-          <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-2">
-            <GlowingLineChart />
-            <AnimatedHatchedPatternAreaChart />
+          <section className="grid gap-6 lg:px-6 px-1 pb-8 grid-cols-1 lg:grid-cols-2">
+            <GlowingLineChart 
+            title="Yearly Sales"/>
+            <AnimatedHatchedPatternAreaChart
+            title="Gross Profit Graph"
+             />
             <BarChart />
-            <AreaChartFillByValue />
-            < DuotoneVerticalBarMultipleChart/>
-            <RoundedPieChart />
+            <AreaChartFillByValue 
+            title="Target Acheived By Month"/>
+            < DuotoneVerticalBarMultipleChart
+            title="Comparison Of Expense"
+            />
+            <RoundedPieChart
+              title="Top Brand By Gross Sales" />
             <></>
           </section>
         </div>

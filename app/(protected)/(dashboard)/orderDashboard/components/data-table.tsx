@@ -399,7 +399,7 @@ export function DataTable({
   return (
   <div className="w-full flex flex-col gap-6">
   {/* Top Toolbar */}
-  <div className="flex items-center justify-between px-4 lg:px-6 gap-4">
+  <div className="flex items-center justify-between px-4 lg:lg:px-6 px-1 gap-4">
     
     {/* Search */}
     <Input

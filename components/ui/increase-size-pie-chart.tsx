@@ -59,19 +59,21 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function IncreaseSizePieChart() {
+interface RoundedPieChartProps {
+  title?: string;
+  description?: string;
+}
+
+export function IncreaseSizePieChart({ 
+  title = "Browser Distribution", // Default title
+  description = "January - June 2024" // Default description
+}: RoundedPieChartProps) {
   return (
     <Card className="flex flex-col shadow-lg">
       <CardHeader className="items-center pb-0">
         <CardTitle>
-          Sized Pie Chart
-          <Badge
-            variant="outline"
-            className="text-red-500 bg-red-500/10 border-none ml-2"
-          >
-            <TrendingDown className="h-4 w-4" />
-            <span>5.2%</span>
-          </Badge>
+          {title}
+         
         </CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>

@@ -16,8 +16,28 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 import React from "react";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { Button } from "@/components/ui/button";
+
+// Change it to your needs
+const animationConfig = {
+  glowWidth: 300,
+};
+
+const months = [
+  "January", "February", "March",
+  "April", "May", "June",
+  "July", "August", "September",
+  "October", "November", "December"
+];
 
 const chartData = [
   { month: "January", desktop: 342, mobile: 245 },
@@ -50,30 +70,62 @@ interface RoundedPieChartProps {
   description?: string;
 }
 
-type ActiveProperty = keyof typeof chartConfig;
-
-export function AnimatedHatchedPatternAreaChart({ 
+export function AnimatedHighlightedAreaChart({
   title = "Browser Distribution", // Default title
   description = "January - June 2024" // Default description
-}: RoundedPieChartProps
-) {
-  const [activeProperty, setActiveProperty] =
-    React.useState<ActiveProperty | null>(null);
+}: RoundedPieChartProps) {
+
+  const [xAxis, setXAxis] = React.useState<number | null>(null);
+  const [selectedMonth, setSelectedMonth] = React.useState<string | null>(null);
 
   return (
     <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle>
-         {title}
-         
-        </CardTitle>
+        <div className="flex items-center justify-between">
+
+          {/* Title + Badge */}
+          <div className="flex items-center gap-2">
+            <CardTitle>{title}</CardTitle>
+          </div>
+
+          {/* Month Dropdown */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-[123px]">
+                {selectedMonth ? selectedMonth.slice(0, 3) : "Month"}
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent className="w-[220px]">
+              <div className="grid grid-cols-3 gap-2">
+                {months.map((month) => (
+                  <Button
+                    key={month}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedMonth(month)}
+                  >
+                    {month.slice(0, 3)}
+                  </Button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+        </div>
+
         <CardDescription>
-          Showing total visitors for the last 6 months
+          Showing total visitors for the last 12 months
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <AreaChart accessibilityLayer data={chartData}>
+          <AreaChart
+            accessibilityLayer
+            data={chartData}
+            onMouseMove={(e) => setXAxis(e.chartX as number)}
+            onMouseLeave={() => setXAxis(null)}
+          >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="month"
@@ -84,9 +136,19 @@ export function AnimatedHatchedPatternAreaChart({
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <defs>
-              <HatchedBackgroundPattern config={chartConfig} />
               <linearGradient
-                id="hatched-background-pattern-grad-desktop"
+                id="animated-highlighted-mask-grad"
+                x1="0"
+                y1="0"
+                x2="1"
+                y2="0"
+              >
+                <stop offset="0%" stopColor="transparent" />
+                <stop offset="50%" stopColor="white" />
+                <stop offset="100%" stopColor="transparent" />
+              </linearGradient>
+              <linearGradient
+                id="animated-highlighted-grad-desktop"
                 x1="0"
                 y1="0"
                 x2="0"
@@ -104,7 +166,7 @@ export function AnimatedHatchedPatternAreaChart({
                 />
               </linearGradient>
               <linearGradient
-                id="hatched-background-pattern-grad-mobile"
+                id="animated-highlighted-grad-mobile"
                 x1="0"
                 y1="0"
                 x2="0"
@@ -121,36 +183,37 @@ export function AnimatedHatchedPatternAreaChart({
                   stopOpacity={0}
                 />
               </linearGradient>
+              {xAxis && (
+                <mask id="animated-highlighted-mask">
+                  <rect
+                    x={xAxis - animationConfig.glowWidth / 2}
+                    y={0}
+                    width={animationConfig.glowWidth}
+                    height="100%"
+                    fill="url(#animated-highlighted-mask-grad)"
+                  />
+                </mask>
+              )}
             </defs>
             <Area
-              onMouseEnter={() => setActiveProperty("mobile")}
-              onMouseLeave={() => setActiveProperty(null)}
               dataKey="mobile"
               type="natural"
-              fill={
-                activeProperty === "mobile"
-                  ? "url(#hatched-background-pattern-mobile)"
-                  : "url(#hatched-background-pattern-grad-mobile)"
-              }
+              fill={"url(#animated-highlighted-grad-mobile)"}
               fillOpacity={0.4}
               stroke="var(--color-mobile)"
               stackId="a"
               strokeWidth={0.8}
+              mask="url(#animated-highlighted-mask)"
             />
             <Area
-              onMouseEnter={() => setActiveProperty("desktop")}
-              onMouseLeave={() => setActiveProperty(null)}
               dataKey="desktop"
               type="natural"
-              fill={
-                activeProperty === "desktop"
-                  ? "url(#hatched-background-pattern-desktop)"
-                  : "url(#hatched-background-pattern-grad-desktop)"
-              }
+              fill={"url(#animated-highlighted-grad-desktop)"}
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
               stackId="a"
               strokeWidth={0.8}
+              mask="url(#animated-highlighted-mask)"
             />
           </AreaChart>
         </ChartContainer>
@@ -158,39 +221,3 @@ export function AnimatedHatchedPatternAreaChart({
     </Card>
   );
 }
-
-const HatchedBackgroundPattern = ({ config }: { config: ChartConfig }) => {
-  const items = Object.fromEntries(
-    Object.entries(config).map(([key, value]) => [key, value.color])
-  );
-  return (
-    <>
-      {Object.entries(items).map(([key, value]) => (
-        <pattern
-          key={key}
-          id={`hatched-background-pattern-${key}`}
-          x="0"
-          y="0"
-          width="6.81"
-          height="6.81"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-45)"
-          overflow="visible"
-        >
-          <g overflow="visible" className="will-change-transform">
-            <animateTransform
-              attributeName="transform"
-              type="translate"
-              from="0 0"
-              to="6 0"
-              dur="1s"
-              repeatCount="indefinite"
-            />
-            <rect width="10" height="10" opacity={0.05} fill={value} />
-            <rect width="1" height="10" fill={value} />
-          </g>
-        </pattern>
-      ))}
-    </>
-  );
-};

@@ -52,24 +52,23 @@ const chartConfig = {
     color: "var(--chart-5)",
   },
 } satisfies ChartConfig;
-
+interface RoundedPieChartProps {
+  title?: string;
+  description?: string;
+}
 type ActiveBrowser = keyof typeof chartConfig | "all" | null;
 
-export function GlowingRadialChart() {
+export function GlowingRadialChart({ 
+  title = "Browser Distribution", // Default title
+  description = "January - June 2024" // Default description
+}: RoundedPieChartProps) {
   const [activeBrowser, setActiveBrowser] = React.useState<ActiveBrowser>(null);
 
   return (
     <Card className="flex flex-col shadow-lg">
       <CardHeader className="items-center pb-0">
         <CardTitle>
-          Glowing Radial Chart
-          <Badge
-            variant="outline"
-            className="text-green-500 bg-green-500/10 border-none ml-2"
-          >
-            <TrendingUp className="h-4 w-4" />
-            <span>5.2%</span>
-          </Badge>
+         {title}
         </CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>

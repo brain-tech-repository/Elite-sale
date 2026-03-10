@@ -15,13 +15,7 @@ import {
 } from "@/components/ui/form"
 
 import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { AutoComplete, AutoCompleteOption } from "@/components/ui/autocomplete"
 
 /* =========================
    SCHEMA
@@ -36,6 +30,36 @@ const formSchema = z.object({
 })
 
 type FormValues = z.infer<typeof formSchema>
+
+/* =========================
+   OPTIONS
+========================= */
+
+const regionOptions: AutoCompleteOption[] = [
+  { value: "north", label: "North" },
+  { value: "south", label: "South" },
+  { value: "west", label: "West" },
+]
+
+const warehouseOptions: AutoCompleteOption[] = [
+  { value: "wh1", label: "Warehouse 1" },
+  { value: "wh2", label: "Warehouse 2" },
+]
+
+const brandOptions: AutoCompleteOption[] = [
+  { value: "brand1", label: "Brand 1" },
+  { value: "brand2", label: "Brand 2" },
+]
+
+const groupOptions: AutoCompleteOption[] = [
+  { value: "group1", label: "Group 1" },
+  { value: "group2", label: "Group 2" },
+]
+
+const materialOptions: AutoCompleteOption[] = [
+  { value: "mat1", label: "Material 1" },
+  { value: "mat2", label: "Material 2" },
+]
 
 /* =========================
    COMPONENT
@@ -57,7 +81,7 @@ export default function MyForm() {
     try {
       console.log(values)
       toast.success("Form submitted successfully!")
-    } catch (error) {
+    } catch {
       toast.error("Submission failed")
     }
   }
@@ -70,132 +94,106 @@ export default function MyForm() {
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
 
-          {/* ================= Region ================= */}
+          {/* Region */}
           <FormField
             control={form.control}
             name="region"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
                 <FormLabel>Region</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Region" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="north">North</SelectItem>
-                    <SelectItem value="south">South</SelectItem>
-                    <SelectItem value="west">West</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={regionOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Region"
+                    searchPlaceholder="Search region..."
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* ================= Warehouse ================= */}
+          {/* Warehouse */}
           <FormField
             control={form.control}
             name="warehouse"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
                 <FormLabel>Warehouse</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Warehouse" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="wh1">Warehouse 1</SelectItem>
-                    <SelectItem value="wh2">Warehouse 2</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={warehouseOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Warehouse"
+                    searchPlaceholder="Search warehouse..."
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* ================= Brand ================= */}
+          {/* Brand */}
           <FormField
             control={form.control}
             name="Brand"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
                 <FormLabel>Material Brand</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Brand" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="brand1">Brand 1</SelectItem>
-                    <SelectItem value="brand2">Brand 2</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={brandOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Brand"
+                    searchPlaceholder="Search brand..."
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* ================= Material Group ================= */}
+          {/* Material Group */}
           <FormField
             control={form.control}
             name="material_group"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
                 <FormLabel>Material Group</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Material Group" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="group1">Group 1</SelectItem>
-                    <SelectItem value="group2">Group 2</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={groupOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Material Group"
+                    searchPlaceholder="Search material group..."
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* ================= Material ================= */}
+          {/* Material */}
           <FormField
             control={form.control}
             name="material"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
                 <FormLabel>Material</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Material" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="mat1">Material 1</SelectItem>
-                    <SelectItem value="mat2">Material 2</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={materialOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Material"
+                    searchPlaceholder="Search material..."
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -203,21 +201,22 @@ export default function MyForm() {
 
         </div>
 
-        {/* Submit Button */}
+        {/* Buttons */}
         <div className="flex w-full justify-start gap-6 pt-2">
-          <Button type="submit"   variant="outline" className="shadow-lg">
+          <Button type="submit" variant="outline" className="shadow-lg">
             Filter
           </Button>
 
           <Button
             type="button"
             variant="outline"
-             className="shadow-lg"
+            className="shadow-lg"
             onClick={() => form.reset()}
           >
             Reset
           </Button>
         </div>
+
       </form>
     </Form>
   )

@@ -5,15 +5,9 @@ import MyForm1 from "./components/filter1";
 import { SectionCards } from "./components/section-cards";
 import { GlowingLineChart } from "@/components/ui/glowing-line";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
-import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
+
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
-import { ColumnDef } from "@tanstack/react-table";
 import { CommonDataTable } from "@/components/table-data/custom-table";
-import { RoundedPieChart } from "@/components/ui/rounded-pie-chart";
-import LineCharts from "@/components/charts/linechart";
-import LineCharts1 from "@/components/charts/lineChart1";
-import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart";
-import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart";
 import { salesColumns } from "./components/columns"
 import { Card } from "@/components/ui/card";
 import VerticalComposedChart from "@/components/ui/VerticalComposedChart";
@@ -66,22 +60,22 @@ export default function Salesdashboa() {
             <DataTableHeader title="Route Dashboard" />
           </div>
           {/* FILTERS */}
-          <div className="px-6 pb-4">
+          <div className="lg:px-6 px-1 pb-4">
             <Card className="shadow-lg"> <MyForm /></Card>
           </div>
           {/* KPI CARDS */}
-          <div className="px-6 pb-6">
+          <div className="lg:px-6 px-1 pb-6">
             <SectionCards />
           </div>
           {/* TOP CHARTS */}
-          <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
+          <section className="grid gap-6 lg:px-6 px-1 pb-8 grid-cols-1 lg:grid-cols-3">
             <VerticalComposedChart />
             <HighlightedMultipleBarChart />
             <GlowingLineChart />
 
           </section>
           {/* SECTION 1 */}
-          <div className="px-6 pb-8">
+          <div className="lg:px-6 px-1 pb-8">
 
 
             <Card className="shadow-lg"> <MyForm1 /></Card>
@@ -95,7 +89,7 @@ export default function Salesdashboa() {
         
 
           {/* SECTION 3 */}
-          <div className="px-6 pb-10">
+          <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Route Expense Analysis" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
               <div className="lg:col-span-1">
@@ -105,7 +99,7 @@ export default function Salesdashboa() {
               <RainbowGlowGradientLineCharts />
             </section>
           </div>
-          <div className="px-6 pb-10">
+          <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Route Wise Sales Report" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
               <div className="lg:col-span-1">
@@ -113,7 +107,7 @@ export default function Salesdashboa() {
               </div>
             </section>
           </div>
-          <div className="px-6 pb-10">
+          <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Route Efficency Overview" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
               <div className="lg:col-span-1">

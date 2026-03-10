@@ -19,16 +19,16 @@ export default function Salesdashboa() {
           </div>
           {/* FILTERS */}
 
-          <div className="px-6 pb-4 ">
+          <div className="lg:px-6 px-1 pb-4 ">
             <Card className="shadow-lg lg:px-5 "> <MyForm /></Card>
           </div>
           {/* TOP CHARTS */}
-          <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
+          <section className="grid gap-6 lg:px-6 px-1 pb-8 grid-cols-1 lg:grid-cols-3">
             <SectionCards />
             <RainbowGlowGradientLineChart />
             <GaugePieChartCard />
           </section>
-          <section className="px-6 pb-10 space-y-4">
+          <section className="lg:px-6 px-1 pb-10 space-y-4">
             <div className="lg:col-span-1">
               <Card className="shadow-lg py-2">
                 <CommonDataTable

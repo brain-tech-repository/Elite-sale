@@ -21,15 +21,6 @@ import {
 } from "@/components/ui/form"
 
 import { Button } from "@/components/ui/button"
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
 import { Calendar } from "@/components/ui/calendar"
 
 import {
@@ -38,6 +29,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+import { AutoComplete, AutoCompleteOption } from "@/components/ui/autocomplete"
 
 
 /* =========================
@@ -46,23 +38,42 @@ import {
 
 const formSchema = z.object({
   dateRange: z.object({
-    from: z.date({
-      message: "Start date is required",
-    }),
-    to: z.date({
-      message: "End date is required",
-    }),
+    from: z.date(),
+    to: z.date(),
   }),
   region: z.string().min(1, "Region is required"),
   sub_region: z.string().min(1, "Sub Region is required"),
   warehouse: z.string().min(1, "Warehouse is required"),
   routes: z.string().min(1, "Route is required"),
-
- 
 })
 
 type FormValues = z.infer<typeof formSchema>
 
+
+/* =========================
+   OPTIONS
+========================= */
+
+const regionOptions: AutoCompleteOption[] = [
+  { value: "north", label: "North" },
+  { value: "south", label: "South" },
+  { value: "west", label: "West" },
+]
+
+const subRegionOptions: AutoCompleteOption[] = [
+  { value: "sub1", label: "Sub Region 1" },
+  { value: "sub2", label: "Sub Region 2" },
+]
+
+const warehouseOptions: AutoCompleteOption[] = [
+  { value: "wh1", label: "Warehouse 1" },
+  { value: "wh2", label: "Warehouse 2" },
+]
+
+const routeOptions: AutoCompleteOption[] = [
+  { value: "route1", label: "Route 1" },
+  { value: "route2", label: "Route 2" },
+]
 
 
 /* =========================
@@ -79,7 +90,6 @@ export default function MyForm() {
       sub_region: "",
       warehouse: "",
       routes: "",
-      
     },
   })
 
@@ -108,7 +118,7 @@ export default function MyForm() {
               const isDateSelected = dateRange?.from && dateRange?.to
 
               return (
-                <FormItem className="">
+                <FormItem>
 
                   <FormLabel>Date Range</FormLabel>
 
@@ -120,7 +130,7 @@ export default function MyForm() {
                         <Button
                           variant="outline"
                           className={cn(
-                            "pl-3 text-left font-normal shadow-lg",
+                            "pl-3 text-left font-normal shadow-lg w-full",
                             !dateRange?.from && "text-muted-foreground"
                           )}
                         >
@@ -160,6 +170,7 @@ export default function MyForm() {
           />
 
 
+
           {/* ================= Region ================= */}
 
           <FormField
@@ -167,27 +178,22 @@ export default function MyForm() {
             name="region"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Region</FormLabel>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl className="shadow-lg w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Region" />
-                    </SelectTrigger>
-                  </FormControl>
-
-                  <SelectContent>
-                    <SelectItem value="north">North</SelectItem>
-                    <SelectItem value="south">South</SelectItem>
-                    <SelectItem value="west">West</SelectItem>
-                  </SelectContent>
-
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={regionOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Region"
+                    searchPlaceholder="Search region..."
+                    width="w-full"
+                  />
+                </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
@@ -200,26 +206,22 @@ export default function MyForm() {
             name="sub_region"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Sub Region</FormLabel>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl className="shadow-lg w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Sub Region" />
-                    </SelectTrigger>
-                  </FormControl>
-
-                  <SelectContent>
-                    <SelectItem value="sub1">Sub Region 1</SelectItem>
-                    <SelectItem value="sub2">Sub Region 2</SelectItem>
-                  </SelectContent>
-
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={subRegionOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Sub Region"
+                    searchPlaceholder="Search sub region..."
+                    width="w-full"
+                  />
+                </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
@@ -232,26 +234,22 @@ export default function MyForm() {
             name="warehouse"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Warehouse</FormLabel>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl className="shadow-lg w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Warehouse" />
-                    </SelectTrigger>
-                  </FormControl>
-
-                  <SelectContent>
-                    <SelectItem value="wh1">Warehouse 1</SelectItem>
-                    <SelectItem value="wh2">Warehouse 2</SelectItem>
-                  </SelectContent>
-
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={warehouseOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Warehouse"
+                    searchPlaceholder="Search warehouse..."
+                    width="w-full"
+                  />
+                </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
@@ -264,34 +262,26 @@ export default function MyForm() {
             name="routes"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Routes</FormLabel>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl className="shadow-lg w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Route" />
-                    </SelectTrigger>
-                  </FormControl>
-
-                  <SelectContent>
-                    <SelectItem value="route1">Route 1</SelectItem>
-                    <SelectItem value="route2">Route 2</SelectItem>
-                  </SelectContent>
-
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={routeOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Route"
+                    searchPlaceholder="Search route..."
+                    width="w-full"
+                  />
+                </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
-
-          {/* ================= Brand ================= */}
-
-         
         </div>
 
 

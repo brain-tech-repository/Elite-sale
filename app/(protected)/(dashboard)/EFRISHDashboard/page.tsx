@@ -54,29 +54,29 @@ export default function Salesdashboa() {
           </div>
 
           {/* KPI CARDS */}
-          <div className="px-6 pb-6">
+          <div className="lg:px-6 px-1 pb-6">
             <SectionCards />
           </div>
 
 
 
           {/* SECTION 3 */}
-          <div className="px-6 pb-10">
-         
+          <div className="lg:px-6 px-1 pb-10">
+
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
-             
-                <HighlightedMultipleBarChart/>
-            
-              <HighlightedMultipleBarChart/>
-               <HighlightedMultipleBarChart/>
-            
-              <HighlightedMultipleBarChart/>
-               <HighlightedMultipleBarChart/>
-            
-              <HighlightedMultipleBarChart/>
-               <HighlightedMultipleBarChart/>
-            
-             
+
+              <HighlightedMultipleBarChart />
+
+              <HighlightedMultipleBarChart />
+              <HighlightedMultipleBarChart />
+
+              <HighlightedMultipleBarChart />
+              <HighlightedMultipleBarChart />
+
+              <HighlightedMultipleBarChart />
+              <HighlightedMultipleBarChart />
+
+
             </section>
           </div>
 

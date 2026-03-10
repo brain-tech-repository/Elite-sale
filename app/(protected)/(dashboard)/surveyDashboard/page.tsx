@@ -16,14 +16,14 @@ export default function Salesdashboa() {
     <>
       <div className="flex flex-1 flex-col">
 
-        <div className="px-6 pb-6">
+        <div className="lg:px-6 px-1 pb-6">
           <SectionCards onCardClick={(id:any) => setActiveTable(id)} />
         </div>
 
         {/* TABLE SECTION */}
 
         {activeTable === "customers" && (
-          <div className="px-6">
+          <div className="lg:px-6 px-1">
             <Card className="shadow-lg py-2">
               <CommonDataTable
                 columns={sectionColumns}
@@ -36,7 +36,7 @@ export default function Salesdashboa() {
         )}
 
         {activeTable === "users" && (
-          <div className="px-6">
+          <div className="lg:px-6 px-1">
             <Card className="shadow-lg py-2">
               <CommonDataTable
                  columns={sectionColumns}
@@ -48,7 +48,7 @@ export default function Salesdashboa() {
           </div>
         )}
           {activeTable === "country" && (
-          <div className="px-6">
+          <div className="lg:px-6 px-1">
             <Card className="shadow-lg py-2">
               <CommonDataTable
                  columns={sectionColumns}
@@ -60,7 +60,7 @@ export default function Salesdashboa() {
           </div>
         )}
           {activeTable === "surveys" && (
-          <div className="px-6">
+          <div className="lg:px-6 px-1">
             <Card className="shadow-lg py-2">
               <CommonDataTable
                  columns={sectionColumns}

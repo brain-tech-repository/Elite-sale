@@ -21,15 +21,6 @@ import {
 } from "@/components/ui/form"
 
 import { Button } from "@/components/ui/button"
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
 import { Calendar } from "@/components/ui/calendar"
 
 import {
@@ -38,30 +29,39 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-
+import { AutoComplete, AutoCompleteOption } from "@/components/ui/autocomplete"
 
 /* =========================
    SCHEMA
 ========================= */
-
 const formSchema = z.object({
   dateRange: z.object({
-    from: z.date({
-      message: "Start date is required",
-    }),
-    to: z.date({
-      message: "End date is required",
-    }),
+    from: z.date().nullable(),
+    to: z.date().nullable(),
+  }).refine((data) => data.from && data.to, {
+    message: "Date range is required",
   }),
 
   order_type: z.string().min(1, "Order type is required"),
-
   distributor: z.string().min(1, "Distributor is required"),
 })
 
 type FormValues = z.infer<typeof formSchema>
 
+/* =========================
+   OPTIONS
+========================= */
 
+const orderTypeOptions: AutoCompleteOption[] = [
+  { value: "primary", label: "Primary" },
+  { value: "secondary", label: "Secondary" },
+]
+
+const distributorOptions: AutoCompleteOption[] = [
+  { value: "all", label: "All Distributor" },
+  { value: "dist1", label: "Distributor 1" },
+  { value: "dist2", label: "Distributor 2" },
+]
 
 /* =========================
    COMPONENT
@@ -72,10 +72,13 @@ export default function MyForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      dateRange: undefined,
+      dateRange: {
+        from: null,
+        to: null,
+      },
       order_type: "",
       distributor: "",
-    },
+    }
   })
 
   function onSubmit(values: FormValues) {
@@ -115,16 +118,16 @@ export default function MyForm() {
                         <Button
                           variant="outline"
                           className={cn(
-                            "pl-3 text-left font-normal shadow-lg",
+                            "pl-3 text-left font-normal shadow-lg w-full",
                             !dateRange?.from && "text-muted-foreground"
                           )}
                         >
 
                           {isDateSelected
                             ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
-                                dateRange.to!,
-                                "dd/MM/yy"
-                              )}`
+                              dateRange.to!,
+                              "dd/MM/yy"
+                            )}`
                             : "Pick a date range"}
 
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -163,68 +166,51 @@ export default function MyForm() {
             name="order_type"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Order Type</FormLabel>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl className="shadow-lg w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Order Type" />
-                    </SelectTrigger>
-                  </FormControl>
-
-                  <SelectContent>
-                    <SelectItem value="primary">Primary</SelectItem>
-                    <SelectItem value="secondary">Secondary</SelectItem>
-                  </SelectContent>
-
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={orderTypeOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Order Type"
+                    searchPlaceholder="Search order type..."
+                    width="w-full"
+                  />
+                </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
 
-
           {/* ================= Distributor ================= */}
-
           <FormField
             control={form.control}
             name="distributor"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Distributor</FormLabel>
-
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl className="shadow-lg w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Distributor" />
-                    </SelectTrigger>
-                  </FormControl>
-
-                  <SelectContent>
-                    <SelectItem value="all">All Distributor</SelectItem>
-                    <SelectItem value="dist1">Distributor 1</SelectItem>
-                    <SelectItem value="dist2">Distributor 2</SelectItem>
-                  </SelectContent>
-
-                </Select>
+                <FormControl>
+                  <AutoComplete
+                    options={distributorOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Distributor"
+                    searchPlaceholder="Search distributor..."
+                    width="w-full"
+                  />
+                </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
-
         </div>
-
-
-
         {/* ================= Buttons ================= */}
 
         <div className="flex gap-6 pt-2">
@@ -232,7 +218,6 @@ export default function MyForm() {
           <Button type="submit" variant="outline" className="shadow-lg">
             Filter
           </Button>
-
           <Button
             type="button"
             variant="outline"

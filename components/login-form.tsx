@@ -143,7 +143,7 @@ export function LoginForm({
         </CardContent>
       </Card>
 
-      <FieldDescription className="px-6 text-center">
+      <FieldDescription className="lg:px-6 px-1 text-center">
         By clicking continue, you agree to our <a href="#">Terms of Service</a>
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>

@@ -33,6 +33,12 @@ const chartData = [
   { page: "G", uv: 3490, pv: 4300 },
 ];
 
+
+interface RoundedPieChartProps {
+  title?: string;
+  description?: string;
+}
+
 /* ---------------- Chart Config ---------------- */
 
 const chartConfig = {
@@ -50,7 +56,10 @@ type ActiveProperty = keyof typeof chartConfig;
 
 /* ---------------- Chart ---------------- */
 
-export default function HoverAreaChart() {
+export default function HoverAreaChart({ 
+  title = "Browser Distribution", // Default title
+  description = "January - June 2024" // Default description
+}: RoundedPieChartProps) {
   const [activeProperty, setActiveProperty] =
     React.useState<ActiveProperty | null>(null);
 
@@ -58,14 +67,8 @@ export default function HoverAreaChart() {
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle>
-          Page Performance
-          <Badge
-            variant="outline"
-            className="text-green-500 bg-green-500/10 border-none ml-2"
-          >
-            <TrendingUp className="h-4 w-4 mr-1" />
-            6.4%
-          </Badge>
+         {title}
+        
         </CardTitle>
         <CardDescription>
           Showing page analytics for last 7 pages

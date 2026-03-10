@@ -8,7 +8,7 @@ export default function DataTableSubHeader({
   return (
     <div className="flex w-full items-center justify-between 
       border-b-1 border-s-1  border-neutral-300 dark:border-neutral-800 
-      px-3 py-2 shadow-lg">
+      px-3 py-2 shadow-lg bg-sky-100 text-white">
 
       {/* Title Section */}
       <div className="flex items-center gap-2">

@@ -54,16 +54,16 @@ export default function Salesdashboa() {
             <DataTableHeader title="Material Dashboard" />
           </div>
           {/* FILTERS */}
-          <div className="px-6 pb-4">
+          <div className="lg:px-6 px-1 pb-4">
             <Card className="shadow-lg"> <MyForm /></Card>
           </div>
           {/* KPI CARDS */}
-          <div className="px-6 pb-6">
+          <div className="lg:px-6 px-1 pb-6">
             <SectionCards />
           </div>
           {/* TOP CHARTS */}
           {/* SECTION 2 */}
-          <div className="px-6 pb-8">
+          <div className="lg:px-6 px-1 pb-8">
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
 
               {/* Table 1 */}
@@ -90,7 +90,7 @@ export default function Salesdashboa() {
             </section>
           </div>
           {/* SECTION 3 */}
-          <div className="px-6 pb-10">
+          <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Growth Analytics" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
               <div className="lg:col-span-1">
@@ -98,7 +98,7 @@ export default function Salesdashboa() {
               </div>
             </section>
           </div>
-          <div className="px-6 pb-10">
+          <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Material Volume Growth" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
               <RainbowGlowGradientLineChart />
@@ -106,7 +106,7 @@ export default function Salesdashboa() {
               <RainbowGlowGradientLineChart />
             </section>
           </div>
-          <div className="px-6 pb-10">
+          <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Material Volue Growth" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
               <RainbowGlowGradientLineChart />

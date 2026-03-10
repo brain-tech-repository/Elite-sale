@@ -26,7 +26,10 @@ const chartData = [
   { month: "May", desktop: 209, mobile: 118 },
   { month: "June", desktop: 214, mobile: 231 },
 ];
-
+interface RoundedPieChartProps {
+  title?: string;
+  description?: string;
+}
 const chartConfig = {
   desktop: {
     label: "Desktop",
@@ -38,19 +41,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function GlowingLineChart() {
+export function GlowingLineChart({ 
+  title = "Browser Distribution", // Default title
+  description = "January - June 2024" // Default description
+}: RoundedPieChartProps
+) {
   return (
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle>
-          Glowing Line Chart
-          <Badge
-            variant="outline"
-            className="text-green-500 bg-green-500/10 border-none ml-2 "
-          >
-            <TrendingUp className="h-4 w-4" />
-            <span>5.2%</span>
-          </Badge>
+         {title}
         </CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>

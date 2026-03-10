@@ -1,15 +1,9 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { Sale } from "../types"
 
-export type Sale = {
-  id: string
-  customer: string
-  product: string
-  amount: number
-  status: "Completed" | "Pending" | "Cancelled"
-  date: string
-}
+
 
 export const salesColumns: ColumnDef<Sale>[] = [
   {

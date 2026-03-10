@@ -26,6 +26,11 @@ const chartData = [
   { month: "June", desktop: 214, mobile: 140 },
 ];
 
+interface RoundedPieChartProps {
+  title?: string;
+  description?: string;
+}
+
 const chartConfig = {
   desktop: {
     label: "Desktop",
@@ -37,19 +42,15 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function DuotoneVerticalBarMultipleChart() {
+export function DuotoneVerticalBarMultipleChart({ 
+  title = "Browser Distribution", // Default title
+  description = "January - June 2024" // Default description
+}: RoundedPieChartProps) {
   return (
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle>
-          Bar Chart - Multiple
-          <Badge
-            variant="outline"
-            className="text-red-500 bg-red-500/10 border-none ml-2"
-          >
-            <TrendingDown className="h-4 w-4" />
-            <span>-5.2%</span>
-          </Badge>
+         {title}
         </CardTitle>
         <CardDescription>January - June 2025</CardDescription>
       </CardHeader>

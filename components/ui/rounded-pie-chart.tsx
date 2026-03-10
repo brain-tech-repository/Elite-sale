@@ -1,7 +1,8 @@
 "use client";
 
-import { LabelList, Pie, PieChart } from "recharts";
-
+import * as React from "react";
+import { LabelList, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { TrendingUp } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -9,96 +10,123 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp } from "lucide-react";
 
-export const description = "A pie chart with a label list";
+import { Badge } from "@/components/ui/badge";
 
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { browser: "chrome", visitors: 275, fill: "var(--chart-1)" },
+  { browser: "safari", visitors: 200, fill: "var(--chart-2)" },
+  { browser: "firefox", visitors: 187, fill: "var(--chart-3)" },
+  { browser: "edge", visitors: 173, fill: "var(--chart-4)" },
+  { browser: "other", visitors: 90, fill: "var(--chart-5)" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
-    color: "var(--chart-1)",
-  },
-  safari: {
-    label: "Safari",
-    color: "var(--chart-2)",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "var(--chart-3)",
-  },
-  edge: {
-    label: "Edge",
-    color: "var(--chart-4)",
-  },
-  other: {
-    label: "Other",
-    color: "var(--chart-5)",
-  },
+  visitors: { label: "Visitors" },
+  chrome: { label: "Chrome", color: "var(--chart-1)" },
+  safari: { label: "Safari", color: "var(--chart-2)" },
+  firefox: { label: "Firefox", color: "var(--chart-3)" },
+  edge: { label: "Edge", color: "var(--chart-4)" },
+  other: { label: "Other", color: "var(--chart-5)" },
 } satisfies ChartConfig;
 
-export function RoundedPieChart() {
+
+interface RoundedPieChartProps {
+  title?: string;
+  description?: string;
+}
+export function RoundedPieChart({
+  title = "Browser Distribution", // Default title
+  description = "January - June 2024" // Default description
+}: RoundedPieChartProps) {
+  const [hidden, setHidden] = React.useState<string[]>([]);
+
+  const toggleItem = (browser: string) => {
+    setHidden((prev) =>
+      prev.includes(browser)
+        ? prev.filter((item) => item !== browser)
+        : [...prev, browser]
+    );
+  };
+
+  const updatedData = chartData.filter(
+    (item) => !hidden.includes(item.browser)
+  );
+
   return (
     <Card className="flex flex-col shadow-lg">
       <CardHeader className="items-center pb-0">
         <CardTitle>
-          Pie Chart
-          <Badge
-            variant="outline"
-            className="text-green-500 bg-green-500/10 border-none ml-2"
-          >
-            <TrendingUp className="h-4 w-4" />
-            <span>5.2%</span>
-          </Badge>
+          {title}
         </CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
+
+      <CardContent className="flex flex-col items-center gap-4">
         <ChartContainer
           config={chartConfig}
-          className="[&_.recharts-text]:fill-background mx-auto aspect-square max-h-[250px]"
+          className="mx-auto w-full h-[250px]"
         >
-          <PieChart>
-            <ChartTooltip
-              content={<ChartTooltipContent nameKey="visitors" hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              innerRadius={30}
-              dataKey="visitors"
-              radius={10}
-              cornerRadius={8}
-              paddingAngle={4}
-            >
-              <LabelList
-                dataKey="visitors"
-                stroke="none"
-                fontSize={12}
-                fontWeight={500}
-                fill="currentColor"
-                formatter={(value: number) => value.toString()}
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <ChartTooltip
+                content={<ChartTooltipContent nameKey="visitors" hideLabel />}
               />
-            </Pie>
-          </PieChart>
+              <Pie
+                data={updatedData}
+                innerRadius={30}
+                outerRadius={80}
+                dataKey="visitors"
+                cornerRadius={8}
+                paddingAngle={4}
+                isAnimationActive
+              >
+                <LabelList
+                  dataKey="visitors"
+                  stroke="none"
+                  fontSize={12}
+                  fontWeight={500}
+                  fill="#ffffff"
+                />
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
         </ChartContainer>
+
+        {/* Legend */}
+        <div className="flex flex-wrap justify-center gap-3 pt-2">
+          {chartData.map((item) => {
+            const isHidden = hidden.includes(item.browser);
+
+            return (
+              <button
+                key={item.browser}
+                onClick={() => toggleItem(item.browser)}
+                className={`flex items-center gap-2 text-sm transition ${isHidden ? "opacity-40" : "opacity-100"
+                  }`}
+              >
+                <span
+                  className="w-3 h-3 rounded-sm"
+                  style={{ backgroundColor: item.fill }}
+                />
+                {chartConfig[item.browser as keyof typeof chartConfig]?.label}
+              </button>
+            );
+          })}
+        </div>
       </CardContent>
     </Card>
   );
 }
+
+
+
+
+
