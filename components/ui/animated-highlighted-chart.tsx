@@ -1,6 +1,7 @@
 "use client";
 
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import React from "react";
 
 import {
   Card,
@@ -9,15 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Badge } from "@/components/ui/badge";
-import { TrendingDown } from "lucide-react";
-import React from "react";
 
 import {
   Popover,
@@ -27,106 +26,110 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-// Change it to your needs
+interface Props {
+  title?: string;
+  description?: string;
+  data?: { month: string; desktop: number }[];
+}
+
 const animationConfig = {
   glowWidth: 300,
 };
 
 const months = [
-  "January", "February", "March",
-  "April", "May", "June",
-  "July", "August", "September",
-  "October", "November", "December"
-];
-
-const chartData = [
-  { month: "January", desktop: 342, mobile: 245 },
-  { month: "February", desktop: 876, mobile: 654 },
-  { month: "March", desktop: 512, mobile: 387 },
-  { month: "April", desktop: 629, mobile: 521 },
-  { month: "May", desktop: 458, mobile: 412 },
-  { month: "June", desktop: 781, mobile: 598 },
-  { month: "July", desktop: 394, mobile: 312 },
-  { month: "August", desktop: 925, mobile: 743 },
-  { month: "September", desktop: 647, mobile: 489 },
-  { month: "October", desktop: 532, mobile: 476 },
-  { month: "November", desktop: 803, mobile: 687 },
-  { month: "December", desktop: 271, mobile: 198 },
+  "January","February","March",
+  "April","May","June",
+  "July","August","September",
+  "October","November","December"
 ];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
+    label: "Sales",
     color: "var(--chart-1)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
-interface RoundedPieChartProps {
-  title?: string;
-  description?: string;
-}
-
 export function AnimatedHighlightedAreaChart({
-  title = "Browser Distribution", // Default title
-  description = "January - June 2024" // Default description
-}: RoundedPieChartProps) {
+  title = "Sales Trends",
+  description = "Last 12 Months",
+  data = [],
+}: Props) {
 
   const [xAxis, setXAxis] = React.useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(null);
 
+  /* Filter chart data based on selected month */
+  const filteredData = React.useMemo(() => {
+
+    if (!selectedMonth) return data;
+
+    const monthIndex = months.indexOf(selectedMonth);
+
+    return data.slice(0, monthIndex + 1);
+
+  }, [data, selectedMonth]);
+
   return (
     <Card className="shadow-lg">
+
       <CardHeader>
+
         <div className="flex items-center justify-between">
 
-          {/* Title + Badge */}
-          <div className="flex items-center gap-2">
-            <CardTitle>{title}</CardTitle>
-          </div>
+          <CardTitle>{title}</CardTitle>
 
-          {/* Month Dropdown */}
+          {/* Month Filter */}
           <Popover>
+
             <PopoverTrigger asChild>
-              <Button variant="outline" className="w-[123px]">
+              <Button variant="outline" className="w-[110px]">
                 {selectedMonth ? selectedMonth.slice(0, 3) : "Month"}
               </Button>
             </PopoverTrigger>
 
             <PopoverContent className="w-[220px]">
+
               <div className="grid grid-cols-3 gap-2">
+
                 {months.map((month) => (
+
                   <Button
                     key={month}
-                    variant="ghost"
+                    variant={selectedMonth === month ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setSelectedMonth(month)}
                   >
                     {month.slice(0, 3)}
                   </Button>
+
                 ))}
+
               </div>
+
             </PopoverContent>
+
           </Popover>
 
         </div>
 
-        <CardDescription>
-          Showing total visitors for the last 12 months
-        </CardDescription>
+        <CardDescription>{description}</CardDescription>
+
       </CardHeader>
+
       <CardContent>
+
         <ChartContainer config={chartConfig}>
+
           <AreaChart
             accessibilityLayer
-            data={chartData}
+            data={filteredData}
             onMouseMove={(e) => setXAxis(e.chartX as number)}
             onMouseLeave={() => setXAxis(null)}
           >
+
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
+
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -134,8 +137,11 @@ export function AnimatedHighlightedAreaChart({
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
+
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+
             <defs>
+
               <linearGradient
                 id="animated-highlighted-mask-grad"
                 x1="0"
@@ -147,6 +153,7 @@ export function AnimatedHighlightedAreaChart({
                 <stop offset="50%" stopColor="white" />
                 <stop offset="100%" stopColor="transparent" />
               </linearGradient>
+
               <linearGradient
                 id="animated-highlighted-grad-desktop"
                 x1="0"
@@ -165,24 +172,7 @@ export function AnimatedHighlightedAreaChart({
                   stopOpacity={0}
                 />
               </linearGradient>
-              <linearGradient
-                id="animated-highlighted-grad-mobile"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.4}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0}
-                />
-              </linearGradient>
+
               {xAxis && (
                 <mask id="animated-highlighted-mask">
                   <rect
@@ -194,30 +184,25 @@ export function AnimatedHighlightedAreaChart({
                   />
                 </mask>
               )}
+
             </defs>
-            <Area
-              dataKey="mobile"
-              type="natural"
-              fill={"url(#animated-highlighted-grad-mobile)"}
-              fillOpacity={0.4}
-              stroke="var(--color-mobile)"
-              stackId="a"
-              strokeWidth={0.8}
-              mask="url(#animated-highlighted-mask)"
-            />
+
             <Area
               dataKey="desktop"
               type="natural"
-              fill={"url(#animated-highlighted-grad-desktop)"}
+              fill="url(#animated-highlighted-grad-desktop)"
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
-              stackId="a"
-              strokeWidth={0.8}
+              strokeWidth={2}
               mask="url(#animated-highlighted-mask)"
             />
+
           </AreaChart>
+
         </ChartContainer>
+
       </CardContent>
+
     </Card>
   );
 }

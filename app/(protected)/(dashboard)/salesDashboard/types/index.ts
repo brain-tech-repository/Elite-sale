@@ -12,3 +12,39 @@ export interface DashboardSummaryResponse {
   Message: string
   Result: DashboardSummaryResult
 }
+
+
+export interface SalesTrendItem {
+  label: string
+  y: number
+}
+
+export interface SalesTrendResponse {
+  API_Status: number
+  Message: string
+  Result: SalesTrendItem[]
+}
+
+/* Chart formatted type */
+export interface ChartSalesData {
+  month: string
+  desktop: number
+}
+
+export interface MasterItem {
+  id: number
+  name: string
+}
+
+export interface MasterApiResponse {
+  API_Status: number
+  Message: string
+  Result: MasterItem[]
+}
+
+export interface AutoCompleteOption {
+  value: number | string
+  label: string
+}
+
+

@@ -61,15 +61,14 @@ export function CommonDataTable<T>({
 		<>
 
 			<div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-lg">
-
 				<div className="overflow-x-auto rounded-t-xl">
-					<div className="flex flex-col gap-3  mt-3"> {/* Wrapper to handle spacing */}
-						{title && (
-							<h3 className="text-lg font-semibold text-gray-700 px-1">
-								{title}
-							</h3>
-						)}
-						<table className="w-full border-collapse text-sm">
+					<table className="w-full border-collapse text-sm">
+						<div className="flex flex-col gap-3  mt-3"> {/* Wrapper to handle spacing */}
+							{title && (
+								<h3 className="text-lg font-semibold text-gray-700 px-1">
+									{title}
+								</h3>
+							)}
 							{/* Header */}
 							<thead className="sticky top-0 bg-gradient-to-r from-pink-100 via-white to-sky-200 text-gray-800">
 								{table.getHeaderGroups().map((headerGroup) => (
@@ -77,7 +76,7 @@ export function CommonDataTable<T>({
 										{headerGroup.headers.map((header) => (
 											<th
 												key={header.id}
-												className="border-gray-200 border-b border-r px-1 py-1 text-left font-semibold last:border-r-0"
+												className="border-gray-200 border-b border-r px-4 py-3 text-left font-semibold last:border-r-0"
 											>
 												{header.isPlaceholder
 													? null
@@ -99,7 +98,7 @@ export function CommonDataTable<T>({
 											{columns.map((_, index) => (
 												<td
 													key={index}
-													className="border-gray-200 border-b border-r px-1 py-1 last:border-r-0"
+													className="border-gray-200 border-b border-r px-4 py-3 last:border-r-0"
 												>
 													<div className="h-4 w-full animate-pulse rounded bg-gray-200" />
 												</td>
@@ -115,7 +114,7 @@ export function CommonDataTable<T>({
 											{row.getVisibleCells().map((cell) => (
 												<td
 													key={cell.id}
-													className="border-gray-200 border-b border-r px-1 py-1 text-gray-700 last:border-r-0"
+													className="border-gray-200 border-b border-r px-4 py-3 text-gray-700 last:border-r-0"
 												>
 													{flexRender(
 														cell.column.columnDef.cell,
@@ -136,34 +135,34 @@ export function CommonDataTable<T>({
 									</tr>
 								)}
 							</tbody>
-						</table>
-					</div>
-
-					{/* Pagination */}
-					<div className="flex items-center justify-between rounded-b-xl border-gray-200 border-t bg-gradient-to-r from-gray-50 to-gray-100 px-1 py-1">
-						<span className="text-gray-600 text-sm">
-							Page {pagination.pageIndex + 1} of {table.getPageCount()}
-						</span>
-
-						<div className="flex gap-2">
-							<button
-								type="button"
-								onClick={() => table.previousPage()}
-								disabled={!table.getCanPreviousPage()}
-								className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-green-200 hover:via-white hover:to-red-200 disabled:opacity-40"
-							>
-								Previous
-							</button>
-
-							<button
-								type="button"
-								onClick={() => table.nextPage()}
-								disabled={!table.getCanNextPage()}
-								className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-green-200 hover:via-white hover:to-red-200 disabled:opacity-40"
-							>
-								Next
-							</button>
 						</div>
+					</table>
+				</div>
+
+				{/* Pagination */}
+				<div className="flex items-center justify-between rounded-b-xl border-gray-200 border-t bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3">
+					<span className="text-gray-600 text-sm">
+						Page {pagination.pageIndex + 1} of {table.getPageCount()}
+					</span>
+
+					<div className="flex gap-2">
+						<button
+							type="button"
+							onClick={() => table.previousPage()}
+							disabled={!table.getCanPreviousPage()}
+							className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-green-200 hover:via-white hover:to-red-200 disabled:opacity-40"
+						>
+							Previous
+						</button>
+
+						<button
+							type="button"
+							onClick={() => table.nextPage()}
+							disabled={!table.getCanNextPage()}
+							className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-green-200 hover:via-white hover:to-red-200 disabled:opacity-40"
+						>
+							Next
+						</button>
 					</div>
 				</div>
 			</div>

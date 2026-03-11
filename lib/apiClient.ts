@@ -4,9 +4,9 @@ import axios from "axios";
 import { CookieManager } from "./cookieUtils";
 
 const api = axios.create({
-   baseURL: "/backend",   // ✅ MUST be this
-  // baseURL: process.env.NEXT_PUBLIC_API_URL, // ✅ from env
-  withCredentials: true,
+  //  baseURL: "/backend",   // ✅ MUST be this
+  baseURL: process.env.NEXT_PUBLIC_API_URL, // ✅ from env
+  // withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },

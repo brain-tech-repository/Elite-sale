@@ -27,53 +27,46 @@ import {
 
 import { Button } from "@/components/ui/button";
 
+interface Props {
+  title?: string;
+  description?: string;
+  data?: { month: string; desktop: number }[];
+  showYearSelector?: boolean;
+  year?: string
+  setYear?: (year: string) => void
+}
+
+
+
 const chartConfig = {
   desktop: {
-    label: "Desktop",
+    label: "Sales",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
-/* Generate years */
-const years = Array.from({ length: 3000 - 2001 + 1 }, (_, i) =>
+const fallbackData = [
+  { month: "Jan", desktop: 120 },
+  { month: "Feb", desktop: 250 },
+  { month: "Mar", desktop: 180 },
+  { month: "Apr", desktop: 310 },
+  { month: "May", desktop: 220 },
+  { month: "Jun", desktop: 270 },
+];
+
+/* Year list (for selector UI only) */
+const years = Array.from({ length: 2030 - 2001 + 1 }, (_, i) =>
   (2001 + i).toString()
 );
 
-/* Sample data */
-const yearlyData = {
-  "2024": [
-    { month: "January", desktop: 186 },
-    { month: "February", desktop: 305 },
-    { month: "March", desktop: 237 },
-    { month: "April", desktop: 73 },
-    { month: "May", desktop: 209 },
-    { month: "June", desktop: 214 },
-  ],
-  "2023": [
-    { month: "January", desktop: 120 },
-    { month: "February", desktop: 260 },
-    { month: "March", desktop: 180 },
-    { month: "April", desktop: 90 },
-    { month: "May", desktop: 300 },
-    { month: "June", desktop: 150 },
-  ],
-};
-
-interface RainbowChartProps {
-  title?: string;
-  description?: string;
-  year?: string;
-  showYearSelector?: boolean;
-}
-
 export function RainbowGlowGradientLineChart({
-  title = "Browser Distribution",
-  description = "January - June",
-  year: yearProp = "2024",
+  title = "Sales Trends",
+  description = "Monthly Sales",
+  data = [],
   showYearSelector = true,
-}: RainbowChartProps) {
-
-  const [year, setYear] = React.useState<string>(yearProp);
+  year,
+  setYear
+}: Props) {
 
   const ITEMS_PER_PAGE = 15;
   const [page, setPage] = React.useState(0);
@@ -81,21 +74,21 @@ export function RainbowGlowGradientLineChart({
   const start = page * ITEMS_PER_PAGE;
   const visibleYears = years.slice(start, start + ITEMS_PER_PAGE);
 
+   const chartData = data && data.length > 0 ? data : fallbackData;
+
   return (
     <Card className="shadow-lg">
+
       <CardHeader className="flex flex-row items-start justify-between">
 
         <div>
-          <CardTitle className="flex items-center gap-2">
-            {title}
-          </CardTitle>
-
+          <CardTitle>{title}</CardTitle>
           <CardDescription>
-            {description} {year}
+            {description} {showYearSelector && year}
           </CardDescription>
         </div>
 
-        {/* Optional Year Selector */}
+        {/* Year selector */}
         {showYearSelector && (
           <Popover>
             <PopoverTrigger asChild>
@@ -106,21 +99,19 @@ export function RainbowGlowGradientLineChart({
 
             <PopoverContent className="w-[220px]">
 
-              {/* Years Grid */}
               <div className="grid grid-cols-3 gap-2">
                 {visibleYears.map((y) => (
                   <Button
                     key={y}
                     variant={year === y ? "default" : "ghost"}
                     size="sm"
-                    onClick={() => setYear(y)}
+                    onClick={() => setYear?.(y)}
                   >
                     {y}
                   </Button>
                 ))}
               </div>
 
-              {/* Pagination */}
               <div className="flex justify-between mt-3">
                 <Button
                   variant="ghost"
@@ -148,10 +139,12 @@ export function RainbowGlowGradientLineChart({
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={chartConfig} >
+
+        <ChartContainer config={chartConfig}>
+
           <LineChart
             accessibilityLayer
-            data={yearlyData[year as keyof typeof yearlyData]}
+          data={chartData}
             margin={{ left: 12, right: 12 }}
           >
 
@@ -180,13 +173,14 @@ export function RainbowGlowGradientLineChart({
             />
 
             <defs>
+
               <linearGradient id="colorUv" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#0B84CE" stopOpacity={0.8} />
-                <stop offset="20%" stopColor="#224CD1" stopOpacity={0.8} />
-                <stop offset="40%" stopColor="#3A11C7" stopOpacity={0.8} />
-                <stop offset="60%" stopColor="#7107C6" stopOpacity={0.8} />
-                <stop offset="80%" stopColor="#C900BD" stopOpacity={0.8} />
-                <stop offset="100%" stopColor="#D80155" stopOpacity={0.8} />
+                <stop offset="0%" stopColor="#0B84CE" />
+                <stop offset="20%" stopColor="#224CD1" />
+                <stop offset="40%" stopColor="#3A11C7" />
+                <stop offset="60%" stopColor="#7107C6" />
+                <stop offset="80%" stopColor="#C900BD" />
+                <stop offset="100%" stopColor="#D80155" />
               </linearGradient>
 
               <filter
@@ -199,11 +193,15 @@ export function RainbowGlowGradientLineChart({
                 <feGaussianBlur stdDeviation="10" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
+
             </defs>
 
           </LineChart>
+
         </ChartContainer>
+
       </CardContent>
+
     </Card>
   );
 }

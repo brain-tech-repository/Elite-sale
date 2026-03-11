@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/form"
 
 import { Button } from "@/components/ui/button"
-import { AutoComplete, AutoCompleteOption } from "@/components/ui/autocomplete"
+import { AutoComplete } from "@/components/ui/autocomplete"
 import { Calendar } from "@/components/ui/calendar"
 
 import {
@@ -23,10 +24,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { DateRange } from "react-day-picker"
+
+/* HOOKS */
+import {
+  useRegions,
+  useWarehouses,
+  useBrands,
+  useMaterialGroups,
+  useMaterials,
+} from "../useSales"
 
 /* =========================
    SCHEMA
@@ -47,42 +58,25 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 /* =========================
-   DATA
-========================= */
-
-const regions: AutoCompleteOption[] = [
-  { value: "North", label: "North" },
-  { value: "South", label: "South" },
-  { value: "West", label: "West" },
-  { value: "Northbnhmujh,mjh,m", label: "Northbnhmujh,mjh,m" },
-]
-
-const warehouses: AutoCompleteOption[] = [
-  { value: "Warehouse 1", label: "Warehouse 1" },
-  { value: "Warehouse 2", label: "Warehouse 2" },
-]
-
-const brands: AutoCompleteOption[] = [
-  { value: "Brand 1", label: "Brand 1" },
-  { value: "Brand 2", label: "Brand 2" },
-
-]
-
-const groups: AutoCompleteOption[] = [
-  { value: "Group 1", label: "Group 1" },
-  { value: "Group 2", label: "Group 2" },
-]
-
-const materials: AutoCompleteOption[] = [
-  { value: "Material 1", label: "Material 1" },
-  { value: "Material 2", label: "Material 2" },
-]
-
-/* =========================
    COMPONENT
 ========================= */
 
 export default function MyForm() {
+
+  /* SEARCH STATES */
+  const [regionSearch, setRegionSearch] = useState("")
+  const [warehouseSearch, setWarehouseSearch] = useState("")
+  const [brandSearch, setBrandSearch] = useState("")
+  const [groupSearch, setGroupSearch] = useState("")
+  const [materialSearch, setMaterialSearch] = useState("")
+
+  /* API DATA */
+  const { data: regions = [] } = useRegions(regionSearch)
+  const { data: warehouses = [] } = useWarehouses(warehouseSearch)
+  const { data: brands = [] } = useBrands(brandSearch)
+  const { data: groups = [] } = useMaterialGroups(groupSearch)
+  const { data: materials = [] } = useMaterials(materialSearch)
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,17 +86,12 @@ export default function MyForm() {
       Brand: "",
       material_group: "",
       material: "",
-
     },
   })
 
   function onSubmit(values: FormValues) {
-    try {
-      console.log(values)
-      toast.success("Form submitted successfully!")
-    } catch (error) {
-      toast.error("Submission failed")
-    }
+    console.log(values)
+    toast.success("Form submitted successfully!")
   }
 
   return (
@@ -112,6 +101,8 @@ export default function MyForm() {
         className="space-y-8 max-w-7xl mx-auto py-4 px-2"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
+
+          {/* DATE RANGE */}
 
           <FormField
             control={form.control}
@@ -141,9 +132,9 @@ export default function MyForm() {
 
                           {isDateSelected
                             ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
-                              dateRange.to!,
-                              "dd/MM/yy"
-                            )}`
+                                dateRange.to!,
+                                "dd/MM/yy"
+                              )}`
                             : "Pick a date range"}
 
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -173,13 +164,14 @@ export default function MyForm() {
             }}
           />
 
+          {/* REGION */}
 
-          {/* ================= Region ================= */}
           <FormField
             control={form.control}
             name="region"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Region</FormLabel>
 
                 <FormControl>
@@ -187,21 +179,25 @@ export default function MyForm() {
                     options={regions}
                     value={field.value}
                     onChange={field.onChange}
+                    onSearch={setRegionSearch}
                     placeholder="Select Region"
                   />
                 </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
-          {/* ================= Warehouse ================= */}
+          {/* WAREHOUSE */}
+
           <FormField
             control={form.control}
             name="warehouse"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Warehouse</FormLabel>
 
                 <FormControl>
@@ -209,25 +205,25 @@ export default function MyForm() {
                     options={warehouses}
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="Select Warehouse"
-                    searchPlaceholder="Search Warehouse..."
-
-                    width="w-full"
-
+                    onSearch={setWarehouseSearch}
+                    placeholder="select ware"
                   />
                 </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
-          {/* ================= Brand ================= */}
+          {/* BRAND */}
+
           <FormField
             control={form.control}
             name="Brand"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Material Brand</FormLabel>
 
                 <FormControl>
@@ -235,21 +231,25 @@ export default function MyForm() {
                     options={brands}
                     value={field.value}
                     onChange={field.onChange}
+                    onSearch={setBrandSearch}
                     placeholder="Select Brand"
                   />
                 </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
-          {/* ================= Material Group ================= */}
+          {/* MATERIAL GROUP */}
+
           <FormField
             control={form.control}
             name="material_group"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Material Group</FormLabel>
 
                 <FormControl>
@@ -257,21 +257,25 @@ export default function MyForm() {
                     options={groups}
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="Select Mat Group"
+                    onSearch={setGroupSearch}
+                    placeholder="Select Group"
                   />
                 </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
-          {/* ================= Material ================= */}
+          {/* MATERIAL */}
+
           <FormField
             control={form.control}
             name="material"
             render={({ field }) => (
               <FormItem>
+
                 <FormLabel>Material</FormLabel>
 
                 <FormControl>
@@ -279,19 +283,23 @@ export default function MyForm() {
                     options={materials}
                     value={field.value}
                     onChange={field.onChange}
+                    onSearch={setMaterialSearch}
                     placeholder="Select Material"
                   />
                 </FormControl>
 
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
         </div>
 
-        {/* Submit Buttons */}
+        {/* BUTTONS */}
+
         <div className="flex w-full justify-start gap-6 pt-2">
+
           <Button type="submit" variant="outline" className="shadow-lg">
             Filter
           </Button>
@@ -304,6 +312,7 @@ export default function MyForm() {
           >
             Reset
           </Button>
+
         </div>
 
       </form>

@@ -27,6 +27,7 @@ export interface AutoCompleteProps {
 	options: AutoCompleteOption[];
 	value: string | number;
 	onChange: (value: string | number) => void;
+		onSearch?: (search: string) => void;   // ⭐ NEW
 	placeholder?: string;
 	searchPlaceholder?: string;
 	emptyMessage?: string;
@@ -38,6 +39,7 @@ export function AutoComplete({
 	options,
 	value,
 	onChange,
+	onSearch,
 	placeholder = "Select option...",
 	searchPlaceholder = "Search...",
 	emptyMessage = "No option found.",
@@ -70,7 +72,9 @@ export function AutoComplete({
 				style={{ width: "var(--radix-popover-trigger-width)" }}
 			>
 				<Command>
-					<CommandInput placeholder={searchPlaceholder} className="h-9" />
+					<CommandInput placeholder={searchPlaceholder} className="h-9" 
+					onValueChange={(value) => onSearch?.(value)}  // ⭐ search call
+					/>
 					<CommandList>
 						<CommandEmpty>{emptyMessage}</CommandEmpty>
 						<CommandGroup>
