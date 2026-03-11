@@ -12,9 +12,13 @@ import { useDashboardSummary } from "../useSales"
 function AnimatedCard({ children }: { children: React.ReactNode }) {
   return <motion.div>{children}</motion.div>
 }
-export function SectionCards() {
+interface Props {
+  filters?: any
+}
 
-  const { data, isLoading } = useDashboardSummary()
+export function SectionCards({ filters }: Props) {
+
+const { data, isLoading } = useDashboardSummary(filters)
 
   const result = data?.Result
 
@@ -62,7 +66,7 @@ export function SectionCards() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
           <Card className={`p-4 rounded-xl shadow-md ${card.color}`}>

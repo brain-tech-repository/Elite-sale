@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -11,12 +11,11 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form"
 
 import { Button } from "@/components/ui/button"
-import { AutoComplete } from "@/components/ui/autocomplete"
+
 import { Calendar } from "@/components/ui/calendar"
 
 import {
@@ -31,6 +30,7 @@ import { CalendarIcon } from "lucide-react"
 import { DateRange } from "react-day-picker"
 
 /* HOOKS */
+
 import {
   useRegions,
   useWarehouses,
@@ -38,6 +38,7 @@ import {
   useMaterialGroups,
   useMaterials,
 } from "../useSales"
+import { MultiSelect } from "@/components/ui/multi-select"
 
 /* =========================
    SCHEMA
@@ -48,51 +49,113 @@ const formSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
-  region: z.string().min(1, "Region is required"),
-  warehouse: z.string().min(1, "Warehouse is required"),
-  Brand: z.string().min(1, "Brand is required"),
-  material_group: z.string().min(1, "Material group is required"),
-  material: z.string().min(1, "Material is required"),
+
+  region: z.array(z.string()).optional(),
+
+  warehouse: z.array(z.string()).optional(),
+
+  Brand: z.array(z.string()).optional(),
+
+  material_group: z.array(z.string()).optional(),
+
+  material: z.array(z.string()).optional(),
 })
 
 type FormValues = z.infer<typeof formSchema>
+
+type Props = {
+  onFilter: (filters: any) => void
+}
 
 /* =========================
    COMPONENT
 ========================= */
 
-export default function MyForm() {
+export default function MyForm({ onFilter }: Props) {
 
   /* SEARCH STATES */
+
   const [regionSearch, setRegionSearch] = useState("")
   const [warehouseSearch, setWarehouseSearch] = useState("")
   const [brandSearch, setBrandSearch] = useState("")
   const [groupSearch, setGroupSearch] = useState("")
   const [materialSearch, setMaterialSearch] = useState("")
 
-  /* API DATA */
-  const { data: regions = [] } = useRegions(regionSearch)
-  const { data: warehouses = [] } = useWarehouses(warehouseSearch)
-  const { data: brands = [] } = useBrands(brandSearch)
-  const { data: groups = [] } = useMaterialGroups(groupSearch)
-  const { data: materials = [] } = useMaterials(materialSearch)
+  /* FORM */
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       dateRange: undefined,
-      region: "",
-      warehouse: "",
-      Brand: "",
-      material_group: "",
-      material: "",
+      region: [],
+      warehouse: [],
+      Brand: [],
+      material_group: [],
+      material: [],
     },
   })
 
-  function onSubmit(values: FormValues) {
-    console.log(values)
-    toast.success("Form submitted successfully!")
+  /* WATCH VALUES */
+
+  const regionValue = form.watch("region")
+  const materialTypeValue = form.watch("material_group")
+  const brandValue = form.watch("Brand")
+
+  /* API DATA */
+
+ const { data: regions = [] } = useRegions(regionSearch)
+
+const { data: warehouses = [] } = useWarehouses(
+  regionValue?.join(",") || "",
+  warehouseSearch
+)
+
+const { data: groups = [] } = useMaterialGroups(groupSearch)
+
+const { data: brands = [] } = useBrands(
+  materialTypeValue?.join(",") || "",
+  brandSearch
+)
+
+const { data: materials = [] } = useMaterials(
+  materialTypeValue?.join(",") || "",
+  brandValue?.join(",") || "",
+  materialSearch
+)
+  /* RESET DEPENDENT FIELDS */
+
+  useEffect(() => {
+    form.setValue("warehouse", [])
+  }, [regionValue])
+
+  useEffect(() => {
+    form.setValue("Brand", [])
+    form.setValue("material", [])
+  }, [materialTypeValue])
+
+  useEffect(() => {
+    form.setValue("material", [])
+  }, [brandValue])
+
+  /* SUBMIT */
+
+function onSubmit(values: FormValues) {
+
+  const filters = {
+    fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
+    todate: format(values.dateRange.to, "yyyy-MM-dd"),
+
+    region_id: values.region?.join(",") || "",
+    warehouse_id: values.warehouse?.join(",") || "",
+    brand_id: values.Brand?.join(",") || "",
+    material_type_id: values.material_group?.join(",") || "",
+    material_id: values.material?.join(",") || "",
   }
+
+  onFilter(filters)
+
+  toast.success("Filters applied")
+}
 
   return (
     <Form {...form}>
@@ -100,7 +163,8 @@ export default function MyForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 max-w-7xl mx-auto py-4 px-2"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 
           {/* DATE RANGE */}
 
@@ -121,26 +185,24 @@ export default function MyForm() {
 
                     <PopoverTrigger asChild>
 
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "pl-3 text-left font-normal shadow-lg w-full",
-                            !dateRange?.from && "text-muted-foreground"
-                          )}
-                        >
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "pl-3 text-left font-normal shadow-lg w-full",
+                          !dateRange?.from && "text-muted-foreground"
+                        )}
+                      >
 
-                          {isDateSelected
-                            ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
-                                dateRange.to!,
-                                "dd/MM/yy"
-                              )}`
-                            : "Pick a date range"}
+                        {isDateSelected
+                          ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
+                              dateRange.to!,
+                              "dd/MM/yy"
+                            )}`
+                          : "Pick a date range"}
 
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
 
-                        </Button>
-                      </FormControl>
+                      </Button>
 
                     </PopoverTrigger>
 
@@ -174,15 +236,12 @@ export default function MyForm() {
 
                 <FormLabel>Region</FormLabel>
 
-                <FormControl>
-                  <AutoComplete
-                    options={regions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onSearch={setRegionSearch}
-                    placeholder="Select Region"
-                  />
-                </FormControl>
+                <MultiSelect
+                  options={regions}
+                  defaultValue={form.getValues("region")}
+                  onValueChange={field.onChange}
+                  onSearchChange={(text) => setRegionSearch(text.trim())}
+                />
 
                 <FormMessage />
 
@@ -200,15 +259,36 @@ export default function MyForm() {
 
                 <FormLabel>Warehouse</FormLabel>
 
-                <FormControl>
-                  <AutoComplete
-                    options={warehouses}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onSearch={setWarehouseSearch}
-                    placeholder="select ware"
-                  />
-                </FormControl>
+                <MultiSelect
+                  options={warehouses}
+                  defaultValue={form.getValues("warehouse")}
+                  onValueChange={field.onChange}
+                  onSearchChange={(text) => setWarehouseSearch(text.trim())}
+                  disabled={!regionValue?.length}
+                />
+
+                <FormMessage />
+
+              </FormItem>
+            )}
+          />
+
+          {/* MATERIAL TYPE */}
+
+          <FormField
+            control={form.control}
+            name="material_group"
+            render={({ field }) => (
+              <FormItem>
+
+                <FormLabel>Material Type</FormLabel>
+
+                <MultiSelect
+                  options={groups}
+                  defaultValue={form.getValues("material_group")}
+                  onValueChange={field.onChange}
+                  onSearchChange={(text) => setGroupSearch(text.trim())}
+                />
 
                 <FormMessage />
 
@@ -226,41 +306,13 @@ export default function MyForm() {
 
                 <FormLabel>Material Brand</FormLabel>
 
-                <FormControl>
-                  <AutoComplete
-                    options={brands}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onSearch={setBrandSearch}
-                    placeholder="Select Brand"
-                  />
-                </FormControl>
-
-                <FormMessage />
-
-              </FormItem>
-            )}
-          />
-
-          {/* MATERIAL GROUP */}
-
-          <FormField
-            control={form.control}
-            name="material_group"
-            render={({ field }) => (
-              <FormItem>
-
-                <FormLabel>Material Group</FormLabel>
-
-                <FormControl>
-                  <AutoComplete
-                    options={groups}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onSearch={setGroupSearch}
-                    placeholder="Select Group"
-                  />
-                </FormControl>
+                <MultiSelect
+                  options={brands}
+                  defaultValue={form.getValues("Brand")}
+                  onValueChange={field.onChange}
+                  onSearchChange={(text) => setBrandSearch(text.trim())}
+                  disabled={!materialTypeValue?.length}
+                />
 
                 <FormMessage />
 
@@ -278,15 +330,13 @@ export default function MyForm() {
 
                 <FormLabel>Material</FormLabel>
 
-                <FormControl>
-                  <AutoComplete
-                    options={materials}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onSearch={setMaterialSearch}
-                    placeholder="Select Material"
-                  />
-                </FormControl>
+                <MultiSelect
+                  options={materials}
+                  defaultValue={form.getValues("material")}
+                  onValueChange={field.onChange}
+                  onSearchChange={(text) => setMaterialSearch(text.trim())}
+                  disabled={!materialTypeValue?.length}
+                />
 
                 <FormMessage />
 
@@ -298,7 +348,7 @@ export default function MyForm() {
 
         {/* BUTTONS */}
 
-        <div className="flex w-full justify-start gap-6 pt-2">
+        <div className="flex gap-6 pt-2">
 
           <Button type="submit" variant="outline" className="shadow-lg">
             Filter

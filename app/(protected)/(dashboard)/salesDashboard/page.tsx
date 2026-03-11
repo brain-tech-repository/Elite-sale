@@ -1,244 +1,271 @@
 "use client"
-import DataTableHeader from "@/components/table-data/data-table-header";
-import MyForm from "./components/filter";
-import { SectionCards } from "./components/section-cards";
-import { GlowingLineChart } from "@/components/ui/glowing-line";
-import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
-import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
-import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
-import { ColumnDef } from "@tanstack/react-table";
-import { CommonDataTable } from "@/components/table-data/custom-table";
-import { RoundedPieChart } from "@/components/ui/rounded-pie-chart";
-import LineCharts from "@/components/charts/linechart";
-import LineCharts1 from "@/components/charts/lineChart1";
-import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart";
-import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart";
-import { salesColumns } from "./components/columns"
-import { Card } from "@/components/ui/card";
-import { AnimatedHighlightedAreaChart } from "@/components/ui/animated-highlighted-chart";
-import { useMonthlySalesTrend, useYearlySalesTrend } from "./useSales";
-import React from "react";
-/* -------------------------------------------------------------------------- */
-/*                              SALES TYPE MODEL                              */
-/* -------------------------------------------------------------------------- */
-type Sale = {
-  id: string;
-  customer: string;
-  product: string;
-  amount: number;
-  status: "Completed" | "Pending" | "Cancelled";
-  date: string;
-};
+
+import React from "react"
+
+import DataTableHeader from "@/components/table-data/data-table-header"
+import MyForm from "./components/filter"
+import { SectionCards } from "./components/section-cards"
+import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line"
+import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle"
+import DataTableSubHeader from "@/components/table-data/data-table-sub-header"
+import { CommonDataTable } from "@/components/table-data/custom-table"
+import { RoundedPieChart } from "@/components/ui/rounded-pie-chart"
+import LineCharts from "@/components/charts/linechart"
+import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart"
+import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart"
+
+import { Card } from "@/components/ui/card"
+import { AnimatedHighlightedAreaChart } from "@/components/ui/animated-highlighted-chart"
+
+import {
+  useBrandPerformance,
+  useCustomerSegmentPerformance,
+  useMaterialGroupPerformance,
+  useMonthlySalesTrend,
+  useRegionPerformance,
+  useYearlySalesTrend,
+} from "./useSales"
+import { performanceColumns } from "./components/columns"
 
 export default function Salesdashboa() {
 
+  /* -------------------------------------------------------------------------- */
+  /*                               FILTER STATE                                 */
+  /* -------------------------------------------------------------------------- */
+
+  const [filters, setFilters] = React.useState<any>(null)
+
+  /* -------------------------------------------------------------------------- */
+  /*                           YEARLY / MONTHLY TREND                           */
+  /* -------------------------------------------------------------------------- */
+
   const [year, setYear] = React.useState("2025")
 
-  const { data: yearlyData = [], isLoading: yearlyLoading } =
-    useYearlySalesTrend(year)
+  const { data: yearlyData = [] } = useYearlySalesTrend(year)
 
-  const { data: monthlyData = [], isLoading: monthlyLoading } =
-    useMonthlySalesTrend(year)
-
+  const { data: monthlyData = [] } = useMonthlySalesTrend(year)
 
   /* -------------------------------------------------------------------------- */
-  /*                              SAMPLE TABLE DATA                             */
+  /*                         PERFORMANCE DATA FROM FILTERS                      */
   /* -------------------------------------------------------------------------- */
 
-  const data: Sale[] = [
-    {
-      id: "ORD-001",
-      customer: "Amit Sharma",
-      product: "Premium Course",
-      amount: 450,
-      status: "Completed",
-      date: "02 Mar 2026",
-    },
-    {
-      id: "ORD-002",
-      customer: "Priya Singh",
-      product: "Mock Test Series",
-      amount: 320,
-      status: "Pending",
-      date: "01 Mar 2026",
-    },
-    {
-      id: "ORD-003",
-      customer: "Rahul Verma",
-      product: "Recorded Batch",
-      amount: 210,
-      status: "Cancelled",
-      date: "28 Feb 2026",
-    },
-  ];
+  const { data: regionPerformance = [] } =
+    useRegionPerformance(filters)
+
+  const { data: brandPerformance = [] } =
+    useBrandPerformance(filters)
+
+  const { data: materialGroupPerformance = [] } =
+    useMaterialGroupPerformance(filters)
+
+  const { data: customerSegmentPerformance = [] } =
+    useCustomerSegmentPerformance(filters)
+
+  const regionTable = regionPerformance?.Result?.table_data ?? []
+  const regionPie = regionPerformance?.Result?.pie_chart ?? []
+  const regionLine =
+    regionPerformance?.Result?.line_chart?.map((item: any) => ({
+      month: item.label,
+      desktop: item.y,
+    })) ?? []
+
+  const brandTable = brandPerformance?.Result?.table_data ?? []
+  const brandPie = brandPerformance?.Result?.pie_chart ?? []
+  const brandLine =
+    brandPerformance?.Result?.line_chart?.map((item: any) => ({
+      month: item.label,
+      desktop: item.y,
+    })) ?? []
+
+
+  const materialTable = materialGroupPerformance?.Result?.table_data ?? []
+  const materialPie = materialGroupPerformance?.Result?.pie_chart ?? []
+  const materialLine =
+    materialGroupPerformance?.Result?.line_chart?.map((item: any) => ({
+      month: item.label,
+      desktop: item.y,
+    })) ?? []
+
+  const customerTable =
+    customerSegmentPerformance?.Result?.table_data ?? []
+
+  const customerPie =
+    customerSegmentPerformance?.Result?.pie_chart ?? []
+
+  const customerLine =
+    customerSegmentPerformance?.Result?.line_chart?.map((item: any) => ({
+      month: item.label,
+      desktop: item.y,
+    })) ?? []
 
   return (
-    <>
-      <div className="flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col">
 
-          {/* -------------------------------------------------------------------------- */}
-          {/*                                PAGE HEADER                                 */}
-          {/* -------------------------------------------------------------------------- */}
+      <div className="@container/main flex flex-1 flex-col">
 
-          <div className="py-6">
-            <DataTableHeader title="Sales Dashboard" />
-          </div>
+        {/* PAGE HEADER */}
 
+        <div className="py-6">
+          <DataTableHeader title="Sales Dashboard" />
+        </div>
 
-          {/* -------------------------------------------------------------------------- */}
-          {/*                                FILTER SECTION                              */}
-          {/*                         (Date / Region / Brand filters)                    */}
-          {/* -------------------------------------------------------------------------- */}
+        {/* FILTER SECTION */}
 
-          <div className="lg:lg:px-6 px-1 pb-4">
-            <Card className="shadow-lg">
-              <MyForm />
-            </Card>
-          </div>
+        <div className="lg:px-2 px-1 pb-4">
+          <Card className="shadow-lg">
+            <MyForm onFilter={setFilters} />
+          </Card>
+        </div>
 
-          {/* -------------------------------------------------------------------------- */}
-          {/*                               KPI SUMMARY CARDS                            */}
-          {/*                    (Total Sales, Revenue, Orders etc.)                     */}
-          {/* -------------------------------------------------------------------------- */}
+        {/* KPI SUMMARY */}
 
-          <div className="lg:lg:px-6 px-1 pb-6">
-            <SectionCards />
-          </div>
-          {/* -------------------------------------------------------------------------- */}
-          {/*                            TOP ANALYTICS CHARTS                            */}
-          {/*               Yearly Sales Trend | Monthly Trend | Gauge Chart             */}
-          {/* -------------------------------------------------------------------------- */}
-          <section className="grid gap-6 lg:lg:px-6 px-1 pb-8 grid-cols-1 lg:grid-cols-3">
-            {/* Yearly Sales Trend */}
+        <div className="lg:px-2 px-1 pb-6">
+          <SectionCards filters={filters} />
+        </div>
+
+        {/* TOP CHARTS */}
+
+        <section className="grid gap-6 lg:px-2 px-1 pb-8 grid-cols-1 lg:grid-cols-3">
+
+          <RainbowGlowGradientLineChart
+            title="Sales By Monthly Trends"
+            data={monthlyData}
+            year={year}
+            setYear={setYear}
+          />
+
+          <AnimatedHighlightedAreaChart
+            title="Sales By Yearly Trends"
+            description={`Sales overview for ${year}`}
+            data={yearlyData}
+          />
+
+          <GaugePieChartCard />
+
+        </section>
+
+        {/* REGION PERFORMANCE */}
+
+        <div className="lg:px-2 px-1 pb-8">
+
+          <DataTableSubHeader title="Region Performance" />
+
+          <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
+
+            <CommonDataTable
+              columns={performanceColumns}
+              data={regionTable}
+              pageSize={5}
+              title="Region Performance"
+            />
+
+            <RoundedPieChart
+              title="Sales By Region Contribution"
+              data={regionPie}
+            />
 
             <RainbowGlowGradientLineChart
-              title="Sales By Monthly Trends"
-              data={monthlyData}
-              year={year}
-              setYear={setYear}
+              title="Region Monthly Sales Trend"
+              data={regionLine}
+              showYearSelector={false}
             />
 
-            <AnimatedHighlightedAreaChart
-              title="Sales By Yearly Trends"
-              description={`Sales overview for ${year}`}
-              data={yearlyData}
-            />
-
-
-
-            {/* Overall Sales Performance Gauge */}
-            <GaugePieChartCard />
           </section>
 
-          {/* -------------------------------------------------------------------------- */}
-          {/*                           SECTION 1 : REGION PERFORMANCE                   */}
-          {/*         Table + Region Contribution Pie Chart + Monthly Sales Trend       */}
-          {/* -------------------------------------------------------------------------- */}
-          <div className="lg:lg:px-6 px-1 pb-8">
-            <DataTableSubHeader title="Region Performance" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              {/* Region Sales Table */}
-              <CommonDataTable
-                columns={salesColumns}
-                data={data}
-                pageSize={5}
-                title="Region Performance"
-              />
-              {/* Region Sales Contribution */}
-              <RoundedPieChart
-                title="Sales By Region Contribution"
-                description="Based on last 30 days"
-              />
-              {/* Region Monthly Trend */}
-              <LineCharts
-                title="Region Monthly Sales Trend"
-                description="Based on last 30 days"
-              />
-            </section>
-          </div>
-          {/* -------------------------------------------------------------------------- */}
-          {/*                           SECTION 2 : BRAND PERFORMANCE                    */}
-          {/*        Table + Brand Contribution Chart + Monthly Brand Sales Trend       */}
-          {/* -------------------------------------------------------------------------- */}
-          <div className="lg:lg:px-6 px-1 pb-8">
-            <DataTableSubHeader title="Brand Performance" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              {/* Brand Sales Table */}
-              <div className="lg:col-span-1">
-                <CommonDataTable
-                  columns={salesColumns}
-                  data={data}
-                  pageSize={5}
-                  title="Brand Performance"
-                />
-              </div>
-              {/* Brand Contribution Chart */}
-              <GlowingRadialChart title="Sales By Brand Contribution" />
-              {/* Brand Monthly Trend */}
-              <RainbowGlowGradientLineChart
-                title="Brand Monthly Sales Trend"
-                showYearSelector={false}
-              />
-            </section>
-          </div>
-          {/* -------------------------------------------------------------------------- */}
-          {/*                           SECTION 3 : MATERIAL GROUP                       */}
-          {/*     Table + Material Group Contribution Chart + Monthly Trend Chart       */}
-          {/* -------------------------------------------------------------------------- */}
-          <div className="lg:lg:px-6 px-1 pb-10">
-            <DataTableSubHeader title="Material Group" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              {/* Material Group Table */}
-              <div className="lg:col-span-1">
-                <CommonDataTable
-                  columns={salesColumns}
-                  data={data}
-                  pageSize={5}
-                  title="Material Group"
-                />
-              </div>
-              {/* Material Group Contribution */}
-              <IncreaseSizePieChart
-                title="Sales By Material Group Contribution"
-              />
-              {/* Material Group Monthly Trend */}
-              <RainbowGlowGradientLineChart
-                title="Material Group Monthly Sales Trend"
-                showYearSelector={false}
-              />
-            </section>
-          </div>
-
-          {/* -------------------------------------------------------------------------- */}
-          {/*                       SECTION 4 : CUSTOMER SEGMENT PERFORMANCE             */}
-          {/*     Table + Customer Segment Contribution + Monthly Sales Trend Chart     */}
-          {/* -------------------------------------------------------------------------- */}
-          <div className="lg:lg:px-6 px-1 pb-10">
-            <DataTableSubHeader title="Customer Segment Performance" />
-            <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
-              {/* Customer Segment Table */}
-              <div className="lg:col-span-1">
-                <CommonDataTable
-                  columns={salesColumns}
-                  data={data}
-                  pageSize={5}
-                  title="Customer Segment"
-                />
-              </div>
-              {/* Customer Segment Contribution */}
-              <IncreaseSizePieChart
-                title="Sales By Customer Segment Contribution"
-              />
-              {/* Customer Segment Monthly Trend */}
-              <RainbowGlowGradientLineChart
-                title="Customer Segment Monthly Sales Trend"
-                showYearSelector={false}
-              />
-            </section>
-          </div>
         </div>
+
+        {/* BRAND PERFORMANCE */}
+
+        <div className="lg:px-2 px-1 pb-8">
+
+          <DataTableSubHeader title="Brand Performance" />
+
+          <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
+
+            <CommonDataTable
+              columns={performanceColumns}
+              data={brandTable}
+              pageSize={5}
+              title="Brand Performance"
+            />
+
+            <RoundedPieChart
+              title="Sales By Brand Contribution"
+              data={brandPie}
+            />
+
+            <RainbowGlowGradientLineChart
+              title="Brand Monthly Sales Trend"
+              data={brandLine}
+              showYearSelector={false}
+            />
+
+          </section>
+
+        </div>
+
+        {/* MATERIAL GROUP PERFORMANCE */}
+
+        <div className="lg:px-2 px-1 pb-10">
+
+          <DataTableSubHeader title="Material Group" />
+
+          <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
+
+            <CommonDataTable
+              columns={performanceColumns}
+              data={materialTable}
+              pageSize={5}
+              title="Material Group"
+            />
+
+            <RoundedPieChart
+
+              title="Sales By Material Group Contribution"
+              data={materialPie}
+            />
+
+            <RainbowGlowGradientLineChart
+              title="Material Group Monthly Sales Trend"
+              data={materialLine}
+              showYearSelector={false}
+            />
+
+          </section>
+
+        </div>
+
+        {/* CUSTOMER SEGMENT */}
+
+        <div className="lg:px-2 px-1 pb-10">
+
+          <DataTableSubHeader title="Customer Segment Performance" />
+
+          <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-3">
+
+            <CommonDataTable
+              columns={performanceColumns}
+              data={customerTable}
+              pageSize={5}
+              title="Customer Segment"
+            />
+
+            <RoundedPieChart
+              title="Sales By Customer Segment Contribution"
+              data={customerPie}
+            />
+
+            <RainbowGlowGradientLineChart
+              title="Customer Segment Monthly Sales Trend"
+              data={customerLine}
+              showYearSelector={false}
+            />
+          </section>
+
+        </div>
+
       </div>
-    </>
-  );
+
+    </div>
+  )
 }

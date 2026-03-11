@@ -47,4 +47,8 @@ export interface AutoCompleteOption {
   label: string
 }
 
+export interface SelectOption {
+  value: string
+  label: string
+}
 
