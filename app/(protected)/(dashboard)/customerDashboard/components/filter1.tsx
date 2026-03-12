@@ -41,7 +41,7 @@ type FormValues = z.infer<typeof formSchema>
    COMPONENT
 ========================= */
 
-export default function MyForm() {
+export default function MyForm1() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {

@@ -1,3 +1,45 @@
+import { z } from "zod"
+/* ========================================================================== */
+/*                               FILTER SCHEMA                                */
+/* ========================================================================== */
+export const salesFilterSchema = z.object({
+  dateRange: z.object({
+    from: z.date(),
+    to: z.date(),
+  }),
+
+  region: z.array(z.string()).optional(),
+
+  warehouse: z.array(z.string()).optional(),
+
+  Brand: z.array(z.string()).optional(),
+
+  material_group: z.array(z.string()).optional(),
+
+  material: z.array(z.string()).optional(),
+})
+
+export type SalesFilterFormValues = z.infer<typeof salesFilterSchema>
+
+/* ========================================================================== */
+/*                               FILTER PAYLOAD                               */
+/* ========================================================================== */
+
+export interface SalesFilterPayload {
+  fromdate: string
+  todate: string
+
+  region_id: string
+  warehouse_id: string
+  brand_id: string
+  material_type_id: string
+  material_id: string
+}
+
+/* ========================================================================== */
+/*                           DASHBOARD SUMMARY TYPES                          */
+/* ========================================================================== */
+
 export interface DashboardSummaryResult {
   today_sales: number
   total_sales: number
@@ -13,6 +55,9 @@ export interface DashboardSummaryResponse {
   Result: DashboardSummaryResult
 }
 
+/* ========================================================================== */
+/*                             SALES TREND TYPES                              */
+/* ========================================================================== */
 
 export interface SalesTrendItem {
   label: string
@@ -25,11 +70,18 @@ export interface SalesTrendResponse {
   Result: SalesTrendItem[]
 }
 
-/* Chart formatted type */
+/* ========================================================================== */
+/*                             CHART DATA TYPES                               */
+/* ========================================================================== */
+
 export interface ChartSalesData {
   month: string
   desktop: number
 }
+
+/* ========================================================================== */
+/*                             MASTER API TYPES                               */
+/* ========================================================================== */
 
 export interface MasterItem {
   id: number
@@ -42,6 +94,10 @@ export interface MasterApiResponse {
   Result: MasterItem[]
 }
 
+/* ========================================================================== */
+/*                             UI SELECT TYPES                                */
+/* ========================================================================== */
+
 export interface AutoCompleteOption {
   value: number | string
   label: string
@@ -51,4 +107,3 @@ export interface SelectOption {
   value: string
   label: string
 }
-

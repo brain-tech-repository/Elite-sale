@@ -10,14 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+
 import { Badge } from "@/components/ui/badge";
 import React from "react";
+
 import {
   Select,
   SelectContent,
@@ -27,38 +30,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Legend } from "recharts";
 
 export const description = "A bar chart";
 
-const chartData = [
-  { month: "January", desktop: 342, mobile: 245, tablet: 123 },
-  { month: "February", desktop: 876, mobile: 654, tablet: 234 },
-  { month: "April", desktop: 629, mobile: 521, tablet: 267 },
-  { month: "June", desktop: 781, mobile: 598, tablet: 321 },
-  { month: "July", desktop: 394, mobile: 312, tablet: 145 },
-  { month: "September", desktop: 647, mobile: 489, tablet: 212 },
-  { month: "October", desktop: 532, mobile: 476, tablet: 187 },
-  { month: "December", desktop: 271, mobile: 198, tablet: 123 },
+/* ---------------- REGION COLOR PALETTE ---------------- */
+
+const regionColors = [
+  "#3b82f6",
+  "#ef4444",
+  "#22c55e",
+  "#f59e0b",
+  "#a855f7",
+  "#06b6d4",
+  "#ec4899",
+  "#84cc16",
+  "#f97316",
+  "#6366f1",
 ];
 
+/* ---------------- CHART CONFIG ---------------- */
+
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  value: {
+    label: "Customers",
     color: "var(--chart-1)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
-  },
-  tablet: {
-    label: "Tablet",
-    color: "var(--chart-3)",
   },
 } satisfies ChartConfig;
 
-type ActiveProperty = keyof typeof chartConfig | "all";
+type ActiveProperty = string | "all";
 
-export function GlowingBarVerticalChart() {
+/* ---------------- PROPS ---------------- */
+
+interface Props {
+  data?: any[];
+  regions?: string[];
+}
+
+/* ---------------- COMPONENT ---------------- */
+
+export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
   const [activeProperty, setActiveProperty] =
     React.useState<ActiveProperty>("all");
 
@@ -76,54 +87,60 @@ export function GlowingBarVerticalChart() {
               <span>-5.2%</span>
             </Badge>
           </CardTitle>
+
+          {/* REGION FILTER */}
           <Select
             value={activeProperty}
-            onValueChange={(value: ActiveProperty) => {
-              setActiveProperty(value);
-            }}
+            onValueChange={(value: ActiveProperty) =>
+              setActiveProperty(value)
+            }
           >
             <SelectTrigger className="text-xs !h-6 !px-1.5">
               <SelectValue placeholder="Select a property" />
             </SelectTrigger>
+
             <SelectContent align="end">
               <SelectGroup>
                 <SelectLabel>Properties</SelectLabel>
+
                 <SelectItem className="text-xs" value="all">
                   All
                 </SelectItem>
-                <SelectItem className="text-xs" value="desktop">
-                  Desktop
-                </SelectItem>
-                <SelectItem className="text-xs" value="mobile">
-                  Mobile
-                </SelectItem>
-                <SelectItem className="text-xs" value="tablet">
-                  Tablet
-                </SelectItem>
+
+                {regions.map((region) => (
+                  <SelectItem
+                    key={region}
+                    className="text-xs"
+                    value={region}
+                  >
+                    {region}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
+
         <CardDescription>January - June 2025</CardDescription>
       </CardHeader>
+
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             layout="vertical"
-            margin={{
-              left: -15,
-            }}
+            margin={{ left: -15 }}
           >
             <YAxis
               type="category"
-              dataKey="month"
+              dataKey="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value: string) => value.slice(0, 3)}
             />
+
             <XAxis
               type="number"
               tickLine={false}
@@ -131,39 +148,29 @@ export function GlowingBarVerticalChart() {
               axisLine={false}
               hide
             />
+
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar
-              stackId="a"
-              barSize={8}
-              className="dark:text-[#1A1A1C] text-[#E4E4E7]"
-              dataKey="mobile"
-              fill="var(--color-mobile)"
-              radius={4}
-              shape={<CustomGradientBar activeProperty={activeProperty} />}
-              background={{ fill: "currentColor", radius: 4 }} // Only Top Bar will have background else it will give render errors
-              overflow="visible"
-            />
-            <Bar
-              stackId="a"
-              barSize={8}
-              shape={<CustomGradientBar activeProperty={activeProperty} />}
-              dataKey="tablet"
-              fill="var(--color-tablet)"
-              radius={4}
-              overflow="visible"
-            />
-            <Bar
-              stackId="a"
-              barSize={8}
-              shape={<CustomGradientBar activeProperty={activeProperty} />}
-              dataKey="desktop"
-              fill="var(--color-desktop)"
-              radius={4}
-              overflow="visible"
-            />
+
+               <Legend verticalAlign="top" height={36} />
+
+            {/* DYNAMIC REGION BARS */}
+      {regions.map((region, index) => (
+  <Bar
+    key={region}
+    stackId="a"
+    barSize={8}
+    dataKey={region}
+    fill={regionColors[index % regionColors.length]}
+    radius={4}
+    shape={(props:any) => (
+      <CustomGradientBar {...props} activeProperty={activeProperty} />
+    )}
+    overflow="visible"
+  />
+))}
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -171,16 +178,19 @@ export function GlowingBarVerticalChart() {
   );
 }
 
+/* ---------------- CUSTOM BAR SHAPE ---------------- */
+
 const CustomGradientBar = (
   props: React.SVGProps<SVGRectElement> & {
     dataKey?: string;
-    activeProperty?: ActiveProperty | null;
-    glowOpacity?: number;
+    activeProperty?: string | "all";
   }
 ) => {
-  const { fill, x, y, width, height, dataKey, activeProperty, radius } = props;
+  const { fill, x, y, width, height, dataKey, activeProperty, radius } =
+    props;
 
-  const isActive = activeProperty === "all" ? true : activeProperty === dataKey;
+  const isActive =
+    activeProperty === "all" || activeProperty === dataKey;
 
   return (
     <>
@@ -192,13 +202,14 @@ const CustomGradientBar = (
         height={height}
         stroke="none"
         fill={fill}
-        opacity={isActive ? 1 : 0.1}
+        opacity={isActive ? 1 : 0.15}
         filter={
           isActive && activeProperty !== "all"
             ? `url(#glow-chart-${dataKey})`
             : undefined
         }
       />
+
       <defs>
         <filter
           id={`glow-chart-${dataKey}`}
@@ -208,7 +219,11 @@ const CustomGradientBar = (
           height="600%"
         >
           <feGaussianBlur stdDeviation="10" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          <feComposite
+            in="SourceGraphic"
+            in2="blur"
+            operator="over"
+          />
         </filter>
       </defs>
     </>

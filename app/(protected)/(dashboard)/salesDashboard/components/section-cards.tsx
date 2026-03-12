@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useDashboardSummary } from "../useSales"
+import { Skeleton } from "@/components/ui/skeleton"
 
 function AnimatedCard({ children }: { children: React.ReactNode }) {
   return <motion.div>{children}</motion.div>
@@ -18,7 +19,7 @@ interface Props {
 
 export function SectionCards({ filters }: Props) {
 
-const { data, isLoading } = useDashboardSummary(filters)
+  const { data, isLoading } = useDashboardSummary(filters)
 
   const result = data?.Result
 
@@ -61,9 +62,19 @@ const { data, isLoading } = useDashboardSummary(filters)
     },
   ]
 
-  if (isLoading) {
-    return <div className="p-4">Loading summary...</div>
+   if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1,2,3,4].map((i)=>(
+          <Card key={i} className="p-4 space-y-3">
+            <Skeleton className="h-5 w-32"/>
+            <Skeleton className="h-8 w-24"/>
+          </Card>
+        ))}
+      </div>
+    )
   }
+
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">

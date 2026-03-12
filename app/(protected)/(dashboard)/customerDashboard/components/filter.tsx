@@ -1,8 +1,9 @@
 "use client"
 
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+
 import { toast } from "sonner"
 
 import {
@@ -10,57 +11,143 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form"
 
 import { Button } from "@/components/ui/button"
+
+import { Calendar } from "@/components/ui/calendar"
+
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
-/* =========================
-   SCHEMA
-========================= */
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { DateRange } from "react-day-picker"
 
-const formSchema = z.object({
-  region: z.string().min(1, "Region is required"),
-  warehouse: z.string().min(1, "Warehouse is required"),
-  Brand: z.string().min(1, "Brand is required"),
-  route: z.string().min(1, "Material group is required"),
-  sales_area: z.string().min(1, "Material is required"),
-})
+import {
+  useRegions,
+  useWarehouses,
+  useSalesAreas,
+  useRoutes,
+} from "../useCustomers"
 
-type FormValues = z.infer<typeof formSchema>
+import { MultiSelect } from "@/components/ui/multi-select"
 
-/* =========================
-   COMPONENT
-========================= */
+import {
+  SalesFilterFormValues,
+  SalesFilterPayload,
+  salesFilterSchema,
+} from "../types"
 
-export default function MyForm() {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+
+
+/* ========================================================================== */
+/*                                   PROPS                                    */
+/* ========================================================================== */
+
+type Props = {
+  onFilter: (filters: SalesFilterPayload) => void
+}
+
+
+
+/* ========================================================================== */
+/*                                 COMPONENT                                  */
+/* ========================================================================== */
+
+export default function MyForm({ onFilter }: Props) {
+
+  const form = useForm<SalesFilterFormValues>({
+    resolver: zodResolver(salesFilterSchema),
     defaultValues: {
-      region: "",
-      warehouse: "",
-      Brand: "",
-      route: "",
-      sales_area: "",
+      dateRange: undefined,
+      region: [],
+      warehouse: [],
+      sales_area: [],
+      route: [],
     },
   })
 
-  function onSubmit(values: FormValues) {
-    try {
-      console.log(values)
-      toast.success("Form submitted successfully!")
-    } catch (error) {
-      toast.error("Submission failed")
+
+  /* WATCH VALUES */
+
+  const regionValue = form.watch("region")
+  const warehouseValue = form.watch("warehouse")
+  const salesAreaValue = form.watch("sales_area")
+
+
+  /* API DATA */
+
+  const { data: regions = [] } = useRegions()
+
+  const { data: warehouses = [] } = useWarehouses(
+    regionValue?.join(",") || "0"
+  )
+
+  const { data: salesAreas = [] } = useSalesAreas(
+    warehouseValue?.join(",") || "0"
+  )
+
+  const { data: routes = [] } = useRoutes(
+    salesAreaValue?.join(",") || "0"
+  )
+
+
+  /* RESET DEPENDENT FIELDS */
+
+  useEffect(() => {
+    form.setValue("warehouse", [])
+    form.setValue("sales_area", [])
+    form.setValue("route", [])
+  }, [regionValue])
+
+  useEffect(() => {
+    form.setValue("sales_area", [])
+    form.setValue("route", [])
+  }, [warehouseValue])
+
+  useEffect(() => {
+    form.setValue("route", [])
+  }, [salesAreaValue])
+
+
+
+  /* ====================================================================== */
+  /*                                  SUBMIT                                */
+  /* ====================================================================== */
+
+  function onSubmit(values: SalesFilterFormValues) {
+
+    if (!values.dateRange?.from || !values.dateRange?.to) {
+      toast.error("Please select date range")
+      return
     }
+
+    const filters: SalesFilterPayload = {
+      fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
+      todate: format(values.dateRange.to, "yyyy-MM-dd"),
+
+      region_id: values.region?.join(",") || "0",
+      warehouse_id: values.warehouse?.join(",") || "0",
+      sales_area_id: values.sales_area?.join(",") || "0",
+      route_id: values.route?.join(",") || "0",
+    }
+
+    onFilter(filters)
+
+    toast.success("Filters applied")
   }
+
+
+
+  /* ====================================================================== */
+  /*                                   UI                                   */
+  /* ====================================================================== */
 
   return (
     <Form {...form}>
@@ -68,132 +155,186 @@ export default function MyForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 max-w-7xl mx-auto py-4 px-2"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 
-          {/* ================= Region ================= */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+
+          {/* DATE RANGE */}
+
+          <FormField
+            control={form.control}
+            name="dateRange"
+            render={({ field }) => {
+
+              const dateRange = field.value as DateRange | undefined
+              const isDateSelected = dateRange?.from && dateRange?.to
+
+              return (
+                <FormItem>
+
+                  <FormLabel>Date Range</FormLabel>
+
+                  <Popover>
+
+                    <PopoverTrigger asChild>
+
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "pl-3 text-left font-normal shadow-lg w-full",
+                          !dateRange?.from && "text-muted-foreground"
+                        )}
+                      >
+
+                        {isDateSelected
+                          ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
+                              dateRange.to!,
+                              "dd/MM/yy"
+                            )}`
+                          : "Pick a date range"}
+
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+
+                      </Button>
+
+                    </PopoverTrigger>
+
+                    <PopoverContent align="start" className="p-0 w-auto">
+
+                      <Calendar
+                        mode="range"
+                        selected={dateRange}
+                        onSelect={(range) => field.onChange(range)}
+                        initialFocus
+                      />
+
+                    </PopoverContent>
+
+                  </Popover>
+
+                  <FormMessage />
+
+                </FormItem>
+              )
+            }}
+          />
+
+
+          {/* REGION */}
+
           <FormField
             control={form.control}
             name="region"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
+
                 <FormLabel>Region</FormLabel>
-                <Select
+
+                <MultiSelect
+                  options={regions}
+                  defaultValue={form.getValues("region")}
                   onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Region" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="north">North</SelectItem>
-                    <SelectItem value="south">South</SelectItem>
-                    <SelectItem value="west">West</SelectItem>
-                  </SelectContent>
-                </Select>
+                />
+
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
-          {/* ================= Warehouse ================= */}
+
+          {/* WAREHOUSE */}
+
           <FormField
             control={form.control}
             name="warehouse"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
+
                 <FormLabel>Warehouse</FormLabel>
-                <Select
+
+                <MultiSelect
+                  options={warehouses}
+                  defaultValue={form.getValues("warehouse")}
                   onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Warehouse" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="wh1">Warehouse 1</SelectItem>
-                    <SelectItem value="wh2">Warehouse 2</SelectItem>
-                  </SelectContent>
-                </Select>
+                  disabled={!regionValue?.length}
+                />
+
                 <FormMessage />
+
               </FormItem>
             )}
           />
 
-          
 
-          {/* ================= Material Group ================= */}
-          <FormField
-            control={form.control}
-            name="route"
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Route</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Material Group" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="group1">Route 1</SelectItem>
-                    <SelectItem value="group2">Route 2</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* SALES AREA */}
 
-          {/* ================= Material ================= */}
           <FormField
             control={form.control}
             name="sales_area"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
+
                 <FormLabel>Sales Area</FormLabel>
-                <Select
+
+                <MultiSelect
+                  options={salesAreas}
+                  defaultValue={form.getValues("sales_area")}
                   onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Sales Area" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="mat1">Sales Area 1</SelectItem>
-                    <SelectItem value="mat2">Sales Area 2</SelectItem>
-                  </SelectContent>
-                </Select>
+                  disabled={!warehouseValue?.length}
+                />
+
                 <FormMessage />
+
+              </FormItem>
+            )}
+          />
+
+
+          {/* ROUTE */}
+
+          <FormField
+            control={form.control}
+            name="route"
+            render={({ field }) => (
+              <FormItem>
+
+                <FormLabel>Route</FormLabel>
+
+                <MultiSelect
+                  options={routes}
+                  defaultValue={form.getValues("route")}
+                  onValueChange={field.onChange}
+                  disabled={!salesAreaValue?.length}
+                />
+
+                <FormMessage />
+
               </FormItem>
             )}
           />
 
         </div>
 
-        {/* Submit Button */}
-        <div className="flex w-full justify-start gap-6 pt-2">
-          <Button type="submit"   variant="outline" className="shadow-lg">
+
+        {/* BUTTONS */}
+
+        <div className="flex gap-6 pt-2">
+
+          <Button type="submit" variant="outline" className="shadow-lg">
             Filter
           </Button>
 
           <Button
             type="button"
             variant="outline"
-             className="shadow-lg"
+            className="shadow-lg"
             onClick={() => form.reset()}
           >
             Reset
           </Button>
+
         </div>
+
       </form>
     </Form>
   )

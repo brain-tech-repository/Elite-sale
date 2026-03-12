@@ -9,30 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { SalesFilterPayload } from "../types"
+import { useDashboardSummary } from "../useCustomers"
 
 
-const cardsData = [
-  {
-    title: "Today",
-    value: "0",
-    color: "bg-blue-50",
-  },
-  {
-    title: "This Month",
-    value: "9",
-    color: "bg-green-50",
-  },
-  {
-    title: "Total Customer",
-    value: "8,559",
-    color: "bg-indigo-50",
-  },
-  {
-    title: "Pending Approval",
-    value: "145",
-    color: "bg-amber-50",
-  },
-]
 function AnimatedCard({ children }: { children: React.ReactNode }) {
   const controls = useAnimation()
   const [hovered, setHovered] = useState(false)
@@ -61,10 +41,40 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function SectionCards() {
+type Props = {
+  filters: SalesFilterPayload | null
+}
+
+export function SectionCards({ filters }: Props) {
+
+  const { data, isLoading } = useDashboardSummary(filters)
+
+  const result = data?.data || {}
+  const cardsData = [
+    {
+      title: "Today",
+      value: result.today ?? 0,
+      color: "bg-blue-50",
+    },
+    {
+      title: "This Month",
+      value: result.this_month ?? 0,
+      color: "bg-green-50",
+    },
+    {
+      title: "Total Customer",
+      value: result.total_customer ?? 0,
+      color: "bg-indigo-50",
+    },
+    {
+      title: "Pending Approval",
+      value: result.pending_approval ?? 0,
+      color: "bg-amber-50",
+    },
+  ]
   return (
     <Card className="grid grid-cols-1 gap-3 shadow-lg px-5">
-      {cardsData.map((card, index) => (
+       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
           <Card className={`py-1 px-3 shadow-md ${card.color}`}>
             <CardHeader className="">
