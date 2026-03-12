@@ -10,9 +10,7 @@ import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle"
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header"
 import { CommonDataTable } from "@/components/table-data/custom-table"
 import { RoundedPieChart } from "@/components/ui/rounded-pie-chart"
-import LineCharts from "@/components/charts/linechart"
-import { GlowingRadialChart } from "@/components/ui/glowing-radial-chart"
-import { IncreaseSizePieChart } from "@/components/ui/increase-size-pie-chart"
+
 
 import { Card } from "@/components/ui/card"
 import { AnimatedHighlightedAreaChart } from "@/components/ui/animated-highlighted-chart"
@@ -33,6 +31,49 @@ export default function Salesdashboa() {
   /*                               FILTER STATE                                 */
   /* -------------------------------------------------------------------------- */
 
+  const fallbackTableData = [
+    {
+      id: 1,
+      name: "Sample A",
+      total_sales: 120000,
+      total_collection: 90000,
+      total_return: 5000,
+      total_exchange: 2000,
+    },
+    {
+      id: 2,
+      name: "Sample B",
+      total_sales: 95000,
+      total_collection: 75000,
+      total_return: 4000,
+      total_exchange: 1000,
+    },
+    {
+      id: 3,
+      name: "Sample C",
+      total_sales: 80000,
+      total_collection: 65000,
+      total_return: 3000,
+      total_exchange: 500,
+    },
+    {
+      id: 4,
+      name: "Sample B",
+      total_sales: 95000,
+      total_collection: 75000,
+      total_return: 4000,
+      total_exchange: 1000,
+    },
+    {
+      id: 5,
+      name: "Sample C",
+      total_sales: 80000,
+      total_collection: 65000,
+      total_return: 3000,
+      total_exchange: 500,
+    },
+  ]
+
   const [filters, setFilters] = React.useState<any>(null)
 
   /* -------------------------------------------------------------------------- */
@@ -40,10 +81,11 @@ export default function Salesdashboa() {
   /* -------------------------------------------------------------------------- */
 
   const [year, setYear] = React.useState("2025")
+  const { data: yearlyData = [] } =
+    useYearlySalesTrend(year, filters)
 
-  const { data: yearlyData = [] } = useYearlySalesTrend(year)
-
-  const { data: monthlyData = [] } = useMonthlySalesTrend(year)
+  const { data: monthlyData = [] } =
+    useMonthlySalesTrend(year, filters)
 
   /* -------------------------------------------------------------------------- */
   /*                         PERFORMANCE DATA FROM FILTERS                      */
@@ -61,7 +103,10 @@ export default function Salesdashboa() {
   const { data: customerSegmentPerformance = [] } =
     useCustomerSegmentPerformance(filters)
 
-  const regionTable = regionPerformance?.Result?.table_data ?? []
+  const regionTable =
+    regionPerformance?.Result?.table_data?.length
+      ? regionPerformance.Result.table_data
+      : fallbackTableData
   const regionPie = regionPerformance?.Result?.pie_chart ?? []
   const regionLine =
     regionPerformance?.Result?.line_chart?.map((item: any) => ({
@@ -69,7 +114,10 @@ export default function Salesdashboa() {
       desktop: item.y,
     })) ?? []
 
-  const brandTable = brandPerformance?.Result?.table_data ?? []
+  const brandTable =
+    brandPerformance?.Result?.table_data?.length
+      ? brandPerformance.Result.table_data
+      : fallbackTableData
   const brandPie = brandPerformance?.Result?.pie_chart ?? []
   const brandLine =
     brandPerformance?.Result?.line_chart?.map((item: any) => ({
@@ -78,7 +126,10 @@ export default function Salesdashboa() {
     })) ?? []
 
 
-  const materialTable = materialGroupPerformance?.Result?.table_data ?? []
+  const materialTable =
+    materialGroupPerformance?.Result?.table_data?.length
+      ? materialGroupPerformance.Result.table_data
+      : fallbackTableData
   const materialPie = materialGroupPerformance?.Result?.pie_chart ?? []
   const materialLine =
     materialGroupPerformance?.Result?.line_chart?.map((item: any) => ({
@@ -87,7 +138,9 @@ export default function Salesdashboa() {
     })) ?? []
 
   const customerTable =
-    customerSegmentPerformance?.Result?.table_data ?? []
+    customerSegmentPerformance?.Result?.table_data?.length
+      ? customerSegmentPerformance.Result.table_data
+      : fallbackTableData
 
   const customerPie =
     customerSegmentPerformance?.Result?.pie_chart ?? []
@@ -139,7 +192,6 @@ export default function Salesdashboa() {
             description={`Sales overview for ${year}`}
             data={yearlyData}
           />
-
           <GaugePieChartCard />
 
         </section>

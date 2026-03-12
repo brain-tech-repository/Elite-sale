@@ -48,14 +48,37 @@ export const useDashboardSummary = (filters?: any) => {
     staleTime: 1000 * 60 * 5,
   })
 }
+const getYearlySalesTrend = async (
+  year: string,
+  filters?: any
+): Promise<SalesTrendResponse> => {
 
-const getYearlySalesTrend = async (year: string): Promise<SalesTrendResponse> => {
-  const { data } = await api.get(`get_yearly_sales_trend?year=${year}`)
+  const params = {
+    year,
+    ...filters,
+  }
+
+  const query = new URLSearchParams(params).toString()
+
+  const { data } = await api.get(`get_yearly_sales_trend?${query}`)
+
   return data
 }
 
-const getMonthlySalesTrend = async (year: string): Promise<SalesTrendResponse> => {
-  const { data } = await api.get(`get_monthly_sales_trend?year=${year}`)
+const getMonthlySalesTrend = async (
+  year: string,
+  filters?: any
+): Promise<SalesTrendResponse> => {
+
+  const params = {
+    year,
+    ...filters,
+  }
+
+  const query = new URLSearchParams(params).toString()
+
+  const { data } = await api.get(`get_monthly_sales_trend?${query}`)
+
   return data
 }
 
@@ -70,18 +93,24 @@ const transformChartData = (data: SalesTrendItem[]): ChartSalesData[] => {
 
 /* ================= TANSTACK QUERIES ================= */
 
-export const useYearlySalesTrend = (year: string) => {
+export const useYearlySalesTrend = (
+  year: string,
+  filters?: any
+) => {
   return useQuery({
-    queryKey: ["yearly-sales-trend", year],
-    queryFn: () => getYearlySalesTrend(year),
+    queryKey: ["yearly-sales-trend", year, filters],
+    queryFn: () => getYearlySalesTrend(year, filters),
     select: (data) => transformChartData(data.Result),
   })
 }
 
-export const useMonthlySalesTrend = (year: string) => {
+export const useMonthlySalesTrend = (
+  year: string,
+  filters?: any
+) => {
   return useQuery({
-    queryKey: ["monthly-sales-trend", year],
-    queryFn: () => getMonthlySalesTrend(year),
+    queryKey: ["monthly-sales-trend", year, filters],
+    queryFn: () => getMonthlySalesTrend(year, filters),
     select: (data) => transformChartData(data.Result),
   })
 }

@@ -10,33 +10,29 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+
 const cardsData = [
   {
-    title: "Active Accounts",
-    value: "45,678",
-    message: "Exceeds target",
+    title: "Today",
+    value: "0",
+    color: "bg-blue-50",
+  },
+  {
+    title: "This Month",
+    value: "9",
     color: "bg-green-50",
   },
   {
-    title: "Growth Rate",
-    value: "4.5%",
-    message: "Meets projection",
+    title: "Total Customer",
+    value: "8,559",
     color: "bg-indigo-50",
   },
   {
-    title: "Orders Sales",
-    value: "2,890",
-    message: "This quarter",
+    title: "Pending Approval",
+    value: "145",
     color: "bg-amber-50",
   },
-  {
-    title: "Refund Rate",
-    value: "1.2%",
-    message: "Improved quality",
-    color: "bg-rose-50",
-  },
 ]
-
 function AnimatedCard({ children }: { children: React.ReactNode }) {
   const controls = useAnimation()
   const [hovered, setHovered] = useState(false)
@@ -57,10 +53,8 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
     controls.stop()
     controls.set({ rotateY: 0 })
   }
-
   return (
     <motion.div
-    
     >
       {children}
     </motion.div>
@@ -73,16 +67,13 @@ export function SectionCards() {
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
           <Card className={`py-1 px-3 shadow-md ${card.color}`}>
-            <CardHeader className="p-1 space-y-1">
-              <CardDescription className="text-[10px]">
+            <CardHeader className="">
+             <CardDescription className="text-sm font-semibold text-muted-foreground">
                 {card.title}
               </CardDescription>
-
               <CardTitle className="text-base font-semibold tabular-nums">
                 {card.value}
               </CardTitle>
-
-             
             </CardHeader>
           </Card>
         </AnimatedCard>
