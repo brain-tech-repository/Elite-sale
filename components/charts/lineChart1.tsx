@@ -33,7 +33,7 @@ const data = [
 
 export default function LineCharts1() {
   return (
-    <Card className="flex flex-col w-full max-w-sm shadow-lg">
+    <Card className="flex flex-col w-full max-w-sm shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           Traffic Overview
@@ -59,14 +59,14 @@ export default function LineCharts1() {
               <Tooltip />
 
               <defs>
-  <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stopColor="#86EFAC" />   {/* light green */}
-    <stop offset="25%" stopColor="#4ADE80" />  {/* soft green */}
-    <stop offset="50%" stopColor="#22C55E" />  {/* main green */}
-    <stop offset="75%" stopColor="#16A34A" />  {/* darker green */}
-    <stop offset="100%" stopColor="#15803D" /> {/* deep green */}
-  </linearGradient>
-</defs>
+                <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#86EFAC" /> {/* light green */}
+                  <stop offset="25%" stopColor="#4ADE80" /> {/* soft green */}
+                  <stop offset="50%" stopColor="#22C55E" /> {/* main green */}
+                  <stop offset="75%" stopColor="#16A34A" /> {/* darker green */}
+                  <stop offset="100%" stopColor="#15803D" /> {/* deep green */}
+                </linearGradient>
+              </defs>
               <Line
                 type="monotone"
                 dataKey="pv"

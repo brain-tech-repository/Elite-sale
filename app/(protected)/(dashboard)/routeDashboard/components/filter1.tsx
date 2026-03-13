@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { toast } from "sonner"
-import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 import {
   Form,
@@ -18,9 +18,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 import {
   Select,
@@ -28,19 +28,17 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-import { Calendar } from "@/components/ui/calendar"
+import { Calendar } from "@/components/ui/calendar";
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import DataTableSubHeader from "@/components/table-data/data-table-sub-header"
-import DataTableHeader from "@/components/table-data/table-header"
-
-
+} from "@/components/ui/popover";
+import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
+import DataTableHeader from "@/components/table-data/table-header";
 
 /* =========================
    SCHEMA
@@ -57,18 +55,15 @@ const formSchema = z.object({
   }),
 
   routes: z.string().min(1, "Route is required"),
-})
+});
 
-type FormValues = z.infer<typeof formSchema>
-
-
+type FormValues = z.infer<typeof formSchema>;
 
 /* =========================
    COMPONENT
 ========================= */
 
 export default function MyForm1() {
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,29 +73,25 @@ export default function MyForm1() {
       },
       routes: "",
     },
-  })
+  });
 
   function onSubmit(values: FormValues) {
-    console.log(values)
-    toast.success("Filters applied successfully!")
+    console.log(values);
+    toast.success("Filters applied successfully!");
   }
 
   return (
     <>
-   
-    <Form {...form}>
-       <DataTableHeader title="Route Performance" />
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 max-w-7xl mx-auto py-4 px-2"
-      >
-        
+      <Form {...form}>
+        <DataTableHeader title="Route Performance" />
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 max-w-7xl mx-auto py-4 px-2"
+        >
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 lg:px-4">
+            {/* ================= Date Range ================= */}
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 lg:px-4">
-
-          {/* ================= Date Range ================= */}
-
-          {/* <FormField
+            {/* <FormField
             control={form.control}
             name="dateRange"
             render={({ field }) => {
@@ -120,7 +111,7 @@ export default function MyForm1() {
                         <Button
                           variant="outline"
                           className={cn(
-                            "pl-3 text-left font-normal shadow-lg w-full",
+                            "pl-3 text-left font-normal shadow-sm w-full",
                             !dateRange?.from && "text-muted-foreground"
                           )}
                         >
@@ -154,69 +145,56 @@ export default function MyForm1() {
             }}
           /> */}
 
+            {/* ================= Routes ================= */}
 
-          {/* ================= Routes ================= */}
-          
+            <FormField
+              control={form.control}
+              name="routes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Routes</FormLabel>
 
-          <FormField
-            control={form.control}
-            name="routes"
-            render={({ field }) => (
-              <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl className="shadow-sm w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Route" />
+                      </SelectTrigger>
+                    </FormControl>
 
-                <FormLabel>Routes</FormLabel>
+                    <SelectContent>
+                      <SelectItem value="route1">Route 1</SelectItem>
+                      <SelectItem value="route2">Route 2</SelectItem>
+                      <SelectItem value="route3">Route 3</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                  <FormControl className="shadow-lg w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Route" />
-                    </SelectTrigger>
-                  </FormControl>
+            <div className="flex gap-6 pt-6">
+              <Button type="submit" variant="outline" className="shadow-sm">
+                Filter
+              </Button>
 
-                  <SelectContent>
-                    <SelectItem value="route1">Route 1</SelectItem>
-                    <SelectItem value="route2">Route 2</SelectItem>
-                    <SelectItem value="route3">Route 3</SelectItem>
-                  </SelectContent>
-
-                </Select>
-
-                <FormMessage />
-
-              </FormItem>
-            )}
-          />
-
-          <div className="flex gap-6 pt-6">
-
-            <Button type="submit" variant="outline" className="shadow-lg">
-              Filter
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="shadow-lg"
-              onClick={() => form.reset()}
-            >
-              Reset
-            </Button>
-
+              <Button
+                type="button"
+                variant="outline"
+                className="shadow-sm"
+                onClick={() => form.reset()}
+              >
+                Reset
+              </Button>
+            </div>
           </div>
 
-        </div>
-
-
-        {/* ================= Buttons ================= */}
-
-
-
-      </form>
-    </Form>
+          {/* ================= Buttons ================= */}
+        </form>
+      </Form>
     </>
-  )
+  );
 }

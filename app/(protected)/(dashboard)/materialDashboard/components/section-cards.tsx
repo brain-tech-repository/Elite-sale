@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { motion, useAnimation } from "framer-motion"
-import { useState } from "react"
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { motion, useAnimation } from "framer-motion";
+import { useState } from "react";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 const cardsData = [
   {
@@ -46,53 +46,52 @@ const cardsData = [
     footer: "Steady increase",
     color: "bg-indigo-50",
   },
-  
-]
+];
 
 function AnimatedCard({ children }: { children: React.ReactNode }) {
-  const controls = useAnimation()
-  const [hovered, setHovered] = useState(false)
+  const controls = useAnimation();
+  const [hovered, setHovered] = useState(false);
 
   const handleHoverStart = async () => {
-    setHovered(true)
+    setHovered(true);
     await controls.start({
       rotateY: 360,
       transition: { duration: 0.7, ease: "easeInOut" },
-    })
-    controls.set({ rotateY: 0 })
-  }
+    });
+    controls.set({ rotateY: 0 });
+  };
 
   const handleHoverEnd = () => {
-    setHovered(false)
-    controls.stop()
-    controls.set({ rotateY: 0 })
-  }
+    setHovered(false);
+    controls.stop();
+    controls.set({ rotateY: 0 });
+  };
 
   return (
     <motion.div
-      // style={{ perspective: 1000 }}
-      // animate={controls}
-      // onHoverStart={handleHoverStart}
-      // onHoverEnd={handleHoverEnd}
-      // whileHover={{ scale: 1.04 }}
-      // className="transition-all duration-200 hover:shadow-xl rounded-lg"
+    // style={{ perspective: 1000 }}
+    // animate={controls}
+    // onHoverStart={handleHoverStart}
+    // onHoverEnd={handleHoverEnd}
+    // whileHover={{ scale: 1.04 }}
+    // className="transition-all duration-200 hover:shadow-xl rounded-lg"
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 export function SectionCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {cardsData.map((card, index) => {
-        const isPositive = card.trend > 0
-        const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown
+        const isPositive = card.trend > 0;
+        const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown;
 
         return (
           <AnimatedCard key={index}>
             <Card
-              className={`p-4 shadow-md hover:shadow-xl transition-all duration-300 rounded-xl border  shadow-lg ${card.color}`}
+              className={`p-4 shadow-sm hover:shadow-xl transition-all duration-300 rounded-xl border  shadow-sm ${card.color}`}
             >
               <CardHeader className="p-2 flex justify-between items-start">
                 <div className="space-y-1">
@@ -129,14 +128,12 @@ export function SectionCards() {
                   <TrendIcon className="size-3" />
                 </div>
 
-                <div className="text-muted-foreground">
-                  {card.message}
-                </div>
+                <div className="text-muted-foreground">{card.message}</div>
               </CardFooter>
             </Card>
           </AnimatedCard>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

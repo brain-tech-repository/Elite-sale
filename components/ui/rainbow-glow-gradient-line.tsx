@@ -1,7 +1,17 @@
 "use client";
 
 import * as React from "react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
 import {
@@ -11,13 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 
 import {
   Popover,
@@ -32,31 +35,21 @@ interface Props {
   description?: string;
   data?: { month: string; desktop: number }[];
   showYearSelector?: boolean;
-  year?: string
-  setYear?: (year: string) => void
+  year?: string;
+  setYear?: (year: string) => void;
 }
 
-
-
-const chartConfig = {
-  desktop: {
-    label: "Sales",
-    color: "var(--chart-2)",
-  },
-} satisfies ChartConfig;
-
 const fallbackData = [
-  { month: "Jan", desktop: 120 },
-  { month: "Feb", desktop: 250 },
-  { month: "Mar", desktop: 180 },
-  { month: "Apr", desktop: 310 },
-  { month: "May", desktop: 220 },
-  { month: "Jun", desktop: 270 },
+  { month: "01", desktop: 120 },
+  { month: "02", desktop: 250 },
+  { month: "03", desktop: 180 },
+  { month: "04", desktop: 310 },
+  { month: "05", desktop: 220 },
+  { month: "06", desktop: 270 },
 ];
 
-/* Year list (for selector UI only) */
 const years = Array.from({ length: 2030 - 2001 + 1 }, (_, i) =>
-  (2001 + i).toString()
+  (2001 + i).toString(),
 );
 
 export function RainbowGlowGradientLineChart({
@@ -65,30 +58,24 @@ export function RainbowGlowGradientLineChart({
   data = [],
   showYearSelector = true,
   year,
-  setYear
+  setYear,
 }: Props) {
-
   const ITEMS_PER_PAGE = 15;
   const [page, setPage] = React.useState(0);
 
   const start = page * ITEMS_PER_PAGE;
   const visibleYears = years.slice(start, start + ITEMS_PER_PAGE);
 
-   const chartData = data && data.length > 0 ? data : fallbackData;
+  const chartData = data && data.length > 0 ? data : fallbackData;
 
   return (
     <Card className="shadow-lg">
-
       <CardHeader className="flex flex-row items-start justify-between">
-
-        <div>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>
+        <CardTitle>{title}</CardTitle>
+        {/* <CardDescription>
             {description} {showYearSelector && year}
-          </CardDescription>
-        </div>
+          </CardDescription> */}
 
-        {/* Year selector */}
         {showYearSelector && (
           <Popover>
             <PopoverTrigger asChild>
@@ -98,7 +85,6 @@ export function RainbowGlowGradientLineChart({
             </PopoverTrigger>
 
             <PopoverContent className="w-[220px]">
-
               <div className="grid grid-cols-3 gap-2">
                 {visibleYears.map((y) => (
                   <Button
@@ -111,7 +97,6 @@ export function RainbowGlowGradientLineChart({
                   </Button>
                 ))}
               </div>
-
               <div className="flex justify-between mt-3">
                 <Button
                   variant="ghost"
@@ -131,77 +116,48 @@ export function RainbowGlowGradientLineChart({
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
-
             </PopoverContent>
           </Popover>
         )}
-
       </CardHeader>
 
-      <CardContent>
-
-        <ChartContainer config={chartConfig}>
-
+      <CardContent className="h-[350px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            accessibilityLayer
-          data={chartData}
-            margin={{ left: 12, right: 12 }}
+            data={chartData}
+            margin={{
+              top: 10,
+              right: 10,
+              left: 0,
+              bottom: 0,
+            }}
           >
+            <CartesianGrid strokeDasharray="3 3" />
 
-            <CartesianGrid vertical={false} />
+            <XAxis dataKey="month" tickLine={false} axisLine={false} />
 
-            <XAxis
-              dataKey="month"
+            <YAxis
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => `${value / 1000}k`}
             />
 
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
+            <Tooltip formatter={(value: number) => [`${value}`, "Sales"]} />
+
+            <Legend />
 
             <Line
+              type="monotone"
               dataKey="desktop"
-              type="bump"
-              stroke="url(#colorUv)"
-              dot={false}
+              name="Sales"
+              stroke="var(--chart-2)"
               strokeWidth={2}
-              filter="url(#rainbow-line-glow)"
+              dot={{ r: 2 }}
+              activeDot={{ r: 6 }}
             />
-
-            <defs>
-
-              <linearGradient id="colorUv" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#0B84CE" />
-                <stop offset="20%" stopColor="#224CD1" />
-                <stop offset="40%" stopColor="#3A11C7" />
-                <stop offset="60%" stopColor="#7107C6" />
-                <stop offset="80%" stopColor="#C900BD" />
-                <stop offset="100%" stopColor="#D80155" />
-              </linearGradient>
-
-              <filter
-                id="rainbow-line-glow"
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-              >
-                <feGaussianBlur stdDeviation="10" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-
-            </defs>
-
           </LineChart>
-
-        </ChartContainer>
-
+        </ResponsiveContainer>
       </CardContent>
-
     </Card>
   );
 }

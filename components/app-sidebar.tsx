@@ -1,30 +1,27 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AudioWaveform,
-
   Bot,
   Command,
-
   GalleryVerticalEnd,
- 
   SquareTerminal,
-} from "lucide-react"
+} from "lucide-react";
 
-import Link from "next/link"
+import Link from "next/link";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 // This is sample data.
 const data = {
@@ -60,59 +57,57 @@ const data = {
         {
           title: "Sales Dashboard",
           url: "/salesDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-         {
+        {
           title: "Finance Dashboard",
           url: "/financeDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-         {
+        {
           title: "Customers Dashboard",
           url: "/customerDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-         {
+        {
           title: "Route Dashboard",
           url: "/routeDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-          {
+        {
           title: "Order Dashboard",
           url: "/orderDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-         {
+        {
           title: "Survey Dashboard",
           url: "/surveyDashboard",
-           icon: Bot,
+          icon: Bot,
         },
         {
           title: "Material Dashboard",
           url: "/materialDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-         {
+        {
           title: "Asset Dashboard",
           url: "/assetDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-         {
-          title: "EFRISH Dashboard",
+        {
+          title: "EFRIS Dashboard",
           url: "/EFRISHDashboard",
-           icon: Bot,
+          icon: Bot,
         },
-          {
+        {
           title: "SAP Dashboard",
           url: "/sapDashboard",
-           icon: Bot,
+          icon: Bot,
         },
       ],
     },
-   
   ],
- 
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -129,5 +124,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

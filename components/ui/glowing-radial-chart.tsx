@@ -58,18 +58,16 @@ interface RoundedPieChartProps {
 }
 type ActiveBrowser = keyof typeof chartConfig | "all" | null;
 
-export function GlowingRadialChart({ 
+export function GlowingRadialChart({
   title = "Browser Distribution", // Default title
-  description = "January - June 2024" // Default description
+  description = "January - June 2024", // Default description
 }: RoundedPieChartProps) {
   const [activeBrowser, setActiveBrowser] = React.useState<ActiveBrowser>(null);
 
   return (
-    <Card className="flex flex-col shadow-lg">
+    <Card className="flex flex-col shadow-sm">
       <CardHeader className="items-center pb-0">
-        <CardTitle>
-         {title}
-        </CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -77,9 +75,9 @@ export function GlowingRadialChart({
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"
         >
-          <RadialBarChart 
-            data={chartData} 
-            innerRadius={30} 
+          <RadialBarChart
+            data={chartData}
+            innerRadius={30}
             outerRadius={110}
             onMouseMove={(data) => {
               if (data && data.activePayload && data.activePayload[0]) {
@@ -96,14 +94,22 @@ export function GlowingRadialChart({
               cornerRadius={10}
               dataKey="visitors"
               background
-              className="drop-shadow-lg"
+              className="drop-shadow-sm"
             >
               {chartData.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
+                <Cell
+                  key={`cell-${index}`}
                   fill={entry.fill}
-                  filter={activeBrowser === entry.browser ? `url(#radial-glow-${entry.browser})` : undefined}
-                  opacity={activeBrowser === null || activeBrowser === entry.browser ? 1 : 0.3}
+                  filter={
+                    activeBrowser === entry.browser
+                      ? `url(#radial-glow-${entry.browser})`
+                      : undefined
+                  }
+                  opacity={
+                    activeBrowser === null || activeBrowser === entry.browser
+                      ? 1
+                      : 0.3
+                  }
                 />
               ))}
             </RadialBar>

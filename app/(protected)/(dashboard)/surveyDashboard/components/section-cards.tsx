@@ -1,6 +1,12 @@
-"use client"
+"use client";
 
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const cardsData = [
   {
@@ -35,7 +41,7 @@ const cardsData = [
     footer: "Customers increased",
     color: "bg-rose-50",
   },
-]
+];
 
 export function SectionCards({ onCardClick }: any) {
   return (
@@ -44,7 +50,7 @@ export function SectionCards({ onCardClick }: any) {
         <Card
           key={card.id}
           onClick={() => onCardClick(card.id)}
-          className={`p-4 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 rounded-xl border shadow-lg ${card.color}`}
+          className={`p-4 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 rounded-xl border shadow-sm ${card.color}`}
         >
           <CardHeader className="p-2 flex justify-between items-start">
             <div className="space-y-1">
@@ -64,5 +70,5 @@ export function SectionCards({ onCardClick }: any) {
         </Card>
       ))}
     </div>
-  )
+  );
 }

@@ -47,7 +47,7 @@ const renderNeedle = (
   cx: number,
   cy: number,
   innerRadius: number,
-  outerRadius: number
+  outerRadius: number,
 ) => {
   const total = data.reduce((acc, cur) => acc + cur.value, 0);
 
@@ -83,7 +83,7 @@ export function GaugePieChartCard() {
   const outerRadius = 100;
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           Performance Gauge

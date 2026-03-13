@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import MyForm1 from "./components/filter1";
@@ -8,7 +8,7 @@ import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradi
 
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { CommonDataTable } from "@/components/table-data/custom-table";
-import { salesColumns } from "./components/columns"
+import { salesColumns } from "./components/columns";
 import { Card } from "@/components/ui/card";
 import VerticalComposedChart from "@/components/ui/VerticalComposedChart";
 import { HighlightedMultipleBarChart } from "@/components/ui/highlighted-double-bar-chart";
@@ -22,8 +22,6 @@ type Sale = {
   date: string;
 };
 export default function Salesdashboa() {
-
-
   const data: Sale[] = [
     {
       id: "ORD-001",
@@ -54,14 +52,16 @@ export default function Salesdashboa() {
     <>
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col">
-
           {/* PAGE HEADER */}
           <div className=" py-6">
             <DataTableHeader title="Route Dashboard" />
           </div>
           {/* FILTERS */}
           <div className="lg:px-6 px-1 pb-4">
-            <Card className="shadow-lg"> <MyForm /></Card>
+            <Card className="shadow-sm">
+              {" "}
+              <MyForm />
+            </Card>
           </div>
           {/* KPI CARDS */}
           <div className="lg:px-6 px-1 pb-6">
@@ -72,28 +72,35 @@ export default function Salesdashboa() {
             <VerticalComposedChart />
             <HighlightedMultipleBarChart />
             <GlowingLineChart />
-
           </section>
           {/* SECTION 1 */}
           <div className="lg:px-6 px-1 pb-8">
-
-
-            <Card className="shadow-lg"> <MyForm1 /></Card>
+            <Card className="shadow-sm">
+              {" "}
+              <MyForm1 />
+            </Card>
 
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
-              <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+              <CommonDataTable
+                columns={salesColumns}
+                data={data}
+                pageSize={5}
+              />
 
               <RainbowGlowGradientLineChart />
             </section>
           </div>
-        
 
           {/* SECTION 3 */}
           <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Route Expense Analysis" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
               <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+                <CommonDataTable
+                  columns={salesColumns}
+                  data={data}
+                  pageSize={5}
+                />
               </div>
 
               <RainbowGlowGradientLineCharts />
@@ -103,7 +110,11 @@ export default function Salesdashboa() {
             <DataTableSubHeader title="Route Wise Sales Report" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
               <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+                <CommonDataTable
+                  columns={salesColumns}
+                  data={data}
+                  pageSize={5}
+                />
               </div>
             </section>
           </div>
@@ -111,7 +122,11 @@ export default function Salesdashboa() {
             <DataTableSubHeader title="Route Efficency Overview" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
               <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+                <CommonDataTable
+                  columns={salesColumns}
+                  data={data}
+                  pageSize={5}
+                />
               </div>
             </section>
           </div>

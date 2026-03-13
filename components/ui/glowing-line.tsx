@@ -41,17 +41,14 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function GlowingLineChart({ 
+export function GlowingLineChart({
   title = "Browser Distribution", // Default title
-  description = "January - June 2024" // Default description
-}: RoundedPieChartProps
-) {
+  description = "January - June 2024", // Default description
+}: RoundedPieChartProps) {
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>
-         {title}
-        </CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>

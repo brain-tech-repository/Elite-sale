@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -44,7 +38,7 @@ const chartConfig = {
 
 export function RainbowGlowGradientLineCharts() {
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>
           Rainbow Line Chart
@@ -70,7 +64,11 @@ export function RainbowGlowGradientLineCharts() {
               right: 12,
             }}
           >
-            <CartesianGrid vertical={true} horizontal={true} strokeDasharray="3 3" />
+            <CartesianGrid
+              vertical={true}
+              horizontal={true}
+              strokeDasharray="3 3"
+            />
 
             {/* X Axis */}
             <XAxis
@@ -82,11 +80,7 @@ export function RainbowGlowGradientLineCharts() {
             />
 
             {/* Y Axis with single vertical line */}
-            <YAxis
-              tickLine={false}
-              axisLine={true}
-              width={30}
-            />
+            <YAxis tickLine={false} axisLine={true} width={30} />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}

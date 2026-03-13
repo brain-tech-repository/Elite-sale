@@ -24,7 +24,6 @@ const chartData = [
   { month: "February", desktop: 305, mobile: 200 },
   { month: "March", desktop: 237, mobile: 120 },
   { month: "April", desktop: 73, mobile: 190 },
-
 ];
 
 const chartConfig = {
@@ -47,7 +46,7 @@ export function HighlightedMultipleBarChart() {
   }, [activeIndex]);
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>
           Bar Chart - Multiple

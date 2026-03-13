@@ -8,7 +8,7 @@ import {
   Legend,
   Title,
   ChartData,
-  ChartOptions
+  ChartOptions,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { Card } from "./card";
@@ -19,7 +19,7 @@ ChartJS.register(
   BarElement,
   Tooltip,
   Legend,
-  Title
+  Title,
 );
 
 const labels: string[] = [
@@ -29,7 +29,7 @@ const labels: string[] = [
   "April",
   "May",
   "June",
-  "July"
+  "July",
 ];
 
 const data: ChartData<"bar"> = {
@@ -45,7 +45,7 @@ const data: ChartData<"bar"> = {
         "rgba(75, 192, 192, 0.2)",
         "rgba(54, 162, 235, 0.2)",
         "rgba(153, 102, 255, 0.2)",
-        "rgba(201, 203, 207, 0.2)"
+        "rgba(201, 203, 207, 0.2)",
       ],
       borderColor: [
         "rgb(255, 99, 132)",
@@ -54,21 +54,28 @@ const data: ChartData<"bar"> = {
         "rgb(75, 192, 192)",
         "rgb(54, 162, 235)",
         "rgb(153, 102, 255)",
-        "rgb(201, 203, 207)"
+        "rgb(201, 203, 207)",
       ],
-      borderWidth: 1
-    }
-  ]
+      borderWidth: 1,
+    },
+  ],
 };
 
 const options: ChartOptions<"bar"> = {
   scales: {
     y: {
-      beginAtZero: true
-    }
-  }
+      beginAtZero: true,
+    },
+  },
 };
 
 export default function BarChart() {
-  return<> <Card className="shadow-lg px-5"><Bar data={data} options={options} /></Card></>;
+  return (
+    <>
+      {" "}
+      <Card className="shadow-sm px-5">
+        <Bar data={data} options={options} />
+      </Card>
+    </>
+  );
 }
