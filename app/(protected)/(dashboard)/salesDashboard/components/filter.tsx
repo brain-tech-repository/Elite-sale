@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+
 import { toast } from "sonner"
 
 import {
@@ -39,32 +39,12 @@ import {
   useMaterials,
 } from "../useSales"
 import { MultiSelect } from "@/components/ui/multi-select"
+import { SalesFilterFormValues, SalesFilterPayload, salesFilterSchema } from "../types"
 
-/* =========================
-   SCHEMA
-========================= */
 
-const formSchema = z.object({
-  dateRange: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
-
-  region: z.array(z.string()).optional(),
-
-  warehouse: z.array(z.string()).optional(),
-
-  Brand: z.array(z.string()).optional(),
-
-  material_group: z.array(z.string()).optional(),
-
-  material: z.array(z.string()).optional(),
-})
-
-type FormValues = z.infer<typeof formSchema>
 
 type Props = {
-  onFilter: (filters: any) => void
+  onFilter: (filters: SalesFilterPayload) => void
 }
 
 /* =========================
@@ -83,8 +63,8 @@ export default function MyForm({ onFilter }: Props) {
 
   /* FORM */
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SalesFilterFormValues>({
+    resolver: zodResolver(salesFilterSchema),
     defaultValues: {
       dateRange: undefined,
       region: [],
@@ -103,25 +83,25 @@ export default function MyForm({ onFilter }: Props) {
 
   /* API DATA */
 
- const { data: regions = [] } = useRegions(regionSearch)
+  const { data: regions = [] } = useRegions(regionSearch)
 
-const { data: warehouses = [] } = useWarehouses(
-  regionValue?.join(",") || "",
-  warehouseSearch
-)
+  const { data: warehouses = [] } = useWarehouses(
+    regionValue?.join(",") || "",
+    warehouseSearch
+  )
 
-const { data: groups = [] } = useMaterialGroups(groupSearch)
+  const { data: groups = [] } = useMaterialGroups(groupSearch)
 
-const { data: brands = [] } = useBrands(
-  materialTypeValue?.join(",") || "",
-  brandSearch
-)
+  const { data: brands = [] } = useBrands(
+    materialTypeValue?.join(",") || "",
+    brandSearch
+  )
 
-const { data: materials = [] } = useMaterials(
-  materialTypeValue?.join(",") || "",
-  brandValue?.join(",") || "",
-  materialSearch
-)
+  const { data: materials = [] } = useMaterials(
+    materialTypeValue?.join(",") || "",
+    brandValue?.join(",") || "",
+    materialSearch
+  )
   /* RESET DEPENDENT FIELDS */
 
   useEffect(() => {
@@ -139,23 +119,23 @@ const { data: materials = [] } = useMaterials(
 
   /* SUBMIT */
 
-function onSubmit(values: FormValues) {
+  function onSubmit(values: SalesFilterFormValues) {
 
-  const filters = {
-    fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
-    todate: format(values.dateRange.to, "yyyy-MM-dd"),
+    const filters: SalesFilterPayload = {
+      fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
+      todate: format(values.dateRange.to, "yyyy-MM-dd"),
 
-    region_id: values.region?.join(",") || "",
-    warehouse_id: values.warehouse?.join(",") || "",
-    brand_id: values.Brand?.join(",") || "",
-    material_type_id: values.material_group?.join(",") || "",
-    material_id: values.material?.join(",") || "",
+      region_id: values.region?.join(",") || "",
+      warehouse_id: values.warehouse?.join(",") || "",
+      brand_id: values.Brand?.join(",") || "",
+      material_type_id: values.material_group?.join(",") || "",
+      material_id: values.material?.join(",") || "",
+    }
+
+    onFilter(filters)
+
+    toast.success("Filters applied")
   }
-
-  onFilter(filters)
-
-  toast.success("Filters applied")
-}
 
   return (
     <Form {...form}>
@@ -195,9 +175,9 @@ function onSubmit(values: FormValues) {
 
                         {isDateSelected
                           ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
-                              dateRange.to!,
-                              "dd/MM/yy"
-                            )}`
+                            dateRange.to!,
+                            "dd/MM/yy"
+                          )}`
                           : "Pick a date range"}
 
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
