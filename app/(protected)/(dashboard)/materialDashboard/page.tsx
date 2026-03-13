@@ -1,11 +1,11 @@
-"use client"
+"use client";
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { CommonDataTable } from "@/components/table-data/custom-table";
-import { salesColumns } from "./components/columns"
+import { salesColumns } from "./components/columns";
 import { Card } from "@/components/ui/card";
 type Sale = {
   id: string;
@@ -16,8 +16,6 @@ type Sale = {
   date: string;
 };
 export default function Salesdashboa() {
-
-
   const data: Sale[] = [
     {
       id: "ORD-001",
@@ -48,14 +46,16 @@ export default function Salesdashboa() {
     <>
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col">
-
           {/* PAGE HEADER */}
           <div className=" py-6">
             <DataTableHeader title="Material Dashboard" />
           </div>
           {/* FILTERS */}
           <div className="lg:px-6 px-1 pb-4">
-            <Card className="shadow-lg"> <MyForm /></Card>
+            <Card className="shadow-sm">
+              {" "}
+              <MyForm />
+            </Card>
           </div>
           {/* KPI CARDS */}
           <div className="lg:px-6 px-1 pb-6">
@@ -65,11 +65,12 @@ export default function Salesdashboa() {
           {/* SECTION 2 */}
           <div className="lg:px-6 px-1 pb-8">
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
-
               {/* Table 1 */}
               <div className="lg:col-span-1 space-y-2">
-                <DataTableSubHeader title="Top Material By Volume
-" />
+                <DataTableSubHeader
+                  title="Top Material By Volume
+"
+                />
                 <CommonDataTable
                   columns={salesColumns}
                   data={data}
@@ -86,7 +87,6 @@ export default function Salesdashboa() {
                   pageSize={5}
                 />
               </div>
-
             </section>
           </div>
           {/* SECTION 3 */}
@@ -94,7 +94,11 @@ export default function Salesdashboa() {
             <DataTableSubHeader title="Growth Analytics" />
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-1">
               <div className="lg:col-span-1">
-                <CommonDataTable columns={salesColumns} data={data} pageSize={5} />
+                <CommonDataTable
+                  columns={salesColumns}
+                  data={data}
+                  pageSize={5}
+                />
               </div>
             </section>
           </div>
@@ -116,11 +120,12 @@ export default function Salesdashboa() {
           </div>
 
           <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
-
             {/* Table 1 */}
             <div className="lg:col-span-1 space-y-2">
-              <DataTableSubHeader title="Active SKUs (Last 2 Weeks)
-" />
+              <DataTableSubHeader
+                title="Active SKUs (Last 2 Weeks)
+"
+              />
               <CommonDataTable
                 columns={salesColumns}
                 data={data}

@@ -52,21 +52,17 @@ interface RoundedPieChartProps {
 
 type ActiveProperty = keyof typeof chartConfig;
 
-export function AnimatedHatchedPatternAreaChart({ 
+export function AnimatedHatchedPatternAreaChart({
   title = "Browser Distribution", // Default title
-  description = "January - June 2024" // Default description
-}: RoundedPieChartProps
-) {
+  description = "January - June 2024", // Default description
+}: RoundedPieChartProps) {
   const [activeProperty, setActiveProperty] =
     React.useState<ActiveProperty | null>(null);
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>
-         {title}
-         
-        </CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>
           Showing total visitors for the last 6 months
         </CardDescription>
@@ -161,7 +157,7 @@ export function AnimatedHatchedPatternAreaChart({
 
 const HatchedBackgroundPattern = ({ config }: { config: ChartConfig }) => {
   const items = Object.fromEntries(
-    Object.entries(config).map(([key, value]) => [key, value.color])
+    Object.entries(config).map(([key, value]) => [key, value.color]),
   );
   return (
     <>

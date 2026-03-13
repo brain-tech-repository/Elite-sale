@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
@@ -20,7 +20,10 @@ export default function Salesdashboa() {
           {/* FILTERS */}
 
           <div className="lg:px-6 px-1 pb-4 ">
-            <Card className="shadow-lg lg:px-5 "> <MyForm /></Card>
+            <Card className="shadow-sm lg:px-5 ">
+              {" "}
+              <MyForm />
+            </Card>
           </div>
           {/* TOP CHARTS */}
           <section className="grid gap-6 lg:px-6 px-1 pb-8 grid-cols-1 lg:grid-cols-3">
@@ -30,13 +33,14 @@ export default function Salesdashboa() {
           </section>
           <section className="lg:px-6 px-1 pb-10 space-y-4">
             <div className="lg:col-span-1">
-              <Card className="shadow-lg py-2">
+              <Card className="shadow-sm py-2">
                 <CommonDataTable
                   columns={sectionColumns}
                   data={data}
                   pageSize={5}
                   headerTitle="Orders Data"
-                /></Card>
+                />
+              </Card>
             </div>
           </section>
         </div>

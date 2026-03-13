@@ -1,30 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { SectionCards } from "./components/section-cards"
-import { Card } from "@/components/ui/card"
-import { CommonDataTable } from "@/components/table-data/common-table"
+import { useState } from "react";
+import { SectionCards } from "./components/section-cards";
+import { Card } from "@/components/ui/card";
+import { CommonDataTable } from "@/components/table-data/common-table";
 import { sectionColumns } from "./components/columns";
 import data from "./components/data.json";
 
-
 export default function Salesdashboa() {
-
-  const [activeTable, setActiveTable] = useState<string | null>(null)
+  const [activeTable, setActiveTable] = useState<string | null>(null);
 
   return (
     <>
       <div className="flex flex-1 flex-col">
-
         <div className="lg:px-6 px-1 pb-6">
-          <SectionCards onCardClick={(id:any) => setActiveTable(id)} />
+          <SectionCards onCardClick={(id: any) => setActiveTable(id)} />
         </div>
 
         {/* TABLE SECTION */}
 
         {activeTable === "customers" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-lg py-2">
+            <Card className="shadow-sm py-2">
               <CommonDataTable
                 columns={sectionColumns}
                 data={data}
@@ -37,9 +34,9 @@ export default function Salesdashboa() {
 
         {activeTable === "users" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-lg py-2">
+            <Card className="shadow-sm py-2">
               <CommonDataTable
-                 columns={sectionColumns}
+                columns={sectionColumns}
                 data={data}
                 pageSize={5}
                 headerTitle="Top Users"
@@ -47,11 +44,11 @@ export default function Salesdashboa() {
             </Card>
           </div>
         )}
-          {activeTable === "country" && (
+        {activeTable === "country" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-lg py-2">
+            <Card className="shadow-sm py-2">
               <CommonDataTable
-                 columns={sectionColumns}
+                columns={sectionColumns}
                 data={data}
                 pageSize={5}
                 headerTitle="Top Country"
@@ -59,11 +56,11 @@ export default function Salesdashboa() {
             </Card>
           </div>
         )}
-          {activeTable === "surveys" && (
+        {activeTable === "surveys" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-lg py-2">
+            <Card className="shadow-sm py-2">
               <CommonDataTable
-                 columns={sectionColumns}
+                columns={sectionColumns}
                 data={data}
                 pageSize={5}
                 headerTitle="Top Surveys"
@@ -71,8 +68,7 @@ export default function Salesdashboa() {
             </Card>
           </div>
         )}
-
       </div>
     </>
-  )
+  );
 }

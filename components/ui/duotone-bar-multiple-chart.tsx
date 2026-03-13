@@ -42,16 +42,14 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function DuotoneVerticalBarMultipleChart({ 
+export function DuotoneVerticalBarMultipleChart({
   title = "Browser Distribution", // Default title
-  description = "January - June 2024" // Default description
+  description = "January - June 2024", // Default description
 }: RoundedPieChartProps) {
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>
-         {title}
-        </CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>January - June 2025</CardDescription>
       </CardHeader>
 
@@ -106,7 +104,7 @@ export function DuotoneVerticalBarMultipleChart({
 }
 
 const CustomDuotoneBarMultiple = (
-  props: React.SVGProps<SVGRectElement> & { dataKey?: string }
+  props: React.SVGProps<SVGRectElement> & { dataKey?: string },
 ) => {
   const { fill, x, y, width, height, dataKey } = props;
 

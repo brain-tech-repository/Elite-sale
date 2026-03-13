@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 import {
   Card,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 const cardsData = [
   {
@@ -83,7 +83,7 @@ const cardsData = [
     message: "Total repair cost",
     color: "bg-rose-50",
   },
- 
+
   {
     title: "Asset Net Book Value",
     value: "0.00",
@@ -96,7 +96,7 @@ const cardsData = [
     message: "Total repair cost",
     color: "bg-rose-50",
   },
-]
+];
 
 function AnimatedCard({ children }: { children: React.ReactNode }) {
   return (
@@ -106,7 +106,7 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 export function SectionCards() {
@@ -115,7 +115,7 @@ export function SectionCards() {
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
           <Card
-            className={`p-4  hover:shadow-xl transition-all duration-300 rounded-xl border shadow-lg ${card.color}`}
+            className={`p-4  hover:shadow-xl transition-all duration-300 rounded-xl border shadow-sm ${card.color}`}
           >
             <CardHeader className="p-2">
               <CardDescription className="text-sm font-medium text-muted-foreground">
@@ -134,5 +134,5 @@ export function SectionCards() {
         </AnimatedCard>
       ))}
     </div>
-  )
+  );
 }

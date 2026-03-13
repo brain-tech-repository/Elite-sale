@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { toast } from "sonner"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 
 import {
   Form,
@@ -12,16 +12,16 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 /* =========================
    SCHEMA
@@ -33,9 +33,9 @@ const formSchema = z.object({
   Brand: z.string().min(1, "Brand is required"),
   route: z.string().min(1, "Material group is required"),
   sales_area: z.string().min(1, "Material is required"),
-})
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 /* =========================
    COMPONENT
@@ -51,14 +51,14 @@ export default function MyForm1() {
       route: "",
       sales_area: "",
     },
-  })
+  });
 
   function onSubmit(values: FormValues) {
     try {
-      console.log(values)
-      toast.success("Form submitted successfully!")
+      console.log(values);
+      toast.success("Form submitted successfully!");
     } catch (error) {
-      toast.error("Submission failed")
+      toast.error("Submission failed");
     }
   }
 
@@ -69,7 +69,6 @@ export default function MyForm1() {
         className="space-y-8 max-w-7xl mx-auto py-4 px-2"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-
           {/* ================= Region ================= */}
           <FormField
             control={form.control}
@@ -77,11 +76,8 @@ export default function MyForm1() {
             render={({ field }) => (
               <FormItem className="">
                 <FormLabel>Region</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl className="w-full shadow-sm">
                     <SelectTrigger>
                       <SelectValue placeholder="Select Region" />
                     </SelectTrigger>
@@ -104,11 +100,8 @@ export default function MyForm1() {
             render={({ field }) => (
               <FormItem className="">
                 <FormLabel>Warehouse</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl className="w-full shadow-lg">
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl className="w-full shadow-sm">
                     <SelectTrigger>
                       <SelectValue placeholder="Select Warehouse" />
                     </SelectTrigger>
@@ -126,14 +119,14 @@ export default function MyForm1() {
 
         {/* Submit Button */}
         <div className="flex w-full justify-start gap-6 pt-2">
-          <Button type="submit"   variant="outline" className="shadow-lg">
+          <Button type="submit" variant="outline" className="shadow-sm">
             Filter
           </Button>
 
           <Button
             type="button"
             variant="outline"
-             className="shadow-lg"
+            className="shadow-sm"
             onClick={() => form.reset()}
           >
             Reset
@@ -141,5 +134,5 @@ export default function MyForm1() {
         </div>
       </form>
     </Form>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { motion, useAnimation } from "framer-motion"
-import { useState } from "react"
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { motion, useAnimation } from "framer-motion";
+import { useState } from "react";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
 import {
   Card,
@@ -10,7 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 const cardsData = [
   {
@@ -77,52 +77,52 @@ const cardsData = [
     footer: "Slight increase",
     color: "bg-yellow-50",
   },
-]
+];
 
 function AnimatedCard({ children }: { children: React.ReactNode }) {
-  const controls = useAnimation()
-  const [hovered, setHovered] = useState(false)
+  const controls = useAnimation();
+  const [hovered, setHovered] = useState(false);
 
   const handleHoverStart = async () => {
-    setHovered(true)
+    setHovered(true);
     await controls.start({
       rotateY: 360,
       transition: { duration: 1.8, ease: "easeInOut" },
-    })
-    controls.set({ rotateY: 0 })
-  }
+    });
+    controls.set({ rotateY: 0 });
+  };
 
   const handleHoverEnd = () => {
-    setHovered(false)
-    controls.stop()
-    controls.set({ rotateY: 0 })
-  }
+    setHovered(false);
+    controls.stop();
+    controls.set({ rotateY: 0 });
+  };
 
   return (
     <motion.div
-      // style={{ perspective: 1000 }}
-      // animate={controls}
-      // onHoverStart={handleHoverStart}
-      // onHoverEnd={handleHoverEnd}
-      // whileHover={{ scale: 1.04 }}
-      // className="transition-shadow hover:shadow-xl rounded-xl"
+    // style={{ perspective: 1000 }}
+    // animate={controls}
+    // onHoverStart={handleHoverStart}
+    // onHoverEnd={handleHoverEnd}
+    // whileHover={{ scale: 1.04 }}
+    // className="transition-shadow hover:shadow-xl rounded-xl"
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 export function SectionCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {cardsData.map((card, index) => {
-        const isPositive = card.trend > 0
-        const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown
+        const isPositive = card.trend > 0;
+        const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown;
 
         return (
           <AnimatedCard key={index}>
             <Card
-              className={`p-3 rounded-xl border shadow-sm hover:shadow-xl transition-all shadow-lg ${card.color}`}
+              className={`p-3 rounded-xl border shadow-sm hover:shadow-xl transition-all shadow-sm ${card.color}`}
             >
               <CardHeader className="p-0 space-y-1">
                 <CardDescription className="text-sm font-medium text-muted-foreground">
@@ -155,8 +155,8 @@ export function SectionCards() {
               </CardFooter>
             </Card>
           </AnimatedCard>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

@@ -1,27 +1,26 @@
-"use client"
-import { motion } from "framer-motion"
+"use client";
+import { motion } from "framer-motion";
 import {
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { useDashboardSummary } from "../useSales"
-import { Skeleton } from "@/components/ui/skeleton"
+} from "@/components/ui/card";
+import { useDashboardSummary } from "../useSales";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function AnimatedCard({ children }: { children: React.ReactNode }) {
-  return <motion.div>{children}</motion.div>
+  return <motion.div>{children}</motion.div>;
 }
 interface Props {
-  filters?: any
+  filters?: any;
 }
 
 export function SectionCards({ filters }: Props) {
+  const { data, isLoading } = useDashboardSummary(filters);
 
-  const { data, isLoading } = useDashboardSummary(filters)
-
-  const result = data?.Result
+  const result = data?.Result;
 
   const cardsData = [
     {
@@ -60,38 +59,36 @@ export function SectionCards({ filters }: Props) {
 
       color: "bg-rose-50",
     },
-  ]
+  ];
 
-   if (isLoading) {
+  if (isLoading) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[1,2,3,4].map((i)=>(
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
           <Card key={i} className="p-4 space-y-3">
-            <Skeleton className="h-5 w-32"/>
-            <Skeleton className="h-8 w-24"/>
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-8 w-24" />
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
-          <Card className={`p-4 rounded-xl shadow-md ${card.color}`}>
-            <CardHeader className="p-2">
-              <CardDescription className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+          <Card className={`rounded-xl shadow-sm ${card.color}`}>
+            <CardHeader className="text-center lg:text-left">
+              <CardDescription className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                 {card.title}
               </CardDescription>
-              <CardTitle className="text-2xl font-bold">
-                {card.value}
-              </CardTitle>
+
+              <CardTitle className="text-md font-bold">{card.value}</CardTitle>
             </CardHeader>
           </Card>
         </AnimatedCard>
       ))}
     </div>
-  )
+  );
 }

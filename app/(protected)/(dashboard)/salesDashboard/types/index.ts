@@ -1,39 +1,41 @@
-import { z } from "zod"
+import { z } from "zod";
+
 /* ========================================================================== */
 /*                               FILTER SCHEMA                                */
 /* ========================================================================== */
+
 export const salesFilterSchema = z.object({
   dateRange: z.object({
     from: z.date(),
     to: z.date(),
   }),
 
-  region: z.array(z.string()).optional(),
+  region: z.string().optional(),
 
-  warehouse: z.array(z.string()).optional(),
+  warehouse: z.string().optional(),
 
-  Brand: z.array(z.string()).optional(),
+  Brand: z.string().optional(),
 
-  material_group: z.array(z.string()).optional(),
+  material_group: z.string().optional(),
 
-  material: z.array(z.string()).optional(),
-})
+  material: z.string().optional(),
+});
 
-export type SalesFilterFormValues = z.infer<typeof salesFilterSchema>
+export type SalesFilterFormValues = z.infer<typeof salesFilterSchema>;
 
 /* ========================================================================== */
 /*                               FILTER PAYLOAD                               */
 /* ========================================================================== */
 
 export interface SalesFilterPayload {
-  fromdate: string
-  todate: string
+  fromdate: string;
+  todate: string;
 
-  region_id: string
-  warehouse_id: string
-  brand_id: string
-  material_type_id: string
-  material_id: string
+  region_id: string;
+  warehouse_id: string;
+  brand_id: string;
+  material_type_id: string;
+  material_id: string;
 }
 
 /* ========================================================================== */
@@ -41,18 +43,18 @@ export interface SalesFilterPayload {
 /* ========================================================================== */
 
 export interface DashboardSummaryResult {
-  today_sales: number
-  total_sales: number
-  today_collection: number
-  total_collection: number
-  today_return: number
-  total_return: number
+  today_sales: number;
+  total_sales: number;
+  today_collection: number;
+  total_collection: number;
+  today_return: number;
+  total_return: number;
 }
 
 export interface DashboardSummaryResponse {
-  API_Status: number
-  Message: string
-  Result: DashboardSummaryResult
+  API_Status: number;
+  Message: string;
+  Result: DashboardSummaryResult;
 }
 
 /* ========================================================================== */
@@ -60,14 +62,14 @@ export interface DashboardSummaryResponse {
 /* ========================================================================== */
 
 export interface SalesTrendItem {
-  label: string
-  y: number
+  label: string;
+  y: number;
 }
 
 export interface SalesTrendResponse {
-  API_Status: number
-  Message: string
-  Result: SalesTrendItem[]
+  API_Status: number;
+  Message: string;
+  Result: SalesTrendItem[];
 }
 
 /* ========================================================================== */
@@ -75,8 +77,8 @@ export interface SalesTrendResponse {
 /* ========================================================================== */
 
 export interface ChartSalesData {
-  month: string
-  desktop: number
+  month: string;
+  desktop: number;
 }
 
 /* ========================================================================== */
@@ -84,14 +86,14 @@ export interface ChartSalesData {
 /* ========================================================================== */
 
 export interface MasterItem {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 export interface MasterApiResponse {
-  API_Status: number
-  Message: string
-  Result: MasterItem[]
+  API_Status: number;
+  Message: string;
+  Result: MasterItem[];
 }
 
 /* ========================================================================== */
@@ -99,11 +101,11 @@ export interface MasterApiResponse {
 /* ========================================================================== */
 
 export interface AutoCompleteOption {
-  value: number | string
-  label: string
+  value: number | string;
+  label: string;
 }
 
 export interface SelectOption {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }

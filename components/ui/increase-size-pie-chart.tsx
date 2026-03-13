@@ -64,17 +64,14 @@ interface RoundedPieChartProps {
   description?: string;
 }
 
-export function IncreaseSizePieChart({ 
+export function IncreaseSizePieChart({
   title = "Browser Distribution", // Default title
-  description = "January - June 2024" // Default description
+  description = "January - June 2024", // Default description
 }: RoundedPieChartProps) {
   return (
-    <Card className="flex flex-col shadow-lg">
+    <Card className="flex flex-col shadow-sm">
       <CardHeader className="items-center pb-0">
-        <CardTitle>
-          {title}
-         
-        </CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">

@@ -34,7 +34,6 @@ export function RoundedPieChart({
   description = "Distribution",
   data = [],
 }: RoundedPieChartProps) {
-
   const colors = [
     "var(--chart-1)",
     "var(--chart-2)",
@@ -44,25 +43,25 @@ export function RoundedPieChart({
   ];
 
   const fallbackData: PieItem[] = [
-  { label: "Retail", y: 400 },
-  { label: "Wholesale", y: 300 },
-  { label: "Online", y: 200 },
-  { label: "Distributor", y: 100 },
-];
+    { label: "Retail", y: 400 },
+    { label: "Wholesale", y: 300 },
+    { label: "Online", y: 200 },
+    { label: "Distributor", y: 100 },
+  ];
 
   /* -------------------------------------------------------------------------- */
   /*                          FORMAT API DATA FOR CHART                         */
   /* -------------------------------------------------------------------------- */
 
- const chartData = React.useMemo(() => {
-  const source = data && data.length > 0 ? data : fallbackData;
+  const chartData = React.useMemo(() => {
+    const source = data && data.length > 0 ? data : fallbackData;
 
-  return source.map((item, index) => ({
-    name: item.label,
-    value: item.y,
-    fill: colors[index % colors.length],
-  }));
-}, [data]);
+    return source.map((item, index) => ({
+      name: item.label,
+      value: item.y,
+      fill: colors[index % colors.length],
+    }));
+  }, [data]);
 
   const chartConfig = {
     value: { label: "Sales" },
@@ -74,24 +73,20 @@ export function RoundedPieChart({
     setHidden((prev) =>
       prev.includes(name)
         ? prev.filter((item) => item !== name)
-        : [...prev, name]
+        : [...prev, name],
     );
   };
 
-  const updatedData = chartData.filter(
-    (item) => !hidden.includes(item.name)
-  );
+  const updatedData = chartData.filter((item) => !hidden.includes(item.name));
 
   return (
-    <Card className="flex flex-col shadow-lg">
-
+    <Card className="flex flex-col shadow-md">
       <CardHeader className="items-center pb-0">
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col items-center gap-1">
-
         <ChartContainer
           config={chartConfig}
           className="mx-auto w-full lg:h-[200px]"
@@ -108,8 +103,7 @@ export function RoundedPieChart({
                 dataKey="value"
                 cornerRadius={8}
                 paddingAngle={4}
-              >
-              </Pie>
+              ></Pie>
             </PieChart>
           </ResponsiveContainer>
         </ChartContainer>
@@ -125,22 +119,17 @@ export function RoundedPieChart({
                   isHidden ? "opacity-40" : "opacity-100"
                 }`}
               >
-
                 <span
                   className="w-3 h-3 rounded-sm"
                   style={{ backgroundColor: item.fill }}
                 />
 
                 {item.name}
-
               </button>
             );
           })}
-
         </div>
-
       </CardContent>
-
     </Card>
   );
 }

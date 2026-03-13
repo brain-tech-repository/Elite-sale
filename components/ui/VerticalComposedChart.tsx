@@ -23,39 +23,34 @@ const data = [
 
 const VerticalComposedChart = () => {
   return (
-   <Card className="shadow-lg">
-     <ResponsiveContainer width="100%" height={250} >
-      <ComposedChart
-        layout="vertical"
-        data={data}
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20,
-        }}
-      >
-        <CartesianGrid stroke="#f5f5f5" />
+    <Card className="shadow-sm">
+      <ResponsiveContainer width="100%" height={250}>
+        <ComposedChart
+          layout="vertical"
+          data={data}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+        >
+          <CartesianGrid stroke="#f5f5f5" />
 
-        <XAxis type="number" />
+          <XAxis type="number" />
 
-        <YAxis
-          dataKey="name"
-          type="category"
-          scale="band"
-          width={80}
-        />
+          <YAxis dataKey="name" type="category" scale="band" width={80} />
 
-        <Tooltip />
-        <Legend />
+          <Tooltip />
+          <Legend />
 
-        <Area dataKey="amt" fill="#8884d8" stroke="#8884d8" />
+          <Area dataKey="amt" fill="#8884d8" stroke="#8884d8" />
 
-        <Bar dataKey="pv" barSize={20} fill="#413ea0" />
+          <Bar dataKey="pv" barSize={20} fill="#413ea0" />
 
-        <Line dataKey="uv" stroke="#ff7300" />
-      </ComposedChart>
-    </ResponsiveContainer>
+          <Line dataKey="uv" stroke="#ff7300" />
+        </ComposedChart>
+      </ResponsiveContainer>
     </Card>
   );
 };

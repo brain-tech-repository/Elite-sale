@@ -33,7 +33,6 @@ const chartData = [
   { page: "G", uv: 3490, pv: 4300 },
 ];
 
-
 interface RoundedPieChartProps {
   title?: string;
   description?: string;
@@ -56,20 +55,17 @@ type ActiveProperty = keyof typeof chartConfig;
 
 /* ---------------- Chart ---------------- */
 
-export default function HoverAreaChart({ 
+export default function HoverAreaChart({
   title = "Browser Distribution", // Default title
-  description = "January - June 2024" // Default description
+  description = "January - June 2024", // Default description
 }: RoundedPieChartProps) {
   const [activeProperty, setActiveProperty] =
     React.useState<ActiveProperty | null>(null);
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>
-         {title}
-        
-        </CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>
           Showing page analytics for last 7 pages
         </CardDescription>
@@ -95,13 +91,29 @@ export default function HoverAreaChart({
 
             <defs>
               <linearGradient id="grad-uv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-uv)" stopOpacity={0.4}/>
-                <stop offset="95%" stopColor="var(--color-uv)" stopOpacity={0}/>
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-uv)"
+                  stopOpacity={0.4}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-uv)"
+                  stopOpacity={0}
+                />
               </linearGradient>
 
               <linearGradient id="grad-pv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-pv)" stopOpacity={0.4}/>
-                <stop offset="95%" stopColor="var(--color-pv)" stopOpacity={0}/>
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-pv)"
+                  stopOpacity={0.4}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-pv)"
+                  stopOpacity={0}
+                />
               </linearGradient>
 
               <HatchedPattern config={chartConfig} />
@@ -115,9 +127,7 @@ export default function HoverAreaChart({
               stroke="var(--color-uv)"
               strokeWidth={2}
               fill={
-                activeProperty === "uv"
-                  ? "url(#pattern-uv)"
-                  : "url(#grad-uv)"
+                activeProperty === "uv" ? "url(#pattern-uv)" : "url(#grad-uv)"
               }
               onMouseEnter={() => setActiveProperty("uv")}
               onMouseLeave={() => setActiveProperty(null)}
@@ -129,9 +139,7 @@ export default function HoverAreaChart({
               stroke="var(--color-pv)"
               strokeWidth={2}
               fill={
-                activeProperty === "pv"
-                  ? "url(#pattern-pv)"
-                  : "url(#grad-pv)"
+                activeProperty === "pv" ? "url(#pattern-pv)" : "url(#grad-pv)"
               }
               onMouseEnter={() => setActiveProperty("pv")}
               onMouseLeave={() => setActiveProperty(null)}
@@ -147,7 +155,7 @@ export default function HoverAreaChart({
 
 const HatchedPattern = ({ config }: { config: ChartConfig }) => {
   const items = Object.fromEntries(
-    Object.entries(config).map(([key, value]) => [key, value.color])
+    Object.entries(config).map(([key, value]) => [key, value.color]),
   );
 
   return (
