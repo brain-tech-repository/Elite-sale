@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { LabelList, Pie, PieChart, ResponsiveContainer } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -10,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import {
   ChartConfig,
   ChartContainer,
@@ -35,11 +33,12 @@ export function RoundedPieChart({
   data = [],
 }: RoundedPieChartProps) {
   const colors = [
-    "var(--chart-1)",
-    "var(--chart-2)",
-    "var(--chart-3)",
-    "var(--chart-4)",
-    "var(--chart-5)",
+    "#71c6f3", // light sky
+    "#6d7db9", // light indigo
+    "#73e6b0", // light green
+    "#9c93c2", // light violet
+    "#99F6E4", // light teal
+    "#859ead", // extra light blue
   ];
 
   const fallbackData: PieItem[] = [
@@ -80,13 +79,13 @@ export function RoundedPieChart({
   const updatedData = chartData.filter((item) => !hidden.includes(item.name));
 
   return (
-    <Card className="flex flex-col shadow-md">
+    <Card className="flex flex-col shadow-sm py-6">
       <CardHeader className="items-center pb-0">
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
-      <CardContent className="flex flex-col items-center gap-1">
+      <CardContent className="flex flex-col items-center p-0">
         <ChartContainer
           config={chartConfig}
           className="mx-auto w-full lg:h-[200px]"
@@ -99,16 +98,16 @@ export function RoundedPieChart({
               <Pie
                 data={updatedData}
                 innerRadius={30}
-                outerRadius={80}
+                outerRadius={100}
                 dataKey="value"
-                cornerRadius={8}
+                cornerRadius={10}
                 paddingAngle={4}
               ></Pie>
             </PieChart>
           </ResponsiveContainer>
         </ChartContainer>
         {/* Legend */}
-        <div className="flex flex-wrap justify-center gap-3 pt-2">
+        <div className="flex flex-wrap justify-center gap-1 pt-2">
           {chartData.map((item) => {
             const isHidden = hidden.includes(item.name);
             return (

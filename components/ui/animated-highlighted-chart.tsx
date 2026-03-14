@@ -78,7 +78,7 @@ export function AnimatedHighlightedAreaChart({
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-[220px]">
+          <PopoverContent className="w-[200px]">
             <div className="grid grid-cols-3 gap-2">
               {months.map((month) => (
                 <Button
@@ -95,7 +95,7 @@ export function AnimatedHighlightedAreaChart({
         </Popover>
       </CardHeader>
 
-      <CardContent className="h-[350px] w-full">
+      <CardContent className="h-[320px] w-full">
         {chartData.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             No sales data available
@@ -138,12 +138,12 @@ export function AnimatedHighlightedAreaChart({
                 <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--chart-1)"
+                    stopColor="#38bdf8" // sky-400
                     stopOpacity={0.4}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--chart-1)"
+                    stopColor="#38bdf8" // sky-400
                     stopOpacity={0}
                   />
                 </linearGradient>
@@ -153,7 +153,7 @@ export function AnimatedHighlightedAreaChart({
                 type="monotone"
                 dataKey="desktop"
                 name="Sales"
-                stroke="var(--chart-1)"
+                stroke="#0ea5e9" // sky-500
                 fill="url(#salesGradient)"
                 strokeWidth={2}
                 isAnimationActive={true}

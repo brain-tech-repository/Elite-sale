@@ -69,7 +69,7 @@ export function RainbowGlowGradientLineChart({
   const chartData = data && data.length > 0 ? data : fallbackData;
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between">
         <CardTitle>{title}</CardTitle>
         {/* <CardDescription>
@@ -84,7 +84,7 @@ export function RainbowGlowGradientLineChart({
               </Button>
             </PopoverTrigger>
 
-            <PopoverContent className="w-[220px]">
+            <PopoverContent className="w-[200px]">
               <div className="grid grid-cols-3 gap-2">
                 {visibleYears.map((y) => (
                   <Button
@@ -121,7 +121,7 @@ export function RainbowGlowGradientLineChart({
         )}
       </CardHeader>
 
-      <CardContent className="h-[350px] w-full">
+      <CardContent className="h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
@@ -152,8 +152,8 @@ export function RainbowGlowGradientLineChart({
               name="Sales"
               stroke="var(--chart-2)"
               strokeWidth={2}
-              dot={{ r: 2 }}
-              activeDot={{ r: 6 }}
+              dot={{ r: 0 }}
+              activeDot={{ r: 4 }}
             />
           </LineChart>
         </ResponsiveContainer>

@@ -46,7 +46,7 @@ export default function Example({
       </CardHeader>
 
       <CardContent>
-        <div className="w-full h-[220px]">
+        <div className="w-full h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={data}

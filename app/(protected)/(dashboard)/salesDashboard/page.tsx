@@ -44,7 +44,10 @@ export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<any>(null);
   const [year, setYear] = React.useState("2025");
 
-  const [selectedMonth, setSelectedMonth] = React.useState<string | null>(null);
+  // Ensure this matches the string format your API/chart expects (e.g., "January")
+  const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
+    "January",
+  );
 
   /* SALES TREND */
   const { data: monthlyData = [], isLoading: monthlyLoading } =

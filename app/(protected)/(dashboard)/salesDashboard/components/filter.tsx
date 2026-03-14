@@ -138,7 +138,7 @@ export default function MyForm({ onFilter }: Props) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-7xl mx-auto py-4 px-2"
+        className="space-y-8 max-w-7xl mx-auto py-1 px-2"
       >
         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-6">
           {/* DATE RANGE */}
@@ -305,7 +305,7 @@ export default function MyForm({ onFilter }: Props) {
 
         {/* BUTTONS */}
 
-        <div className="flex gap-6 ">
+        <div className="flex gap-x-6 ">
           <Button type="submit" variant="outline" className="shadow-sm">
             Filter
           </Button>
