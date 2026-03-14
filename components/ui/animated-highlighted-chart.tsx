@@ -32,6 +32,8 @@ interface Props {
   title?: string;
   description?: string;
   data?: { month: string; desktop: number }[];
+  selectedMonth?: string | null;
+  setSelectedMonth?: (month: string | null) => void;
 }
 
 const months = [
@@ -53,24 +55,22 @@ export function AnimatedHighlightedAreaChart({
   title = "Sales Trends",
   description = "Last 12 Months",
   data = [],
+  selectedMonth,
+  setSelectedMonth,
 }: Props) {
-  const [selectedMonth, setSelectedMonth] = React.useState<string | null>(null);
-
-  /* Filter chart data based on selected month */
-  const filteredData = React.useMemo(() => {
-    if (!selectedMonth) return data;
-
-    const monthIndex = months.indexOf(selectedMonth);
-
-    return data.slice(0, monthIndex + 1);
-  }, [data, selectedMonth]);
+  /* FIX: We removed the .slice() logic here. 
+     The monthly data for days 01-31 is already handled by your useMonthlySalesTrend hook.
+  */
+  const chartData = React.useMemo(() => {
+    return data;
+  }, [data]);
 
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between">
         <CardTitle>{title}</CardTitle>
 
-        {/* Month Filter */}
+        {/* Month Filter UI - UNCHANGED */}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-[110px]">
@@ -78,14 +78,14 @@ export function AnimatedHighlightedAreaChart({
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-[220px]">
+          <PopoverContent className="w-[200px]">
             <div className="grid grid-cols-3 gap-2">
               {months.map((month) => (
                 <Button
                   key={month}
                   variant={selectedMonth === month ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setSelectedMonth(month)}
+                  onClick={() => setSelectedMonth?.(month)}
                 >
                   {month.slice(0, 3)}
                 </Button>
@@ -93,19 +93,17 @@ export function AnimatedHighlightedAreaChart({
             </div>
           </PopoverContent>
         </Popover>
-
-        {/* <CardDescription>{description}</CardDescription> */}
       </CardHeader>
 
-      <CardContent className="h-[350px] w-full">
-        {filteredData.length === 0 ? (
+      <CardContent className="h-[320px] w-full">
+        {chartData.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             No sales data available
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={filteredData}
+              data={chartData}
               margin={{
                 top: 10,
                 right: 10,
@@ -114,27 +112,38 @@ export function AnimatedHighlightedAreaChart({
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-
-              <XAxis dataKey="month" tickLine={false} axisLine={false} />
-
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                /* This ensures only these specific days show up on the bottom axis */
+                ticks={["01", "11", "21", "31"]}
+                tickFormatter={(value) => String(Number(value))}
+              />
               <YAxis
                 tickLine={false}
                 axisLine={false}
+                /* Strictly uses k (thousands) for all values */
                 tickFormatter={(value) => `${value / 1000}k`}
               />
 
-              <Tooltip formatter={(value: number) => [`${value}`, "Sales"]} />
+              <Tooltip
+                formatter={(value: number) => [
+                  new Intl.NumberFormat().format(value),
+                  "Sales",
+                ]}
+              />
 
               <defs>
                 <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--chart-1)"
+                    stopColor="#38bdf8" // sky-400
                     stopOpacity={0.4}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--chart-1)"
+                    stopColor="#38bdf8" // sky-400
                     stopOpacity={0}
                   />
                 </linearGradient>
@@ -144,9 +153,10 @@ export function AnimatedHighlightedAreaChart({
                 type="monotone"
                 dataKey="desktop"
                 name="Sales"
-                stroke="var(--chart-1)"
+                stroke="#0ea5e9" // sky-500
                 fill="url(#salesGradient)"
                 strokeWidth={2}
+                isAnimationActive={true}
               />
             </AreaChart>
           </ResponsiveContainer>

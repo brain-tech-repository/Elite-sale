@@ -65,11 +65,12 @@ export function CommonDataTable<T>({
             <h3 className="text-base font-semibold text-gray-800">{title}</h3>
           </div>
         )}
-        <div className="overflow-x-auto rounded-t-xl">
-          <table className="w-full border-collapse text-sm">
-            <div className="flex flex-col gap-3  mt-3">
+        <div className="overflow-x-auto ">
+          <div className="max-h-[320px] overflow-y-auto">
+            <table className="w-full border-collapse text-sm">
               {/* Header */}
-              <thead className="sticky top-0 bg-gradient-to-r from-pink-100 via-white to-sky-200 text-gray-800">
+
+              <thead className="sticky top-0 bg-gradient-to-r from-blue-100 via-white to-sky-200 text-gray-800">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -141,8 +142,8 @@ export function CommonDataTable<T>({
                   </tr>
                 )}
               </tbody>
-            </div>
-          </table>
+            </table>
+          </div>
         </div>
 
         {/* Pagination */}

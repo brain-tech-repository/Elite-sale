@@ -44,10 +44,14 @@ export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<any>(null);
   const [year, setYear] = React.useState("2025");
 
-  /* SALES TREND */
+  // Ensure this matches the string format your API/chart expects (e.g., "January")
+  const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
+    "January",
+  );
 
+  /* SALES TREND */
   const { data: monthlyData = [], isLoading: monthlyLoading } =
-    useMonthlySalesTrend(year, filters);
+    useMonthlySalesTrend(year, selectedMonth, filters);
 
   const { data: yearlyData = [], isLoading: yearlyLoading } =
     useYearlySalesTrend(year, filters);
@@ -138,24 +142,26 @@ export default function Salesdashboa() {
 
         {/* TOP CHARTS */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {monthlyLoading ? (
+          {yearlyLoading ? (
             <ChartSkeleton />
           ) : (
             <RainbowGlowGradientLineChart
-              title="Sales By Monthly Trends"
-              data={monthlyData}
+              title="Sales By Yearly Trends"
+              description={`Sales overview for ${year}`}
+              data={yearlyData}
               year={year}
               setYear={setYear}
             />
           )}
 
-          {yearlyLoading ? (
+          {monthlyLoading ? (
             <ChartSkeleton />
           ) : (
             <AnimatedHighlightedAreaChart
-              title="Sales By Yearly Trends"
-              description={`Sales overview for ${year}`}
-              data={yearlyData}
+              title="Sales By Monthly Trends"
+              data={monthlyData}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
             />
           )}
 

@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp } from "lucide-react";
+import { Switch } from "./switch";
+import { Label } from "./label";
 
 /* ---------------- DATA ---------------- */
 
@@ -87,18 +89,13 @@ export function GaugePieChartCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           Performance Gauge
-          <Badge
-            variant="outline"
-            className="text-emerald-600 bg-emerald-100 border-none"
-          >
-            <TrendingUp className="h-4 w-4" />
-            <span>+8.4%</span>
-          </Badge>
         </CardTitle>
 
-        <CardDescription>
-          Overall score based on current metrics
-        </CardDescription>
+        <div className="flex items-center space-x-2">
+          <span>DTM</span>
+          <Switch id="airplane-mode" />
+          <span>MTY</span>
+        </div>
       </CardHeader>
 
       <CardContent>

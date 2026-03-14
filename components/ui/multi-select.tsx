@@ -1040,7 +1040,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
               getPopoverAnimationClass(),
               screenSize === "mobile" && "w-[85vw] max-w-[280px]",
               screenSize === "tablet" && "w-[70vw] max-w-md",
-              screenSize === "desktop" && "min-w-[300px]",
+              screenSize === "desktop" && "min-w-[320px]",
               popoverClassName,
             )}
             style={{
