@@ -1,5 +1,5 @@
-import api from "@/lib/apiClient"
-import { useQuery } from "@tanstack/react-query"
+import api from "@/lib/apiClient";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   AutoCompleteOption,
@@ -9,11 +9,8 @@ import {
   SalesTrendItem,
   SalesTrendResponse,
   SelectOption,
-} from "./types"
-
-
-
-
+} from "./types";
+import React from "react";
 
 /* ========================================================================== */
 /*                              HELPER FUNCTIONS                              */
@@ -23,13 +20,13 @@ import {
  * Convert Master API response to dropdown options
  */
 const mapOptions = (data: MasterApiResponse): SelectOption[] => {
-  if (!data?.Result) return []
+  if (!data?.Result) return [];
 
   return data.Result.map((item) => ({
     value: String(item.id),
     label: item.name,
-  }))
-}
+  }));
+};
 
 /**
  * Convert sales trend API data to chart compatible data
@@ -38,9 +35,8 @@ const transformChartData = (data: SalesTrendItem[]): ChartSalesData[] => {
   return data.map((item) => ({
     month: item.label,
     desktop: item.y,
-  }))
-}
-
+  }));
+};
 
 /* ========================================================================== */
 /*                                 API CALLS                                  */
@@ -50,89 +46,79 @@ const transformChartData = (data: SalesTrendItem[]): ChartSalesData[] => {
  * Fetch dashboard summary cards
  */
 const getDashboardSummaryCards = async (
-  params?: any
+  params?: any,
 ): Promise<DashboardSummaryResponse> => {
+  const query = params ? `?${new URLSearchParams(params).toString()}` : "";
 
-  const query = params
-    ? `?${new URLSearchParams(params).toString()}`
-    : ""
+  const { data } = await api.get(`get_dashboard_summary_cards${query}`);
 
-  const { data } = await api.get(`get_dashboard_summary_cards${query}`)
-
-  return data
-}
-
+  return data;
+};
 
 /**
  * Fetch yearly sales trend
  */
 const getYearlySalesTrend = async (
   year: string,
-  filters?: any
+  filters?: any,
 ): Promise<SalesTrendResponse> => {
+  const { month, ...restFilters } = filters || {};
 
-  const params = { year, ...filters }
+  const params = { year, ...restFilters };
 
-  const query = new URLSearchParams(params).toString()
+  const query = new URLSearchParams(params).toString();
 
-  const { data } = await api.get(`get_yearly_sales_trend?${query}`)
+  const { data } = await api.get(`get_yearly_sales_trend?${query}`);
 
-  return data
-}
-
+  return data;
+};
 
 /**
  * Fetch monthly sales trend
  */
 const getMonthlySalesTrend = async (
   year: string,
-  filters?: any
+  month?: string | null,
+  filters?: any,
 ): Promise<SalesTrendResponse> => {
+  const params = { year, month, ...filters };
 
-  const params = { year, ...filters }
+  const query = new URLSearchParams(params).toString();
 
-  const query = new URLSearchParams(params).toString()
+  const { data } = await api.get(`get_monthly_sales_trend?${query}`);
 
-  const { data } = await api.get(`get_monthly_sales_trend?${query}`)
-
-  return data
-}
-
-
+  return data;
+};
 /**
  * Generic master API fetcher
  */
 const fetchMaster = async (
   endpoint: string,
-  params: Record<string, any> = {}
+  params: Record<string, any> = {},
 ): Promise<MasterApiResponse> => {
-
   const filteredParams = Object.fromEntries(
     Object.entries(params).filter(
-      ([_, value]) => value !== "" && value !== undefined
-    )
-  )
+      ([_, value]) => value !== "" && value !== undefined,
+    ),
+  );
 
-  const query = new URLSearchParams(filteredParams).toString()
+  const query = new URLSearchParams(filteredParams).toString();
 
-  const { data } = await api.get(`${endpoint}?${query}`)
+  const { data } = await api.get(`${endpoint}?${query}`);
 
-  return data
-}
-
+  return data;
+};
 
 /**
  * Generic performance API fetcher
  */
 const fetchPerformance = async (endpoint: string, params: any) => {
+  const query = new URLSearchParams(params).toString();
 
-  const query = new URLSearchParams(params).toString()
+  const { data } = await api.get(`${endpoint}?${query}`);
 
-  const { data } = await api.get(`${endpoint}?${query}`)
-
-  return data
-}
-
+  return data;
+};
 
 /* ========================================================================== */
 /*                             TANSTACK QUERY HOOKS                           */
@@ -146,41 +132,47 @@ export const useDashboardSummary = (filters?: any) => {
     queryKey: ["dashboard-summary", filters],
     queryFn: () => getDashboardSummaryCards(filters),
     staleTime: 1000 * 60 * 5,
-  })
-}
-
+  });
+};
 
 /**
  * Yearly Sales Trend Hook
  */
-export const useYearlySalesTrend = (
-  year: string,
-  filters?: any
-) => {
+export const useYearlySalesTrend = (year: string, filters?: any) => {
+  const yearlyFilters = React.useMemo(() => {
+    if (!filters) return {};
+
+    const { month, ...rest } = filters;
+    return rest;
+  }, [filters]);
 
   return useQuery({
-    queryKey: ["yearly-sales-trend", year, filters],
-    queryFn: () => getYearlySalesTrend(year, filters),
-    select: (data) => transformChartData(data.Result),
-  })
-}
+    queryKey: ["yearly-sales-trend", year, JSON.stringify(yearlyFilters)],
 
+    queryFn: () => getYearlySalesTrend(year, yearlyFilters),
+
+    select: (data) => transformChartData(data.Result),
+
+    // keepPreviousData: true,
+  });
+};
 
 /**
  * Monthly Sales Trend Hook
  */
 export const useMonthlySalesTrend = (
   year: string,
-  filters?: any
+  month?: string | null,
+  filters?: any,
 ) => {
-
   return useQuery({
-    queryKey: ["monthly-sales-trend", year, filters],
-    queryFn: () => getMonthlySalesTrend(year, filters),
-    select: (data) => transformChartData(data.Result),
-  })
-}
+    queryKey: ["monthly-sales-trend", year, month, filters],
 
+    queryFn: () => getMonthlySalesTrend(year, month, filters),
+
+    select: (data) => transformChartData(data.Result),
+  });
+};
 
 /* ========================================================================== */
 /*                           GENERIC MASTER DROPDOWN HOOK                     */
@@ -190,22 +182,20 @@ const useMasterDropdown = (
   key: string,
   endpoint: string,
   params: Record<string, any>,
-  enabled = true
+  enabled = true,
 ) => {
-
   return useQuery<SelectOption[]>({
     queryKey: [key, ...Object.values(params)],
 
     queryFn: async () => {
-      const data = await fetchMaster(endpoint, params)
-      return mapOptions(data)
+      const data = await fetchMaster(endpoint, params);
+      return mapOptions(data);
     },
 
     enabled,
     staleTime: 1000 * 60 * 5,
-  })
-}
-
+  });
+};
 
 /* ========================================================================== */
 /*                             MASTER DROPDOWN HOOKS                          */
@@ -215,49 +205,35 @@ const useMasterDropdown = (
  * Regions Dropdown
  */
 export const useRegions = (search: string) =>
-  useMasterDropdown("regions", "get_regions_list", { search })
-
+  useMasterDropdown("regions", "get_regions_list", { search });
 
 /**
  * Warehouses Dropdown
  */
-export const useWarehouses = (
-  regionId: string,
-  search: string
-) =>
+export const useWarehouses = (regionId: string, search: string) =>
   useMasterDropdown(
     "warehouses",
     "get_warehouses_list",
     { region_id: regionId, search },
-    !!regionId
-  )
-
+    !!regionId,
+  );
 
 /**
  * Material Groups Dropdown
  */
 export const useMaterialGroups = (search: string) =>
-  useMasterDropdown(
-    "material-groups",
-    "get_material_types_list",
-    { search }
-  )
-
+  useMasterDropdown("material-groups", "get_material_types_list", { search });
 
 /**
  * Brands Dropdown
  */
-export const useBrands = (
-  materialTypeId: string,
-  search: string
-) =>
+export const useBrands = (materialTypeId: string, search: string) =>
   useMasterDropdown(
     "brands",
     "get_brands_list",
     { material_type_id: materialTypeId, search },
-    !!materialTypeId
-  )
-
+    !!materialTypeId,
+  );
 
 /**
  * Materials Dropdown
@@ -265,7 +241,7 @@ export const useBrands = (
 export const useMaterials = (
   materialTypeId: string,
   brandId: string,
-  search: string
+  search: string,
 ) =>
   useMasterDropdown(
     "materials",
@@ -275,9 +251,8 @@ export const useMaterials = (
       brand_id: brandId,
       search,
     },
-    !!materialTypeId
-  )
-
+    !!materialTypeId,
+  );
 
 /* ========================================================================== */
 /*                         PERFORMANCE ANALYTICS HOOKS                        */
@@ -291,9 +266,8 @@ export const useRegionPerformance = (filters: any) => {
     queryKey: ["region-performance", filters],
     queryFn: () => fetchPerformance("get_region_performance", filters),
     enabled: !!filters,
-  })
-}
-
+  });
+};
 
 /**
  * Brand Performance
@@ -303,9 +277,8 @@ export const useBrandPerformance = (filters: any) => {
     queryKey: ["brand-performance", filters],
     queryFn: () => fetchPerformance("get_brand_performance", filters),
     enabled: !!filters,
-  })
-}
-
+  });
+};
 
 /**
  * Material Group Performance
@@ -313,12 +286,10 @@ export const useBrandPerformance = (filters: any) => {
 export const useMaterialGroupPerformance = (filters: any) => {
   return useQuery({
     queryKey: ["material-group-performance", filters],
-    queryFn: () =>
-      fetchPerformance("get_material_group_performance", filters),
+    queryFn: () => fetchPerformance("get_material_group_performance", filters),
     enabled: !!filters,
-  })
-}
-
+  });
+};
 
 /**
  * Customer Segment Performance
@@ -329,5 +300,5 @@ export const useCustomerSegmentPerformance = (filters: any) => {
     queryFn: () =>
       fetchPerformance("get_customer_segment_performance", filters),
     enabled: !!filters,
-  })
-}
+  });
+};
