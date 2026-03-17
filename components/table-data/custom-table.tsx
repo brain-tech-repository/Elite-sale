@@ -59,7 +59,7 @@ export function CommonDataTable<T>({
 
   return (
     <>
-      <div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-sm">
+      <div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-sm pt-2">
         {title && (
           <div className="px-4 py-3 border-b border-gray-200">
             <h3 className="text-base font-semibold text-gray-800">{title}</h3>
@@ -70,7 +70,7 @@ export function CommonDataTable<T>({
             <table className="w-full border-collapse text-sm">
               {/* Header */}
 
-              <thead className="sticky top-0 bg-gradient-to-r from-blue-100 via-white to-sky-200 text-gray-800">
+              <thead className="sticky top-0 bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] text-gray-800">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -157,7 +157,7 @@ export function CommonDataTable<T>({
               type="button"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-green-200 hover:via-white hover:to-red-200 disabled:opacity-40"
+              className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-sky-400 hover:via-white hover:to-blue-300 disabled:opacity-40"
             >
               Previous
             </button>
@@ -166,7 +166,7 @@ export function CommonDataTable<T>({
               type="button"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-green-200 hover:via-white hover:to-red-200 disabled:opacity-40"
+              className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-sky-400 hover:via-white hover:to-blue-300 disabled:opacity-40"
             >
               Next
             </button>

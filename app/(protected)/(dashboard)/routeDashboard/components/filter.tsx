@@ -98,7 +98,7 @@ export default function MyForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 max-w-7xl mx-auto py-4 px-2"
+        className="space-y-2 max-w-7xl mx-auto py-1 px-2"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
           {/* ================= Date Range ================= */}

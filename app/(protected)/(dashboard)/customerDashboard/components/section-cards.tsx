@@ -36,7 +36,7 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 }
 
 type Props = {
-  filters: SalesFilterPayload | null;
+  filters?: SalesFilterPayload;
 };
 
 export function SectionCards({ filters }: Props) {
@@ -47,31 +47,32 @@ export function SectionCards({ filters }: Props) {
     {
       title: "Today",
       value: result.today ?? 0,
-      color: "bg-blue-50",
+      color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
     },
     {
       title: "This Month",
       value: result.this_month ?? 0,
-      color: "bg-green-50",
+      color: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
     },
     {
       title: "Total Customer",
       value: result.total_customer ?? 0,
-      color: "bg-indigo-50",
+      color: "bg-gradient-to-r from-[#134E5E] to-[#71B280] text-white",
     },
     {
       title: "Pending Approval",
       value: result.pending_approval ?? 0,
-      color: "bg-amber-50",
+      color:
+        "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364] text-white",
     },
   ];
   return (
-    <Card className="grid grid-cols-1 gap-3 shadow-sm px-5">
+    <Card className="grid grid-cols-1 gap-1 shadow-sm px-5">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
-          <Card className={`py-1 px-3 shadow-sm ${card.color}`}>
+          <Card className={`py-3 px-3 shadow-sm ${card.color}`}>
             <CardHeader className="">
-              <CardDescription className="text-sm font-semibold text-muted-foreground">
+              <CardDescription className="text-sm font-semibold text-white">
                 {card.title}
               </CardDescription>
               <CardTitle className="text-base font-semibold tabular-nums">

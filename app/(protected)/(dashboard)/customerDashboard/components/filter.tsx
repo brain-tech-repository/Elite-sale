@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { toast } from "sonner";
-
 import {
   Form,
   FormField,
@@ -13,11 +11,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Button } from "@/components/ui/button";
-
 import { Calendar } from "@/components/ui/calendar";
-
 import {
   Popover,
   PopoverContent,
@@ -36,7 +31,7 @@ import {
   useRoutes,
 } from "../useCustomers";
 
-import { MultiSelect } from "@/components/ui/multi-select";
+import { AutoComplete } from "@/components/ui/autocomplete";
 
 import {
   SalesFilterFormValues,
@@ -44,27 +39,32 @@ import {
   salesFilterSchema,
 } from "../types";
 
-/* ========================================================================== */
-/*                                   PROPS                                    */
-/* ========================================================================== */
+/* =========================
+   COMPONENT
+========================= */
 
 type Props = {
   onFilter: (filters: SalesFilterPayload) => void;
 };
 
-/* ========================================================================== */
-/*                                 COMPONENT                                  */
-/* ========================================================================== */
-
 export default function MyForm({ onFilter }: Props) {
+  /* SEARCH STATES */
+
+  const [regionSearch, setRegionSearch] = useState("");
+  const [warehouseSearch, setWarehouseSearch] = useState("");
+  const [salesAreaSearch, setSalesAreaSearch] = useState("");
+  const [routeSearch, setRouteSearch] = useState("");
+
+  /* FORM */
+
   const form = useForm<SalesFilterFormValues>({
     resolver: zodResolver(salesFilterSchema),
     defaultValues: {
       dateRange: undefined,
-      region: [],
-      warehouse: [],
-      sales_area: [],
-      route: [],
+      region: "",
+      warehouse: "",
+      sales_area: "",
+      route: "",
     },
   });
 
@@ -78,72 +78,63 @@ export default function MyForm({ onFilter }: Props) {
 
   const { data: regions = [] } = useRegions();
 
-  const { data: warehouses = [] } = useWarehouses(
-    regionValue?.join(",") || "0",
-  );
+  const { data: warehouses = [] } = useWarehouses(regionValue);
 
-  const { data: salesAreas = [] } = useSalesAreas(
-    warehouseValue?.join(",") || "0",
-  );
+  const { data: salesAreas = [] } = useSalesAreas(warehouseValue);
 
-  const { data: routes = [] } = useRoutes(salesAreaValue?.join(",") || "0");
+  const { data: routes = [] } = useRoutes(salesAreaValue);
 
   /* RESET DEPENDENT FIELDS */
 
   useEffect(() => {
-    form.setValue("warehouse", []);
-    form.setValue("sales_area", []);
-    form.setValue("route", []);
+    form.setValue("warehouse", "");
+    form.setValue("sales_area", "");
+    form.setValue("route", "");
   }, [regionValue]);
 
   useEffect(() => {
-    form.setValue("sales_area", []);
-    form.setValue("route", []);
+    form.setValue("sales_area", "");
+    form.setValue("route", "");
   }, [warehouseValue]);
 
   useEffect(() => {
-    form.setValue("route", []);
+    form.setValue("route", "");
   }, [salesAreaValue]);
 
-  /* ====================================================================== */
-  /*                                  SUBMIT                                */
-  /* ====================================================================== */
+  /* SUBMIT */
 
   function onSubmit(values: SalesFilterFormValues) {
-    if (!values.dateRange?.from || !values.dateRange?.to) {
-      toast.error("Please select date range");
-      return;
-    }
-
     const filters: SalesFilterPayload = {
-      fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
-      todate: format(values.dateRange.to, "yyyy-MM-dd"),
+      fromdate: values.dateRange?.from
+        ? format(values.dateRange.from, "yyyy-MM-dd")
+        : "",
 
-      region_id: values.region?.join(",") || "0",
-      warehouse_id: values.warehouse?.join(",") || "0",
-      sales_area_id: values.sales_area?.join(",") || "0",
-      route_id: values.route?.join(",") || "0",
+      todate: values.dateRange?.to
+        ? format(values.dateRange.to, "yyyy-MM-dd")
+        : "",
+
+      region_id: values.region || "0",
+      warehouse_id: values.warehouse || "0",
+      sales_area_id: values.sales_area || "0",
+      route_id: values.route || "0",
+      page: 1,
+      length: 10,
     };
 
     onFilter(filters);
-
     toast.success("Filters applied");
   }
-
-  /* ====================================================================== */
-  /*                                   UI                                   */
-  /* ====================================================================== */
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-7xl mx-auto py-4 px-2"
+        className="space-y-2 max-w-7xl mx-auto py-1 px-2"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5">
           {/* DATE RANGE */}
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="dateRange"
             render={({ field }) => {
@@ -188,7 +179,7 @@ export default function MyForm({ onFilter }: Props) {
                 </FormItem>
               );
             }}
-          />
+          /> */}
 
           {/* REGION */}
 
@@ -199,10 +190,13 @@ export default function MyForm({ onFilter }: Props) {
               <FormItem>
                 <FormLabel>Region</FormLabel>
 
-                <MultiSelect
+                <AutoComplete
+                  enableSelectAll
                   options={regions}
-                  defaultValue={form.getValues("region")}
-                  onValueChange={field.onChange}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setRegionSearch(text.trim())}
+                  placeholder="Select region"
                 />
 
                 <FormMessage />
@@ -219,11 +213,14 @@ export default function MyForm({ onFilter }: Props) {
               <FormItem>
                 <FormLabel>Warehouse</FormLabel>
 
-                <MultiSelect
+                <AutoComplete
+                  enableSelectAll
                   options={warehouses}
-                  defaultValue={form.getValues("warehouse")}
-                  onValueChange={field.onChange}
-                  disabled={!regionValue?.length}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setWarehouseSearch(text.trim())}
+                  placeholder="Select warehouse"
+                  disabled={!regionValue}
                 />
 
                 <FormMessage />
@@ -240,11 +237,14 @@ export default function MyForm({ onFilter }: Props) {
               <FormItem>
                 <FormLabel>Sales Area</FormLabel>
 
-                <MultiSelect
+                <AutoComplete
+                  enableSelectAll
                   options={salesAreas}
-                  defaultValue={form.getValues("sales_area")}
-                  onValueChange={field.onChange}
-                  disabled={!warehouseValue?.length}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setSalesAreaSearch(text.trim())}
+                  placeholder="Select sales area"
+                  disabled={!warehouseValue}
                 />
 
                 <FormMessage />
@@ -260,36 +260,37 @@ export default function MyForm({ onFilter }: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Route</FormLabel>
-
-                <MultiSelect
+                <AutoComplete
+                  enableSelectAll
                   options={routes}
-                  defaultValue={form.getValues("route")}
-                  onValueChange={field.onChange}
-                  disabled={!salesAreaValue?.length}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setRouteSearch(text.trim())}
+                  placeholder="Select route"
+                  disabled={!salesAreaValue}
                 />
 
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <div className="flex gap-x-6 lg:pt-5">
+            <Button type="submit" variant="outline" className="shadow-sm">
+              Filter
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="shadow-sm"
+              onClick={() => form.reset()}
+            >
+              Reset
+            </Button>
+          </div>
         </div>
 
         {/* BUTTONS */}
-
-        <div className="flex gap-6 pt-2">
-          <Button type="submit" variant="outline" className="shadow-sm">
-            Filter
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="shadow-sm"
-            onClick={() => form.reset()}
-          >
-            Reset
-          </Button>
-        </div>
       </form>
     </Form>
   );

@@ -63,7 +63,7 @@ export function NavMain({
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton
                         asChild
-                        className="transition-all duration-200 hover:bg-blue-100 hover:text-blue-600 data-[active=true]:bg-pink-100 data-[active=true]:text-pink-600 rounded-md"
+                        className="transition-all duration-200 text-white hover:bg-blue-100 hover:text-blue-600 data-[active=true]:bg-pink-100 data-[active=true]:text-pink-600 rounded-md"
                       >
                         <Link
                           href={subItem.url}

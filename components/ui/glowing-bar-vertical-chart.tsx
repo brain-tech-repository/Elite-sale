@@ -30,25 +30,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Legend } from "recharts";
+import { Legend, ResponsiveContainer } from "recharts";
 
 export const description = "A bar chart";
+
+/* ---------------- CUSTOM LEGEND RENDERER ---------------- */
+/* ---------------- CUSTOM LEGEND ---------------- */
+
+const renderCustomLegend = (props: any) => {
+  const { payload } = props;
+
+  return (
+    <ul className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-x-4 gap-y-2 mb-6 pl-6 sm:pl-10">
+      {payload.map((entry: any, index: number) => (
+        <li
+          key={`item-${index}`}
+          className="flex items-center gap-2 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground"
+        >
+          <div
+            className="h-2 w-2 rounded-full shrink-0"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="truncate">{entry.value}</span>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 /* ---------------- REGION COLOR PALETTE ---------------- */
 
 const regionColors = [
-  "#3b82f6",
-  "#ef4444",
-  "#22c55e",
-  "#f59e0b",
-  "#a855f7",
-  "#06b6d4",
-  "#ec4899",
-  "#84cc16",
-  "#f97316",
-  "#6366f1",
+  "#5887eb", // blue
+  "#2ebe8e", // emerald
+  "#7476f1", // indigo
+  "#24b9a8", // teal
+  "#617591", // slate
+  "#2d99b4", // cyan
+  "#6059eb", // violet
+  "#059669", // green
 ];
-
 /* ---------------- CHART CONFIG ---------------- */
 
 const chartConfig = {
@@ -73,105 +94,82 @@ export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
   const [activeProperty, setActiveProperty] =
     React.useState<ActiveProperty>("all");
 
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  /* ... existing imports and renderCustomLegend ... */
+
+  // export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
+  // ... existing state and useEffect ...
+
   return (
     <Card>
-      <CardHeader>
-        <div className="flex flex-row justify-between">
-          <CardTitle>
-            Vertical Bar Chart
-            <Badge
-              variant="outline"
-              className="text-red-500 bg-red-500/10 border-none ml-2"
-            >
-              <TrendingDown className="h-4 w-4" />
-              <span>-5.2%</span>
-            </Badge>
-          </CardTitle>
-
-          {/* REGION FILTER */}
-          <Select
-            value={activeProperty}
-            onValueChange={(value: ActiveProperty) =>
-              setActiveProperty(value)
-            }
-          >
-            <SelectTrigger className="text-xs !h-6 !px-1.5">
-              <SelectValue placeholder="Select a property" />
-            </SelectTrigger>
-
-            <SelectContent align="end">
-              <SelectGroup>
-                <SelectLabel>Properties</SelectLabel>
-
-                <SelectItem className="text-xs" value="all">
-                  All
-                </SelectItem>
-
-                {regions.map((region) => (
-                  <SelectItem
-                    key={region}
-                    className="text-xs"
-                    value={region}
-                  >
-                    {region}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <CardDescription>January - June 2025</CardDescription>
-      </CardHeader>
+      <CardHeader>{/* ... existing Header content ... */}</CardHeader>
 
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={data}
-            layout="vertical"
-            margin={{ left: -15 }}
-          >
-            <YAxis
-              type="category"
-              dataKey="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value: string) => value.slice(0, 3)}
-            />
+        <ChartContainer
+          config={chartConfig}
+          /* Increased height on mobile (h-[450px]) to fit legend + graph */
+          className="w-full h-[500px] sm:h-[350px]"
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              accessibilityLayer
+              data={data}
+              layout="vertical"
+              /* Added top: 40 to give the legend room. 
+                 Changed left: 10 so the Y-Axis labels aren't cut off.
+              */
+              margin={{ left: 10, right: 10, top: 40, bottom: 10 }}
+            >
+              <YAxis
+                type="category"
+                dataKey="category"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value: string) => value.slice(0, 3)}
+              />
 
-            <XAxis
-              type="number"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              hide
-            />
+              <XAxis type="number" hide />
 
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
 
-               <Legend verticalAlign="top" height={36} />
+              <Legend
+                verticalAlign="top"
+                align="center"
+                content={renderCustomLegend}
+              />
 
-            {/* DYNAMIC REGION BARS */}
-      {regions.map((region, index) => (
-  <Bar
-    key={region}
-    stackId="a"
-    barSize={8}
-    dataKey={region}
-    fill={regionColors[index % regionColors.length]}
-    radius={4}
-    shape={(props:any) => (
-      <CustomGradientBar {...props} activeProperty={activeProperty} />
-    )}
-    overflow="visible"
-  />
-))}
-          </BarChart>
+              {/* DYNAMIC REGION BARS */}
+              {regions.map((region, index) => (
+                <Bar
+                  key={region}
+                  stackId="a"
+                  barSize={12}
+                  dataKey={region}
+                  fill={regionColors[index % regionColors.length]}
+                  radius={4}
+                  shape={(props: any) => (
+                    <CustomGradientBar
+                      {...props}
+                      activeProperty={activeProperty}
+                    />
+                  )}
+                  overflow="visible"
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
     </Card>
@@ -184,13 +182,11 @@ const CustomGradientBar = (
   props: React.SVGProps<SVGRectElement> & {
     dataKey?: string;
     activeProperty?: string | "all";
-  }
+  },
 ) => {
-  const { fill, x, y, width, height, dataKey, activeProperty, radius } =
-    props;
+  const { fill, x, y, width, height, dataKey, activeProperty, radius } = props;
 
-  const isActive =
-    activeProperty === "all" || activeProperty === dataKey;
+  const isActive = activeProperty === "all" || activeProperty === dataKey;
 
   return (
     <>
@@ -219,11 +215,7 @@ const CustomGradientBar = (
           height="600%"
         >
           <feGaussianBlur stdDeviation="10" result="blur" />
-          <feComposite
-            in="SourceGraphic"
-            in2="blur"
-            operator="over"
-          />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
       </defs>
     </>

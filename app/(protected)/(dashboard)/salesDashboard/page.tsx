@@ -1,34 +1,24 @@
 "use client";
-
 import React from "react";
-
 /* UI COMPONENTS */
-
 import DataTableHeader from "@/components/table-data/data-table-header";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { CommonDataTable } from "@/components/table-data/custom-table";
-
 import { Card } from "@/components/ui/card";
 import { RoundedPieChart } from "@/components/ui/rounded-pie-chart";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
-import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
+import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle1";
 import { AnimatedHighlightedAreaChart } from "@/components/ui/animated-highlighted-chart";
-
 /* SKELETON */
-
 import {
   ChartSkeleton,
   TableSkeleton,
 } from "@/components/ui/dashboard-skeleton";
-
 /* LOCAL */
-
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
 import { performanceColumns } from "./components/columns";
-
 /* API */
-
 import {
   useBrandPerformance,
   useCustomerSegmentPerformance,
@@ -37,18 +27,14 @@ import {
   useRegionPerformance,
   useYearlySalesTrend,
 } from "./useSales";
-
 import { fallbackTableData } from "./components/data/fallback";
-
 export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<any>(null);
   const [year, setYear] = React.useState("2025");
-
   // Ensure this matches the string format your API/chart expects (e.g., "January")
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
     "January",
   );
-
   /* SALES TREND */
   const { data: monthlyData = [], isLoading: monthlyLoading } =
     useMonthlySalesTrend(year, selectedMonth, filters);

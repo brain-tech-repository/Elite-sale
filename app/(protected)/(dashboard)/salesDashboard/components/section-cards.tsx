@@ -8,12 +8,13 @@ import {
 } from "@/components/ui/card";
 import { useDashboardSummary } from "../useSales";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 // Utility to format numbers with commas (e.g., 1,000,000)
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-UG", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(amount);
 };
 
@@ -47,32 +48,39 @@ export function SectionCards({ filters }: Props) {
     {
       title: "Today Sales",
       value: result?.today_sales ?? 0,
-      color: "bg-blue-50 dark:bg-blue-900/20",
+      percentage: result?.today_sales_percentage ?? 0,
+      color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
     },
     {
       title: "Total Sales",
       value: result?.total_sales ?? 0,
-      color: "bg-purple-50 dark:bg-purple-900/20",
+      percentage: result?.total_sales_percentage ?? 0,
+      color: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
     },
     {
       title: "Today Collection",
       value: result?.today_collection ?? 0,
-      color: "bg-green-50 dark:bg-green-900/20",
+      percentage: result?.today_collection_percentage ?? 0,
+      color: "bg-gradient-to-r from-[#134E5E] to-[#71B280] text-white",
     },
     {
       title: "Total Collection",
       value: result?.total_collection ?? 0,
-      color: "bg-indigo-50 dark:bg-indigo-900/20",
+      percentage: result?.total_collection_percentage ?? 0,
+      color:
+        "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364] text-white",
     },
     {
       title: "Today Return",
       value: result?.today_return ?? 0,
-      color: "bg-amber-50 dark:bg-amber-900/20",
+      percentage: result?.today_return_percentage ?? 0,
+      color: "bg-gradient-to-r from-[#2b5876] to-[#4e4376] text-white",
     },
     {
       title: "Total Return",
       value: result?.total_return ?? 0,
-      color: "bg-rose-50 dark:bg-rose-900/20",
+      percentage: result?.total_return_percentage ?? 0,
+      color: "bg-gradient-to-r from-[#09203f] to-[#537895] text-white",
     },
   ];
 
@@ -94,12 +102,13 @@ export function SectionCards({ filters }: Props) {
       {cardsData.map((card, index) => (
         <AnimatedCard key={index} index={index}>
           <Card className={`rounded-xl border-none shadow-sm ${card.color}`}>
-            <CardHeader className="p-4 flex flex-col items-center lg:items-start space-y-1">
-              <CardDescription className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">
+            <CardHeader className="px-2 flex flex-col items-center lg:items-start ">
+              <CardDescription className="text-xs font-bold uppercase tracking-wider text-white dark:text-gray-400">
                 {card.title}
               </CardDescription>
-              <CardTitle className="text-md whitespace-nowrap">
-                <span className="text-xs  mr-1 text-gray-500">UGX</span>
+
+              <CardTitle className="text-md whitespace-nowrap text-white">
+                <span className="text-xs  mr-1 text-white">UGX</span>
                 {formatCurrency(card.value)}
               </CardTitle>
             </CardHeader>

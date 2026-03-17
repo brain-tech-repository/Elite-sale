@@ -11,8 +11,10 @@ import { CommonDataTable } from "@/components/table-data/custom-table";
 import { salesColumns } from "./components/columns";
 import { Card } from "@/components/ui/card";
 import VerticalComposedChart from "@/components/ui/VerticalComposedChart";
-import { HighlightedMultipleBarChart } from "@/components/ui/highlighted-double-bar-chart";
+// import { AdvancedBarChart } from "@/components/ui/highlighted-double-bar-chart";
 import { RainbowGlowGradientLineCharts } from "@/components/ui/rainbow-glow-gradient-lines";
+import GrowthLines from "@/components/growthlines";
+import { AdvancedBarChart } from "@/components/ui/advancebar";
 type Sale = {
   id: string;
   customer: string;
@@ -48,6 +50,26 @@ export default function Salesdashboa() {
       date: "28 Feb 2026",
     },
   ];
+
+  const datas: any[] = [
+    { label: "Sales Growth", value: 75 },
+    { label: "Customer Growth", value: 45 },
+    { label: "Revenue Growth", value: 90 },
+  ];
+
+  const salesTrend1 = [
+    { month: "Jan", desktop: 100 },
+    { month: "Feb", desktop: 8000 },
+    { month: "Mar", desktop: 4000 },
+    { month: "Apr", desktop: 2000 },
+  ];
+
+  const salesTrend2 = [
+    { month: "Jan", desktop: 8000 },
+    { month: "Feb", desktop: 1000 },
+    { month: "Mar", desktop: 2000 },
+    { month: "Apr", desktop: 7000 },
+  ];
   return (
     <>
       <div className="flex flex-1 flex-col">
@@ -69,9 +91,23 @@ export default function Salesdashboa() {
           </div>
           {/* TOP CHARTS */}
           <section className="grid gap-6 lg:px-6 px-1 pb-8 grid-cols-1 lg:grid-cols-3">
-            <VerticalComposedChart />
-            <HighlightedMultipleBarChart />
-            <GlowingLineChart />
+            <GrowthLines items={datas} />
+            <AdvancedBarChart />
+            <div className="flex flex-col gap-4">
+              <RainbowGlowGradientLineChart
+                height={160}
+                showYearSelector={false}
+                data={salesTrend1} // 👈 custom data
+                title="Sales Trend A"
+              />
+
+              <RainbowGlowGradientLineChart
+                height={160}
+                showYearSelector={false}
+                data={salesTrend2} // 👈 custom data
+                title="Sales Trend B"
+              />
+            </div>
           </section>
           {/* SECTION 1 */}
           <div className="lg:px-6 px-1 pb-8">
@@ -103,7 +139,7 @@ export default function Salesdashboa() {
                 />
               </div>
 
-              <RainbowGlowGradientLineCharts />
+              <RainbowGlowGradientLineChart />
             </section>
           </div>
           <div className="lg:px-6 px-1 pb-10">

@@ -4,7 +4,6 @@ import { Pie, PieChart, ResponsiveContainer } from "recharts";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -15,10 +14,7 @@ import {
   ChartTooltipContent,
   ChartConfig,
 } from "@/components/ui/chart";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp } from "lucide-react";
 import { Switch } from "./switch";
-import { Label } from "./label";
 
 /* ---------------- DATA ---------------- */
 
@@ -52,12 +48,11 @@ const renderNeedle = (
   outerRadius: number,
 ) => {
   const total = data.reduce((acc, cur) => acc + cur.value, 0);
-
   const angle = 180 * (value / total);
 
   const needleLength = innerRadius + (outerRadius - innerRadius) * 0.9;
-
   const rad = Math.PI / 180;
+
   const x = cx + needleLength * Math.cos(Math.PI - angle * rad);
   const y = cy - needleLength * Math.sin(Math.PI - angle * rad);
 
@@ -79,62 +74,61 @@ const renderNeedle = (
 /* ---------------- COMPONENT ---------------- */
 
 export function GaugePieChartCard() {
-  const cx = 150;
-  const cy = 130; // Reduced from 160 to pull the chart up
-  const innerRadius = 70;
+  const innerRadius = 60;
   const outerRadius = 100;
 
   return (
     <Card className="shadow-sm">
-      <CardHeader className="pb-2 py-2">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className=" py-0 gap-y-0">Performance Gauge</CardTitle>
+          <CardTitle>Performance Gauge</CardTitle>
         </div>
-        <div className="flex items-center space-x-4 text-sm  py-0 gap-y-0">
+
+        <div className="flex items-center space-x-4 text-sm">
           <span>DTM</span>
-          <Switch id="airplane-mode" />
+          <Switch id="mode" />
           <span>MTY</span>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0 mt-0">
-        <CardContent className="pt-0 mt-0">
-          <ChartContainer config={chartConfig}>
-            <div className="w-full h-[150px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    dataKey="value"
-                    startAngle={180}
-                    endAngle={0}
-                    cx="50%" // ✅ center horizontally
-                    cy="80%" // ✅ push down for semi-circle
-                    innerRadius={70}
-                    outerRadius={100}
-                  />
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          {/* ✅ Responsive wrapper */}
+          <div className="w-full h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  startAngle={180}
+                  endAngle={0}
+                  cx="50%" // ✅ always center
+                  cy="75%" // ✅ correct vertical position
+                  innerRadius={innerRadius}
+                  outerRadius={outerRadius}
+                />
 
-                  {renderNeedle(
-                    score,
-                    chartData,
-                    130, // keep center for needle calc (explained below)
-                    110,
-                    60,
-                    100,
-                  )}
+                {/* ✅ Needle centered dynamically */}
+                {renderNeedle(
+                  score,
+                  chartData,
+                  160, // safe center (works with responsive container)
+                  150,
+                  innerRadius,
+                  outerRadius,
+                )}
 
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </ChartContainer>
-        </CardContent>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </ChartContainer>
       </CardContent>
 
-      <CardFooter className="flex flex-col items-star text-sm p-0 m-0">
+      <CardFooter className="flex flex-col items-start gap-1 text-sm mt-12 pt-10">
         <div className="font-medium">
           Score: <span className="text-emerald-600">{score}%</span>
         </div>

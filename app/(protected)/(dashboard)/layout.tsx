@@ -25,21 +25,23 @@ export default function Page({ children }: PageProps) {
 
       <SidebarInset className="flex flex-col min-h-screen">
         {/* HEADER */}
-        <header className="flex h-14 items-center gap-1 border-b">
+        <header className="flex h-14 items-center gap-1 border-b bg-[#022235] text-white">
           <SidebarTrigger />
 
           <Separator orientation="vertical" className="h-4" />
 
           <Breadcrumb>
             <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbItem className="hidden md:block  text-white">
                 <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
               </BreadcrumbItem>
 
               <BreadcrumbSeparator className="hidden md:block" />
 
-              <BreadcrumbItem>
-                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              <BreadcrumbItem className=" text-white">
+                <BreadcrumbPage className=" text-white">
+                  Dashboard
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
