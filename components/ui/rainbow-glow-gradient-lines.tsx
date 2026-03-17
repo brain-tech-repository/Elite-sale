@@ -1,6 +1,13 @@
 "use client";
 
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+} from "recharts";
 
 import {
   Card,
@@ -21,12 +28,9 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingDown } from "lucide-react";
 
 const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
+  { month: "1", desktop: 3 },
+  { month: "10", desktop: 1 },
+  { month: "10", desktop: 2 },
 ];
 
 const chartConfig = {
@@ -55,72 +59,37 @@ export function RainbowGlowGradientLineCharts() {
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid
-              vertical={true}
-              horizontal={true}
-              strokeDasharray="3 3"
-            />
+        {/* 👇 fixed height container */}
+        <div className="h-[100px] w-full">
+          <ChartContainer config={chartConfig}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ left: 12, right: 12 }}>
+                <CartesianGrid strokeDasharray="3 3" />
 
-            {/* X Axis */}
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                />
 
-            {/* Y Axis with single vertical line */}
-            <YAxis tickLine={false} axisLine={true} width={30} />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
+                <YAxis tickLine={false} axisLine width={30} />
 
-            <Line
-              dataKey="desktop"
-              type="monotone"
-              stroke="url(#colorUv)"
-              dot={false}
-              strokeWidth={3}
-              filter="url(#rainbow-line-glow)"
-            />
-
-            <defs>
-              <linearGradient id="colorUv" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#0B84CE" stopOpacity={0.8} />
-                <stop offset="20%" stopColor="#224CD1" stopOpacity={0.8} />
-                <stop offset="40%" stopColor="#3A11C7" stopOpacity={0.8} />
-                <stop offset="60%" stopColor="#7107C6" stopOpacity={0.8} />
-                <stop offset="80%" stopColor="#C900BD" stopOpacity={0.8} />
-                <stop offset="100%" stopColor="#D80155" stopOpacity={0.8} />
-              </linearGradient>
-
-              <filter
-                id="rainbow-line-glow"
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-              >
-                <feGaussianBlur stdDeviation="8" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-          </LineChart>
-        </ChartContainer>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Line
+                  dataKey="desktop"
+                  type="monotone"
+                  stroke="#3b82f6"
+                  dot={false}
+                  strokeWidth={3}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );

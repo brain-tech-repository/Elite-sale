@@ -37,15 +37,18 @@ interface Props {
   showYearSelector?: boolean;
   year?: string;
   setYear?: (year: string) => void;
+  height?: number | string; // 👈 add this
 }
 
 const fallbackData = [
-  { month: "01", desktop: 120 },
-  { month: "02", desktop: 250 },
-  { month: "03", desktop: 180 },
-  { month: "04", desktop: 310 },
-  { month: "05", desktop: 220 },
-  { month: "06", desktop: 270 },
+  [
+    { month: "Jan", desktop: 120 },
+    { month: "Mar", desktop: 250 },
+    { month: "May", desktop: 180 },
+    { month: "Jul", desktop: 310 },
+    { month: "Sep", desktop: 220 },
+    { month: "Nov", desktop: 270 },
+  ],
 ];
 
 const years = Array.from({ length: 2030 - 2001 + 1 }, (_, i) =>
@@ -59,6 +62,7 @@ export function RainbowGlowGradientLineChart({
   showYearSelector = true,
   year,
   setYear,
+  height = 320, // 👈 default height
 }: Props) {
   const ITEMS_PER_PAGE = 15;
   const [page, setPage] = React.useState(0);
@@ -121,7 +125,10 @@ export function RainbowGlowGradientLineChart({
         )}
       </CardHeader>
 
-      <CardContent className="h-[320px] w-full">
+      <CardContent
+        className="w-full"
+        style={{ height: typeof height === "number" ? `${height}px` : height }}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}

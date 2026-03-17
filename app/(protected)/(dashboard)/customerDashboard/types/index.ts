@@ -1,61 +1,67 @@
-import { z } from "zod"
+import { z } from "zod";
 
 /* ========================================================================== */
 /*                               FILTER SCHEMA                                */
 /* ========================================================================== */
 
 export const salesFilterSchema = z.object({
-  dateRange: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
+  dateRange: z
+    .object({
+      from: z.date(),
+      to: z.date(),
+    })
+    .optional(),
 
-  region: z.array(z.string()).optional(),
+  region: z.string().optional(),
 
-  warehouse: z.array(z.string()).optional(),
+  warehouse: z.string().optional(),
 
-  sales_area: z.array(z.string()).optional(),
+  sales_area: z.string().optional(),
 
-  route: z.array(z.string()).optional(),
-})
+  route: z.string().optional(),
+});
 
-export type SalesFilterFormValues = z.infer<typeof salesFilterSchema>
-
-
+export type SalesFilterFormValues = z.infer<typeof salesFilterSchema>;
 
 /* ========================================================================== */
 /*                               FILTER PAYLOAD                               */
 /* ========================================================================== */
 
-export interface SalesFilterPayload {
-  fromdate: string
-  todate: string
+// export interface SalesFilterPayload {
+//   fromdate: string;
+//   todate: string;
 
-  region_id: string
-  warehouse_id: string
-  sales_area_id: string
-  route_id: string
-}
+//   region_id: string;
+//   warehouse_id: string;
+//   sales_area_id: string;
+//   route_id: string;
+// }
 
+export type SalesFilterPayload = {
+  fromdate: string;
+  todate: string;
 
+  sales_area_id?: string;
+  region_id?: string;
+  warehouse_id?: string;
+  route_id?: string;
+};
 
 /* ========================================================================== */
 /*                            GENERIC API RESPONSE                            */
 /* ========================================================================== */
 
 export interface ApiResponse<T = any> {
-  status: boolean
-  message?: string
-  data: T
+  status: boolean;
+  message?: string;
+  data: T;
 }
-
-
 
 /* ========================================================================== */
 /*                             SELECT OPTION TYPE                             */
 /* ========================================================================== */
 
 export interface SelectOption {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }

@@ -43,12 +43,23 @@ export interface SalesFilterPayload {
 /* ========================================================================== */
 
 export interface DashboardSummaryResult {
+  // Sales
   today_sales: number;
+  today_sales_percentage: number;
   total_sales: number;
+  total_sales_percentage: number;
+
+  // Collections
   today_collection: number;
+  today_collection_percentage: number;
   total_collection: number;
+  total_collection_percentage: number;
+
+  // Returns
   today_return: number;
+  today_return_percentage: number;
   total_return: number;
+  total_return_percentage: number;
 }
 
 export interface DashboardSummaryResponse {

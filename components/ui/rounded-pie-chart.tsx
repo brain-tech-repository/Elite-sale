@@ -33,12 +33,12 @@ export function RoundedPieChart({
   data = [],
 }: RoundedPieChartProps) {
   const colors = [
-    "#71c6f3", // light sky
-    "#6d7db9", // light indigo
-    "#73e6b0", // light green
-    "#9c93c2", // light violet
-    "#99F6E4", // light teal
-    "#859ead", // extra light blue
+    "#61bff1", // light sky
+    "#6377bd", // light indigo
+    "#69e6ab", // light green
+    "#8c81be", // light violet
+    "#83f3dd", // light teal
+    "#729ab3", // extra light blue
   ];
 
   const fallbackData: PieItem[] = [
@@ -82,7 +82,6 @@ export function RoundedPieChart({
     <Card className="flex flex-col shadow-sm py-6">
       <CardHeader className="items-center pb-0">
         <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col items-center p-0">
@@ -107,14 +106,14 @@ export function RoundedPieChart({
           </ResponsiveContainer>
         </ChartContainer>
         {/* Legend */}
-        <div className="flex flex-wrap justify-center gap-1 pt-2">
+        <div className="flex flex-wrap justify-center gap-1 lg:mt-12">
           {chartData.map((item) => {
             const isHidden = hidden.includes(item.name);
             return (
               <button
                 key={item.name}
                 onClick={() => toggleItem(item.name)}
-                className={`flex items-center gap-2 text-sm transition ${
+                className={`flex items-center gap-2 text-sm transition  ${
                   isHidden ? "opacity-40" : "opacity-100"
                 }`}
               >

@@ -1,137 +1,155 @@
 "use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
-
 import {
   Form,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
-/* =========================
-   SCHEMA
-========================= */
+import { useSalesAreas } from "../useCustomers";
 
-const formSchema = z.object({
-  region: z.string().min(1, "Region is required"),
-  warehouse: z.string().min(1, "Warehouse is required"),
-  Brand: z.string().min(1, "Brand is required"),
-  route: z.string().min(1, "Material group is required"),
-  sales_area: z.string().min(1, "Material is required"),
-});
+import { AutoComplete } from "@/components/ui/autocomplete";
 
-type FormValues = z.infer<typeof formSchema>;
+import {
+  SalesFilterFormValues,
+  SalesFilterPayload,
+  salesFilterSchema,
+} from "../types";
 
-/* =========================
-   COMPONENT
-========================= */
-
-export default function MyForm1() {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+type Props = {
+  onFilter: (filters: SalesFilterPayload) => void;
+};
+export default function MyForm({ onFilter }: Props) {
+  /* FORM */
+  const form = useForm<SalesFilterFormValues>({
+    resolver: zodResolver(salesFilterSchema),
     defaultValues: {
-      region: "",
-      warehouse: "",
-      Brand: "",
-      route: "",
+      dateRange: undefined,
       sales_area: "",
     },
   });
-
-  function onSubmit(values: FormValues) {
-    try {
-      console.log(values);
-      toast.success("Form submitted successfully!");
-    } catch (error) {
-      toast.error("Submission failed");
+  /* API */
+  const { data: salesAreas = [] } = useSalesAreas("");
+  /* SUBMIT */
+  function onSubmit(values: SalesFilterFormValues) {
+    if (!values.dateRange?.from || !values.dateRange?.to) {
+      toast.error("Please select date range");
+      return;
     }
+    const filters: SalesFilterPayload = {
+      fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
+      todate: format(values.dateRange.to, "yyyy-MM-dd"),
+      sales_area_id: values.sales_area || "0",
+      page: 1,
+      length: 10,
+    };
+    onFilter(filters);
+    toast.success("Filters applied");
   }
-
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-7xl mx-auto py-4 px-2"
+        className="space-y-4 max-w-5xl mx-auto py-1 px-2"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {/* ================= Region ================= */}
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+          {/* DATE RANGE */}
           <FormField
             control={form.control}
-            name="region"
+            name="dateRange"
+            render={({ field }) => {
+              const dateRange = field.value as DateRange | undefined;
+              const isDateSelected = dateRange?.from && dateRange?.to;
+              return (
+                <FormItem>
+                  <FormLabel>Date Range</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "pl-3 text-left font-normal shadow-sm w-full",
+                          !dateRange?.from && "text-muted-foreground",
+                        )}
+                      >
+                        {isDateSelected
+                          ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
+                              dateRange.to!,
+                              "dd/MM/yy",
+                            )}`
+                          : "Pick a date range"}
+
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+
+                    <PopoverContent align="start" className="p-0 w-auto">
+                      <Calendar
+                        mode="range"
+                        selected={dateRange}
+                        onSelect={(range) => field.onChange(range)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+          {/* SALES */}
+
+          <FormField
+            control={form.control}
+            name="sales_area"
             render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Region</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl className="w-full shadow-sm">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Region" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="north">North</SelectItem>
-                    <SelectItem value="south">South</SelectItem>
-                    <SelectItem value="west">West</SelectItem>
-                  </SelectContent>
-                </Select>
+              <FormItem>
+                <FormLabel>Sales</FormLabel>
+                <AutoComplete
+                  enableSelectAll
+                  options={salesAreas}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder="Select sales"
+                />
                 <FormMessage />
               </FormItem>
             )}
           />
+          <div className="flex gap-6 pt-6">
+            <Button type="submit" variant="outline" className="shadow-sm">
+              Filter
+            </Button>
 
-          {/* ================= Warehouse ================= */}
-          <FormField
-            control={form.control}
-            name="warehouse"
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Warehouse</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl className="w-full shadow-sm">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Warehouse" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="wh1">Warehouse 1</SelectItem>
-                    <SelectItem value="wh2">Warehouse 2</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <Button
+              type="button"
+              variant="outline"
+              className="shadow-sm"
+              onClick={() => form.reset()}
+            >
+              Reset
+            </Button>
+          </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex w-full justify-start gap-6 pt-2">
-          <Button type="submit" variant="outline" className="shadow-sm">
-            Filter
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="shadow-sm"
-            onClick={() => form.reset()}
-          >
-            Reset
-          </Button>
-        </div>
+        {/* BUTTONS */}
       </form>
     </Form>
   );

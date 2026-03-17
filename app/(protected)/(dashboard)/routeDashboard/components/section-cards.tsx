@@ -1,81 +1,25 @@
 "use client";
 
-import { motion, useAnimation } from "framer-motion";
-import { useState } from "react";
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
-
-import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 import {
   Card,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 
-const cardsData = [
-  {
-    title: "New Customers",
-    value: "1,234",
-    trend: -20,
-    message: "Needs attention",
-    footer: "Down 20%",
-    color: "bg-blue-50",
-  },
-  {
-    title: "Return Customers",
-    value: "123",
-    trend: -20,
-    message: "Needs attention",
-    footer: "Down 20%",
-    color: "bg-purple-50",
-  },
-  {
-    title: "Active Accounts",
-    value: "4,567",
-    trend: 1.5,
-    message: "Exceeds target",
-    footer: "Strong retention",
-    color: "bg-green-50",
-  },
-
-  {
-    title: "Refund Rate",
-    value: "1.2%",
-    trend: -2,
-    message: "Improved quality",
-    footer: "Lower refunds",
-    color: "bg-rose-50",
-  },
-];
-
-function AnimatedCard({ children }: { children: React.ReactNode }) {
-  const controls = useAnimation();
-  const [hovered, setHovered] = useState(false);
-
-  const handleHoverStart = async () => {
-    setHovered(true);
-    await controls.start({
-      rotateY: 360,
-      transition: { duration: 0.7, ease: "easeInOut" },
-    });
-    controls.set({ rotateY: 0 });
-  };
-
-  const handleHoverEnd = () => {
-    setHovered(false);
-    controls.stop();
-    controls.set({ rotateY: 0 });
-  };
-
+function AnimatedCard({
+  children,
+  index,
+}: {
+  children: React.ReactNode;
+  index: number;
+}) {
   return (
     <motion.div
-    // style={{ perspective: 1000 }}
-    // animate={controls}
-    // onHoverStart={handleHoverStart}
-    // onHoverEnd={handleHoverEnd}
-    // whileHover={{ scale: 1.04 }}
-    // className="transition-all duration-200 hover:shadow-xl rounded-lg"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.08 }}
     >
       {children}
     </motion.div>
@@ -83,58 +27,50 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 }
 
 export function SectionCards() {
+  const statsData = [
+    {
+      title: "Total Routes",
+      value: 69,
+      color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
+
+      //
+    },
+    {
+      title: "Total Salesmans",
+      value: 74,
+      color: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
+    },
+    {
+      title: "Total Customers",
+      value: 8622,
+      color: "bg-gradient-to-r from-[#134E5E] to-[#71B280]",
+    },
+    {
+      title: "Avg. Customers / Route",
+      value: 125,
+      color: "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364]",
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {cardsData.map((card, index) => {
-        const isPositive = card.trend > 0;
-        const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown;
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {statsData.map((card, index) => (
+        <AnimatedCard key={index} index={index}>
+          <Card
+            className={`rounded-xl border-none shadow-md hover:shadow-xl transition-all duration-300 text-white ${card.color}`}
+          >
+            <CardHeader className="flex flex-col gap-2 px-4">
+              <CardDescription className="text-xs uppercase tracking-wide text-white/80">
+                {card.title}
+              </CardDescription>
 
-        return (
-          <AnimatedCard key={index}>
-            <Card
-              className={`p-4 shadow-sm hover:shadow-xl transition-all duration-300 rounded-xl border  shadow-sm ${card.color}`}
-            >
-              <CardHeader className="p-2 flex justify-between items-start">
-                <div className="space-y-1">
-                  <CardDescription className="text-sm font-medium text-muted-foreground">
-                    {card.title}
-                  </CardDescription>
-
-                  <CardTitle className="text-2xl font-bold tabular-nums tracking-tight">
-                    {card.value}
-                  </CardTitle>
-                </div>
-
-                <Badge
-                  variant="outline"
-                  className={`text-xs px-2 py-1 flex items-center gap-1 ${
-                    isPositive
-                      ? "text-green-600 border-green-200"
-                      : "text-red-600 border-red-200"
-                  }`}
-                >
-                  <TrendIcon className="size-3" />
-                  {card.trend > 0 ? "+" : ""}
-                  {card.trend}%
-                </Badge>
-              </CardHeader>
-
-              <CardFooter className="flex-col items-start gap-1 text-xs p-1 mt-1">
-                <div
-                  className={`flex items-center gap-1 font-medium ${
-                    isPositive ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  {card.footer}
-                  <TrendIcon className="size-3" />
-                </div>
-
-                <div className="text-muted-foreground">{card.message}</div>
-              </CardFooter>
-            </Card>
-          </AnimatedCard>
-        );
-      })}
+              <CardTitle className="text-2xl font-bold">
+                {card.value.toLocaleString("en-IN")}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        </AnimatedCard>
+      ))}
     </div>
   );
 }
