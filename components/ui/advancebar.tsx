@@ -11,139 +11,174 @@ import {
   Cell,
 } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { name: "Page A", desktop: 18400, mobile: 12400, tablet: 8200 },
-  { name: "Page B", desktop: 21000, mobile: 13980, tablet: 11000 },
-  { name: "Page C", desktop: 15200, mobile: 19800, tablet: 14500 },
-  //   { name: "Page D", desktop: 28000, mobile: 11000, tablet: 9000 },
-];
-
+// ✅ Updated config
 const chartConfig = {
-  desktop: { label: "Desktop", color: "var(--chart-1)" },
-  mobile: { label: "Mobile", color: "var(--chart-2)" },
-  tablet: { label: "Tablet", color: "var(--chart-3)" },
-} satisfies ChartConfig;
+  completion: { label: "Completion", color: "var(--chart-1)" },
+  success: { label: "Success", color: "var(--chart-2)" },
+  incompletion: { label: "Incompletion", color: "var(--chart-3)" },
+};
 
-export function AdvancedBarChart() {
+export function AdvancedBarChart({ data = [] }: { data: any[] }) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
   const formatYAxis = (value: number): string => {
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(0)}K`;
-    }
-    return value.toString(); // ✅ convert to string
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+    return value.toString();
+  };
+
+  // ✅ Updated keys
+  const [visibleKeys] = React.useState({
+    completion: true,
+    success: true,
+    incompletion: true,
+  });
+
+  const [hiddenKeys, setHiddenKeys] = React.useState<string[]>([]);
+
+  const handleLegendClick = (dataKey: string) => {
+    setHiddenKeys((prev) =>
+      prev.includes(dataKey)
+        ? prev.filter((key) => key !== dataKey)
+        : [...prev, dataKey],
+    );
   };
 
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle>High-Density Traffic Metrics</CardTitle>
-        <CardDescription>Optimized spacing & responsive layout</CardDescription>
       </CardHeader>
 
-      {/* Reduced horizontal padding */}
       <CardContent className="px-2">
         <ChartContainer config={chartConfig} className="w-full min-h-[350px]">
           <BarChart
-            data={chartData}
-            barGap={10} // space between bars in same group
-            barCategoryGap="10%" // space between groups (fix shrink issue)
-            margin={{ top: 20, right: 10, left: 10, bottom: 5 }} // reduced side spacing
+            data={data}
+            barGap={10}
+            barCategoryGap="10%"
+            margin={{ top: 20, right: 1, left: 1, bottom: 5 }}
             onMouseLeave={() => setActiveIndex(null)}
           >
+            {/* Gradient */}
             <defs>
-              <linearGradient id="desktopGradient" x1="0" y1="0" x2="1" y2="0">
+              <linearGradient
+                id="completionGradient"
+                x1="0"
+                y1="0"
+                x2="1"
+                y2="0"
+              >
                 <stop offset="0%" stopColor="#0F2027" />
                 <stop offset="50%" stopColor="#203A43" />
                 <stop offset="100%" stopColor="#2C5364" />
               </linearGradient>
             </defs>
+
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
 
-            <XAxis dataKey="name" tickLine={false} axisLine={false} />
+            {/* X Axis */}
+            {/* <XAxis
+              dataKey="name"
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(value: string, index: number) =>
+                index % 10 === 0 ? value : ""
+              }
+            /> */}
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              axisLine={false}
+              interval={9} // 👈 shows every 10th item (01, 11, 21...)
+            />
 
+            {/* Y Axis */}
             <YAxis
               tickLine={false}
               axisLine={false}
-              width={20}
+              width={30}
               tickFormatter={formatYAxis}
             />
 
+            {/* Tooltip */}
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 
-            <Legend verticalAlign="top" align="right" />
+            {/* Legend */}
+            <Legend
+              verticalAlign="top"
+              align="right"
+              onClick={(e: any) => handleLegendClick(e.dataKey)}
+            />
 
-            {/* Desktop */}
-            <Bar
-              dataKey="desktop"
-              fill="url(#desktopGradient)" // ✅ use gradient here
-              radius={[10, 10, 0, 0]}
-              maxBarSize={50} // responsive thickness
-            >
-              {chartData.map((_, i) => (
-                <Cell
-                  key={`desktop-${i}`}
-                  fillOpacity={
-                    activeIndex === null || activeIndex === i ? 1 : 0.3
-                  }
-                  onMouseEnter={() => setActiveIndex(i)}
-                  className="transition-all duration-200"
-                />
-              ))}
-            </Bar>
+            {/* ✅ Completion */}
+            {visibleKeys.completion && (
+              <Bar
+                dataKey="completion"
+                fill="url(#completionGradient)"
+                radius={[10, 10, 0, 0]}
+                maxBarSize={50}
+                hide={hiddenKeys.includes("completion")}
+              >
+                {data.map((_, i) => (
+                  <Cell
+                    key={`completion-${i}`}
+                    fillOpacity={
+                      activeIndex === null || activeIndex === i ? 1 : 0.3
+                    }
+                    onMouseEnter={() => setActiveIndex(i)}
+                  />
+                ))}
+              </Bar>
+            )}
 
-            {/* Mobile */}
-            <Bar
-              dataKey="mobile"
-              fill="var(--color-mobile)"
-              radius={[10, 10, 0, 0]}
-              maxBarSize={50}
-            >
-              {chartData.map((_, i) => (
-                <Cell
-                  key={`mobile-${i}`}
-                  fillOpacity={
-                    activeIndex === null || activeIndex === i ? 1 : 0.3
-                  }
-                  onMouseEnter={() => setActiveIndex(i)}
-                  className="transition-all duration-200"
-                />
-              ))}
-            </Bar>
+            {/* ✅ Success */}
+            {visibleKeys.success && (
+              <Bar
+                dataKey="success"
+                fill="var(--chart-2)"
+                radius={[10, 10, 0, 0]}
+                maxBarSize={50}
+                hide={hiddenKeys.includes("success")}
+              >
+                {data.map((_, i) => (
+                  <Cell
+                    key={`success-${i}`}
+                    fillOpacity={
+                      activeIndex === null || activeIndex === i ? 1 : 0.3
+                    }
+                    onMouseEnter={() => setActiveIndex(i)}
+                  />
+                ))}
+              </Bar>
+            )}
 
-            {/* Tablet */}
-            <Bar
-              dataKey="tablet"
-              fill="var(--color-tablet)"
-              radius={[10, 10, 0, 0]}
-              maxBarSize={50}
-            >
-              {chartData.map((_, i) => (
-                <Cell
-                  key={`tablet-${i}`}
-                  fillOpacity={
-                    activeIndex === null || activeIndex === i ? 1 : 0.3
-                  }
-                  onMouseEnter={() => setActiveIndex(i)}
-                  className="transition-all duration-200"
-                />
-              ))}
-            </Bar>
+            {/* ✅ Incompletion */}
+            {visibleKeys.incompletion && (
+              <Bar
+                dataKey="incompletion"
+                fill="var(--chart-3)"
+                radius={[10, 10, 0, 0]}
+                maxBarSize={50}
+                hide={hiddenKeys.includes("incompletion")}
+              >
+                {data.map((_, i) => (
+                  <Cell
+                    key={`incompletion-${i}`}
+                    fillOpacity={
+                      activeIndex === null || activeIndex === i ? 1 : 0.3
+                    }
+                    onMouseEnter={() => setActiveIndex(i)}
+                  />
+                ))}
+              </Bar>
+            )}
           </BarChart>
         </ChartContainer>
       </CardContent>

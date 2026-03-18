@@ -30,54 +30,40 @@ import {
 } from "@/components/ui/popover";
 
 import { AutoComplete, AutoCompleteOption } from "@/components/ui/autocomplete";
+import {
+  useRegions,
+  useRoutes,
+  useSubregion,
+  useWarehouses,
+} from "../useRoutes";
+
+type Props = {
+  onFilter: (filters: any) => void;
+};
 
 /* =========================
    SCHEMA
 ========================= */
-
 const formSchema = z.object({
-  dateRange: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
-  region: z.string().min(1, "Region is required"),
-  sub_region: z.string().min(1, "Sub Region is required"),
-  warehouse: z.string().min(1, "Warehouse is required"),
-  routes: z.string().min(1, "Route is required"),
+  dateRange: z
+    .object({
+      from: z.date(),
+      to: z.date(),
+    })
+    .optional(),
+  region: z.string().optional(),
+  sub_region: z.string().optional(),
+  warehouse: z.string().optional(),
+  routes: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 /* =========================
-   OPTIONS
-========================= */
-
-const regionOptions: AutoCompleteOption[] = [
-  { value: "north", label: "North" },
-  { value: "south", label: "South" },
-  { value: "west", label: "West" },
-];
-
-const subRegionOptions: AutoCompleteOption[] = [
-  { value: "sub1", label: "Sub Region 1" },
-  { value: "sub2", label: "Sub Region 2" },
-];
-
-const warehouseOptions: AutoCompleteOption[] = [
-  { value: "wh1", label: "Warehouse 1" },
-  { value: "wh2", label: "Warehouse 2" },
-];
-
-const routeOptions: AutoCompleteOption[] = [
-  { value: "route1", label: "Route 1" },
-  { value: "route2", label: "Route 2" },
-];
-
-/* =========================
    COMPONENT
 ========================= */
 
-export default function MyForm() {
+export default function MyForm({ onFilter }: Props) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,8 +75,43 @@ export default function MyForm() {
     },
   });
 
+  /* WATCH VALUES */
+
+  const regionValue = form.watch("region");
+  const subRegionValue = form.watch("sub_region");
+  const warehouseValue = form.watch("warehouse");
+
+  /* API DATA */
+
+  const { data: regions = [] } = useRegions();
+
+  const { data: subRegion = [] } = useSubregion(regionValue);
+
+  const { data: warehouse = [] } = useWarehouses(subRegionValue);
+
+  const { data: routes = [] } = useRoutes(warehouseValue);
+
   function onSubmit(values: FormValues) {
-    console.log(values);
+    const payload = {
+      fromdate: values.dateRange?.from
+        ? format(values.dateRange.from, "yyyy-MM-dd")
+        : "",
+
+      todate: values.dateRange?.to
+        ? format(values.dateRange.to, "yyyy-MM-dd")
+        : "",
+
+      region_id: values.region || "0",
+      sub_region_id: values.sub_region || "0",
+      warehouse_id: values.warehouse || "0",
+      route_id: values.routes || "0",
+
+      page: 1,
+      length: 10,
+    };
+
+    onFilter(payload); // 🔥 THIS IS MAIN THING
+
     toast.success("Filters applied successfully!");
   }
 
@@ -163,8 +184,8 @@ export default function MyForm() {
 
                 <FormControl>
                   <AutoComplete
-                    options={regionOptions}
-                    value={field.value}
+                    options={regions}
+                    value={field.value ?? ""}
                     onChange={field.onChange}
                     placeholder="Select Region"
                     searchPlaceholder="Search region..."
@@ -188,8 +209,8 @@ export default function MyForm() {
 
                 <FormControl>
                   <AutoComplete
-                    options={subRegionOptions}
-                    value={field.value}
+                    options={subRegion}
+                    value={field.value ?? ""}
                     onChange={field.onChange}
                     placeholder="Select Sub Region"
                     searchPlaceholder="Search sub region..."
@@ -213,8 +234,8 @@ export default function MyForm() {
 
                 <FormControl>
                   <AutoComplete
-                    options={warehouseOptions}
-                    value={field.value}
+                    options={warehouse}
+                    value={field.value ?? ""}
                     onChange={field.onChange}
                     placeholder="Select Warehouse"
                     searchPlaceholder="Search warehouse..."
@@ -238,8 +259,8 @@ export default function MyForm() {
 
                 <FormControl>
                   <AutoComplete
-                    options={routeOptions}
-                    value={field.value}
+                    options={routes}
+                    value={field.value ?? ""}
                     onChange={field.onChange}
                     placeholder="Select Route"
                     searchPlaceholder="Search route..."

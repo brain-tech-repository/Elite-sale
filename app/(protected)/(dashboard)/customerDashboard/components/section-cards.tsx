@@ -42,11 +42,11 @@ type Props = {
 export function SectionCards({ filters }: Props) {
   const { data, isLoading } = useDashboardSummary(filters);
 
-  const result = data?.data || {};
+  const result = data || {};
   const cardsData = [
     {
       title: "Today",
-      value: result.today ?? 0,
+      value: result.completion_rate ?? 0,
       color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
     },
     {

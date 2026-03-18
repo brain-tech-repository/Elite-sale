@@ -72,6 +72,12 @@ export function RainbowGlowGradientLineChart({
 
   const chartData = data && data.length > 0 ? data : fallbackData;
 
+  // const firstLabel = chartData[0]?.month;
+
+  // const isNumeric = !isNaN(Number(firstLabel));
+
+  // const customTicks = isNumeric ? ["1", "11", "21", "31"] : undefined;
+
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between">
@@ -140,13 +146,39 @@ export function RainbowGlowGradientLineChart({
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-
-            <XAxis dataKey="month" tickLine={false} axisLine={false} />
-
+            {/* UPDATED X-AXIS */}
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              interval="preserveStartEnd" // Guarantees the first and last items (e.g., 1 and 31) render
+              minTickGap={20} // Forces Recharts to space ticks out mathematically (e.g., 1, 5, 10, 15)
+              tickMargin={10} // Adds a little breathing room below the line
+              tick={{ fontSize: 12 }}
+            />
+            {/* 3. Pass the custom ticks and force interval to 0 */}
+            {/* <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              ticks={customTicks}
+              interval={isNumeric ? 0 : "preserveStartEnd"}
+            /> */}
             <YAxis
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `${value / 1000}k`}
+              tickFormatter={(value: number) => {
+                if (value >= 1_000_000_000) {
+                  return `${(value / 1_000_000_000).toFixed(1)}B`;
+                }
+                if (value >= 1_000_000) {
+                  return `${(value / 1_000_000).toFixed(1)}M`;
+                }
+                if (value >= 1_000) {
+                  return `${(value / 1_000).toFixed(1)}K`;
+                }
+                return value.toString();
+              }}
             />
 
             <Tooltip formatter={(value: number) => [`${value}`, "Sales"]} />

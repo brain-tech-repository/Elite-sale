@@ -27,24 +27,17 @@ export type SalesFilterFormValues = z.infer<typeof salesFilterSchema>;
 /*                               FILTER PAYLOAD                               */
 /* ========================================================================== */
 
-// export interface SalesFilterPayload {
-//   fromdate: string;
-//   todate: string;
-
-//   region_id: string;
-//   warehouse_id: string;
-//   sales_area_id: string;
-//   route_id: string;
-// }
-
 export type SalesFilterPayload = {
-  fromdate: string;
-  todate: string;
+  fromdate?: string;
+  todate?: string;
 
-  sales_area_id?: string;
   region_id?: string;
   warehouse_id?: string;
+  sales_area_id?: string;
   route_id?: string;
+
+  page?: number;
+  length?: number;
 };
 
 /* ========================================================================== */
