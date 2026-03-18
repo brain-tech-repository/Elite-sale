@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import {
   Card,
@@ -7,6 +6,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { useDashboardSummary } from "../useRoutes";
+import { SalesFilterPayload } from "../types";
 
 function AnimatedCard({
   children,
@@ -26,28 +27,35 @@ function AnimatedCard({
   );
 }
 
-export function SectionCards() {
+type Props = {
+  filters?: SalesFilterPayload;
+};
+
+export function SectionCards({ filters }: Props) {
+  const { data, isLoading } = useDashboardSummary(filters);
+  const result = data?.data || {};
+
   const statsData = [
     {
       title: "Total Routes",
-      value: 69,
+      value: result?.total_routes ?? 0,
       color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
 
       //
     },
     {
       title: "Total Salesmans",
-      value: 74,
+      value: result?.total_salesmen ?? 0,
       color: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
     },
     {
       title: "Total Customers",
-      value: 8622,
+      value: result?.total_customers ?? 0,
       color: "bg-gradient-to-r from-[#134E5E] to-[#71B280]",
     },
     {
-      title: "Avg. Customers / Route",
-      value: 125,
+      title: "Avg. Customers per Route",
+      value: result?.avg_customers_per_route ?? 0,
       color: "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364]",
     },
   ];

@@ -83,10 +83,10 @@ export default function MyForm1() {
   return (
     <>
       <Form {...form}>
-        <DataTableHeader title="Route Performance" />
+        {/* <DataTableHeader title="Route Performance" /> */}
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 max-w-7xl mx-auto py-4 px-2"
+          className="space-y-1 max-w-7xl mx-auto py-1 px-2"
         >
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 lg:px-4">
             {/* ================= Date Range ================= */}
