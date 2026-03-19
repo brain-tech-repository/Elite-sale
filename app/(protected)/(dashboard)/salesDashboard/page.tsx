@@ -7,7 +7,6 @@ import { CommonDataTable } from "@/components/table-data/custom-table";
 import { Card } from "@/components/ui/card";
 import { RoundedPieChart } from "@/components/ui/rounded-pie-chart";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
-import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle1";
 import { AnimatedHighlightedAreaChart } from "@/components/ui/animated-highlighted-chart";
 /* SKELETON */
 import {
@@ -28,6 +27,8 @@ import {
   useYearlySalesTrend,
 } from "./useSales";
 import { fallbackTableData } from "./components/data/fallback";
+// import { GaugeChart } from "@/components/ui/PieChartWithNeedle";
+import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
 export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<any>(null);
   const [year, setYear] = React.useState("2025");
@@ -127,37 +128,45 @@ export default function Salesdashboa() {
         <SectionCards filters={filters} />
 
         {/* TOP CHARTS */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1   lg:grid-cols-[38%_38%_24%] gap-1 items-stretch">
           {yearlyLoading ? (
             <ChartSkeleton />
           ) : (
-            <RainbowGlowGradientLineChart
-              title="Sales By Yearly Trends"
-              description={`Sales overview for ${year}`}
-              data={yearlyData}
-              year={year}
-              setYear={setYear}
-            />
+            <div>
+              <RainbowGlowGradientLineChart
+                height={220}
+                title="Sales By Yearly Trends"
+                description={`Sales overview for ${year}`}
+                data={yearlyData}
+                year={year}
+                setYear={setYear}
+              />
+            </div>
           )}
 
           {monthlyLoading ? (
             <ChartSkeleton />
           ) : (
-            <AnimatedHighlightedAreaChart
-              title="Sales By Monthly Trends"
-              data={monthlyData}
-              selectedMonth={selectedMonth}
-              setSelectedMonth={setSelectedMonth}
-            />
+            <div>
+              <AnimatedHighlightedAreaChart
+                height={220}
+                title="Sales By Monthly Trends"
+                data={monthlyData}
+                selectedMonth={selectedMonth}
+                setSelectedMonth={setSelectedMonth}
+              />
+            </div>
           )}
 
-          <GaugePieChartCard />
+          <div>
+            <GaugePieChartCard />
+          </div>
         </section>
 
         {/* REGION */}
         <section>
           <DataTableSubHeader title="Region Performance" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             {regionLoading ? (
               <>
                 <TableSkeleton />
@@ -189,7 +198,7 @@ export default function Salesdashboa() {
         {/* BRAND */}
         <section>
           <DataTableSubHeader title="Brand Performance" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 ">
             {brandLoading ? (
               <>
                 <TableSkeleton />
@@ -221,7 +230,7 @@ export default function Salesdashboa() {
         {/* MATERIAL */}
         <section>
           <DataTableSubHeader title="Material Group" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             {materialLoading ? (
               <>
                 <TableSkeleton />
@@ -253,7 +262,7 @@ export default function Salesdashboa() {
         {/* CUSTOMER */}
         <section>
           <DataTableSubHeader title="Customer Segment Performance" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             {customerLoading ? (
               <>
                 <TableSkeleton />
