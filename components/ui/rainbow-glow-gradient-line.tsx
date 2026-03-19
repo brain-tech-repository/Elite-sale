@@ -81,7 +81,7 @@ export function RainbowGlowGradientLineChart({
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between">
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className=" text-sm">{title}</CardTitle>
         {/* <CardDescription>
             {description} {showYearSelector && year}
           </CardDescription> */}
@@ -89,7 +89,7 @@ export function RainbowGlowGradientLineChart({
         {showYearSelector && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="w-[100px]">
+              <Button variant="outline" className="w-[100px] text-sm">
                 {year}
               </Button>
             </PopoverTrigger>
@@ -107,7 +107,7 @@ export function RainbowGlowGradientLineChart({
                   </Button>
                 ))}
               </div>
-              <div className="flex justify-between mt-3">
+              <div className="flex justify-between ">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -135,7 +135,7 @@ export function RainbowGlowGradientLineChart({
         className="w-full"
         style={{ height: typeof height === "number" ? `${height}px` : height }}
       >
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="106%" height="100%">
           <LineChart
             data={chartData}
             margin={{
@@ -151,7 +151,7 @@ export function RainbowGlowGradientLineChart({
               dataKey="month"
               tickLine={false}
               axisLine={false}
-              interval="preserveStartEnd" // Guarantees the first and last items (e.g., 1 and 31) render
+              interval={1} // Guarantees the first and last items (e.g., 1 and 31) render
               minTickGap={20} // Forces Recharts to space ticks out mathematically (e.g., 1, 5, 10, 15)
               tickMargin={10} // Adds a little breathing room below the line
               tick={{ fontSize: 12 }}
@@ -165,6 +165,8 @@ export function RainbowGlowGradientLineChart({
               interval={isNumeric ? 0 : "preserveStartEnd"}
             /> */}
             <YAxis
+              width={60}
+              tickCount={7}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value: number) => {

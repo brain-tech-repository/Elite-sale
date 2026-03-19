@@ -42,11 +42,11 @@ type Props = {
 export function SectionCards({ filters }: Props) {
   const { data, isLoading } = useDashboardSummary(filters);
 
-  const result = data || {};
+  const result = data?.data || {};
   const cardsData = [
     {
       title: "Today",
-      value: result.completion_rate ?? 0,
+      value: result.today ?? 0,
       color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
     },
     {
@@ -70,7 +70,7 @@ export function SectionCards({ filters }: Props) {
     <Card className="grid grid-cols-1 gap-1 shadow-sm px-5">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
-          <Card className={`py-3 px-3 shadow-sm ${card.color}`}>
+          <Card className={`py-2 px-2 shadow-sm ${card.color}`}>
             <CardHeader className="">
               <CardDescription className="text-sm font-semibold text-white">
                 {card.title}

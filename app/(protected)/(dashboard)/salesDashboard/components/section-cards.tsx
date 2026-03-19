@@ -17,6 +17,12 @@ const formatCurrency = (amount: number) => {
     maximumFractionDigits: 2,
   }).format(amount);
 };
+const formateCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-UG", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
 
 function AnimatedCard({
   children,
@@ -98,18 +104,19 @@ export function SectionCards({ filters }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-1">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index} index={index}>
-          <Card className={`rounded-xl border-none shadow-sm ${card.color}`}>
+          <Card
+            className={`rounded-xl border-none shadow-sm  p-3 ${card.color}`}
+          >
             <CardHeader className="px-2 flex flex-col items-center lg:items-start ">
               <CardDescription className="text-xs font-bold uppercase tracking-wider text-white dark:text-gray-400">
                 {card.title}
               </CardDescription>
-
-              <CardTitle className="text-md whitespace-nowrap text-white">
+              <CardTitle className="text-xs whitespace-nowrap text-white">
                 <span className="text-xs  mr-1 text-white">UGX</span>
-                {formatCurrency(card.value)}
+                {formateCurrency(card.value)}
               </CardTitle>
             </CardHeader>
           </Card>

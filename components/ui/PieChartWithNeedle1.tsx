@@ -18,7 +18,7 @@ import { Switch } from "./switch";
 
 /* ---------------- DATA ---------------- */
 
-const score = 80;
+const score = 70;
 
 const chartData = [
   { name: "Low", value: 33, fill: "#38c1eb" },
@@ -81,7 +81,7 @@ export function GaugePieChartCard() {
     <Card className="shadow-sm">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle>Performance Gauge</CardTitle>
+          <CardTitle className="text-sm">Performance Gauge</CardTitle>
         </div>
 
         <div className="flex items-center space-x-4 text-sm">
@@ -94,7 +94,7 @@ export function GaugePieChartCard() {
       <CardContent>
         <ChartContainer config={chartConfig}>
           {/* ✅ Responsive wrapper */}
-          <div className="w-full h-[220px]">
+          <div className="w-full h-[150px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -109,15 +109,7 @@ export function GaugePieChartCard() {
                 />
 
                 {/* ✅ Needle centered dynamically */}
-                {renderNeedle(
-                  score,
-                  chartData,
-                  160, // safe center (works with responsive container)
-                  150,
-                  innerRadius,
-                  outerRadius,
-                )}
-
+                {renderNeedle(score, chartData, 140, 110, 100, 110)}
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent hideLabel />}
@@ -128,7 +120,7 @@ export function GaugePieChartCard() {
         </ChartContainer>
       </CardContent>
 
-      <CardFooter className="flex flex-col items-start gap-1 text-sm mt-12 pt-10">
+      <CardFooter className="flex flex-col items-start gap-1 text-sm ">
         <div className="font-medium">
           Score: <span className="text-emerald-600">{score}%</span>
         </div>

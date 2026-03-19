@@ -34,6 +34,7 @@ interface Props {
   data?: { month: string; desktop: number }[];
   selectedMonth?: string | null;
   setSelectedMonth?: (month: string | null) => void;
+  height?: number; // 👈 NEW
 }
 
 const months = [
@@ -57,6 +58,7 @@ export function AnimatedHighlightedAreaChart({
   data = [],
   selectedMonth,
   setSelectedMonth,
+  height = 320, // 👈 default height
 }: Props) {
   /* FIX: We removed the .slice() logic here. 
      The monthly data for days 01-31 is already handled by your useMonthlySalesTrend hook.
@@ -67,7 +69,7 @@ export function AnimatedHighlightedAreaChart({
 
   return (
     <Card className="shadow-sm">
-      <CardHeader className="flex flex-row items-start justify-between">
+      <CardHeader className="flex flex-row items-start justify-between text-sm">
         <CardTitle>{title}</CardTitle>
 
         {/* Month Filter UI - UNCHANGED */}
@@ -95,13 +97,13 @@ export function AnimatedHighlightedAreaChart({
         </Popover>
       </CardHeader>
 
-      <CardContent className="h-[320px] w-full">
+      <CardContent style={{ height }} className="w-full">
         {chartData.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             No sales data available
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="105%" height="100%">
             <AreaChart
               data={chartData}
               margin={{
@@ -114,17 +116,30 @@ export function AnimatedHighlightedAreaChart({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="month"
+                type="number" // 👈 VERY IMPORTANT
+                domain={[1, 31]} // 👈 define range
+                ticks={[1, 5, 10, 15, 20, 25, 30]}
                 tickLine={false}
                 axisLine={false}
-                /* This ensures only these specific days show up on the bottom axis */
-                ticks={["01", "11", "21", "31"]}
-                tickFormatter={(value) => String(Number(value))}
               />
               <YAxis
+                width={55} // 👈 control axis width (increase if labels cut)
+                tickCount={7} // 👈 control number of ticks (reduce gap)
                 tickLine={false}
                 axisLine={false}
                 /* Strictly uses k (thousands) for all values */
-                tickFormatter={(value) => `${value / 1000}k`}
+                tickFormatter={(value: number) => {
+                  if (value >= 1_000_000_000) {
+                    return `${(value / 1_000_000_000).toFixed(1)}B`;
+                  }
+                  if (value >= 1_000_000) {
+                    return `${(value / 1_000_000).toFixed(1)}M`;
+                  }
+                  if (value >= 1_000) {
+                    return `${(value / 1_000).toFixed(1)}K`;
+                  }
+                  return value.toString();
+                }}
               />
 
               <Tooltip

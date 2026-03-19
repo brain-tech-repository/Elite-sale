@@ -4,7 +4,7 @@ import { useState } from "react";
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
-import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
+import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle1";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { GlowingBarVerticalChart } from "@/components/ui/glowing-bar-vertical-chart";
@@ -128,13 +128,14 @@ export default function CustomerDashboard() {
         </div>
 
         {/* 3. KPI & TREND SECTION: Uses 'gap-6' for inner grid spacing and 'mb-6' for section separation */}
-        <section className="grid gap-6 px-4 mb-6 grid-cols-1 lg:grid-cols-3">
+        <section className="grid gap-1 px-4 mb-6 grid-cols-1  lg:grid-cols-[28%_44%_28%] gap-1 items-stretch">
           <SectionCards filters={globalFilters} />
 
           {monthlyLoading ? (
             <ChartSkeleton />
           ) : (
             <RainbowGlowGradientLineChart
+              height={300}
               title="Monthly Trend of Customers Creation"
               showYearSelector={false}
               data={monthlyTrend}
@@ -143,11 +144,11 @@ export default function CustomerDashboard() {
             />
           )}
 
-          <div className="flex flex-col gap-3">
-            <Card className="shadow-sm md:px-8 gap-y-0 py-1">
+          <div className="flex flex-col gap-1">
+            <Card className="shadow-sm md:px-8 py-1">
               <CardContent className="flex items-center justify-between text-center">
                 <div className="text-md">
-                  <div className="text-green-600 font-semibold text-xl">
+                  <div className="text-green-600 font-semibold text-sm">
                     12%
                   </div>
                   <span className="font-medium text-sm text-muted-foreground">
@@ -156,11 +157,11 @@ export default function CustomerDashboard() {
                 </div>
                 <div className="text-sm">
                   <p>
-                    <span className="font-medium">Current:</span>{" "}
+                    <span className="font-small">Current:</span>{" "}
                     <span className="text-green-600 font-semibold">83.33%</span>
                   </p>
                   <p>
-                    <span className="font-medium">Last:</span>{" "}
+                    <span className="font-small">Last:</span>{" "}
                     <span className="text-red-500 font-semibold">75.00%</span>
                   </p>
                 </div>
