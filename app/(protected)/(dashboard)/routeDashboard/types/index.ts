@@ -11,7 +11,6 @@ export const salesFilterSchema = z.object({
       to: z.date(),
     })
     .optional(),
-
   region: z.string().optional(),
 
   warehouse: z.string().optional(),
@@ -20,7 +19,6 @@ export const salesFilterSchema = z.object({
 
   route: z.string().optional(),
 });
-
 export type SalesFilterFormValues = z.infer<typeof salesFilterSchema>;
 
 /* ========================================================================== */
@@ -60,10 +58,47 @@ export interface SelectOption {
 }
 
 export type Sale = {
-  id: string;
-  customer: string;
-  product: string;
-  amount: number;
-  status: "Completed" | "Pending" | "Cancelled";
-  date: string;
+  sno: number;
+  route: string;
+  warehouse: string;
+  salesman: string;
+
+  totalCustomer: number;
+  totalVisitDays: number;
+  plannedVisit: number;
+  unplannedVisit: number;
+
+  dropRate: number; // ✅ ADD THIS
+  avgTimeSpend: string; // ✅ ADD THIS
+  totalInvoice: number; // ✅ ADD THIS
+  avgInvoicePerDay: number; // ✅ ADD THIS
+
+  salesValue: number; // ✅ ADD THIS
+  salesPerDay: number; // ✅ ADD THIS
+
+  totalCollection: number; // ✅ ADD THIS
+  collectionPerDay: number; // ✅ ADD THIS
+  pendingCollection: number; // ✅ ADD THIS
+};
+
+export type RouteSales = {
+  route: string;
+  todaySales: number;
+  yesterdaySales: number;
+  weeklySales: number;
+  last14DaysSales: number;
+  monthSales: number;
+  quarterSales: number;
+  yearSales: number;
+};
+
+export type RouteExpense = {
+  route: string;
+  totalExpense: number;
+};
+
+export type RouteSalesCollection = {
+  route: string;
+  totalSales: number;
+  totalCollection: number;
 };

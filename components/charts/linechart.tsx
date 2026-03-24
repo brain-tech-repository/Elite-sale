@@ -39,7 +39,7 @@ export default function Example({
   description = "January - June 2024", // Default description
 }: RoundedPieChartProps) {
   return (
-    <Card className="flex flex-col shadow-sm">
+    <Card className="flex flex-col shadow-xm">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>January - July 2024</CardDescription>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
-import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle1";
+import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { GlowingBarVerticalChart } from "@/components/ui/glowing-bar-vertical-chart";
@@ -23,8 +23,37 @@ import {
   ChartSkeleton,
   TableSkeleton,
 } from "@/components/ui/dashboard-skeleton";
+import { SectionCardsSkeleton } from "@/components/ui/SectionCardsSkeleton";
 
 export default function CustomerDashboard() {
+  const dummyTableData = [
+    {
+      serial_no: 1,
+      date: "2026-03-18",
+      customer_code: "CUS00857",
+      customer_category_name: "Cosmetic Store",
+      customer_name: "PAMELLA B.CENTRE",
+      last_transaction: "38,509,000.00",
+      total_collection: "0.00",
+      total_invoice_value: "0.00",
+      amount: "0.00",
+      total_invoice_amount: "38,509,000.00",
+      per_day: "38,509,000.00",
+    },
+    {
+      serial_no: 2,
+      date: "2026-03-17",
+      customer_code: "CUS00999",
+      customer_category_name: "Retail Store",
+      customer_name: "ABC MART",
+      last_transaction: "12,000.00",
+      total_collection: "5,000.00",
+      total_invoice_value: "7,000.00",
+      amount: "2,000.00",
+      total_invoice_amount: "12,000.00",
+      per_day: "6,000.00",
+    },
+  ];
   /* =========================
      STATE MANAGEMENT
   ========================= */
@@ -72,12 +101,14 @@ export default function CustomerDashboard() {
      TABLE API CALL
   ========================= */
 
-  const { data: tableDataRes, isLoading } =
-    useTopCustomersTable(mergedTableFilters);
+  const {
+    data: tableDataRes,
+    isLoading,
+    isError,
+  } = useTopCustomersTable(mergedTableFilters);
 
   // Extract table data safely
-  const tableData = tableDataRes?.tableData || [];
-
+  const tableData = tableDataRes?.tableData ?? [];
   // Extract pagination info from API
   const pagination = tableDataRes?.pagination;
 
@@ -108,13 +139,13 @@ export default function CustomerDashboard() {
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col">
         {/* 1. PAGE HEADER SECTION: Standardized padding */}
-        <header className="py-8 px-4">
+        <header className="py-8 px-2">
           <DataTableHeader title="Customers Dashboard" />
         </header>
 
         {/* 2. TOP FILTER SECTION: Consistent bottom margin to separate from KPI */}
-        <div className="px-4 mb-8">
-          <Card className="shadow-sm lg:px-5">
+        <div className="px-2 mb-8">
+          <Card className="shadow-xm lg:px-5">
             <MyForm
               onFilter={(f) => {
                 setGlobalFilters(f);
@@ -128,8 +159,12 @@ export default function CustomerDashboard() {
         </div>
 
         {/* 3. KPI & TREND SECTION: Uses 'gap-6' for inner grid spacing and 'mb-6' for section separation */}
-        <section className="grid gap-1 px-4 mb-6 grid-cols-1  lg:grid-cols-[28%_44%_28%] gap-1 items-stretch">
-          <SectionCards filters={globalFilters} />
+        <section className="grid gap-1 px-2 mb-6 grid-cols-1  lg:grid-cols-[28%_44%_28%] gap-1 items-stretch">
+          {monthlyLoading ? (
+            <SectionCardsSkeleton />
+          ) : (
+            <SectionCards filters={globalFilters} />
+          )}
 
           {monthlyLoading ? (
             <ChartSkeleton />
@@ -145,8 +180,8 @@ export default function CustomerDashboard() {
           )}
 
           <div className="flex flex-col gap-1">
-            <Card className="shadow-sm md:px-8 py-1">
-              <CardContent className="flex items-center justify-between text-center">
+            <Card className="shadow-xm md:px-8 py-1">
+              <CardContent className="flex items-center justify-between text-center py-0">
                 <div className="text-md">
                   <div className="text-green-600 font-semibold text-sm">
                     12%
@@ -173,7 +208,7 @@ export default function CustomerDashboard() {
         </section>
 
         {/* 4. REGION CHART SECTION: Standardized SubHeader spacing */}
-        <section className="px-4 mb-6">
+        <section className="px-2 mb-6">
           <div className="mb-4">
             <DataTableSubHeader title="Customers By Region" />
           </div>
@@ -190,11 +225,11 @@ export default function CustomerDashboard() {
         </section>
 
         {/* 5. TABLE FILTER SECTION: Consistent with section above */}
-        <section className="px-4 mb-6">
+        <section className="px-2 mb-6">
           <div className="mb-4">
             <DataTableSubHeader title="Filter Records" />
           </div>
-          <Card className="shadow-sm">
+          <Card className="shadow-xm">
             <MyForm1
               onFilter={(f) =>
                 setTableFilters((prev) => ({
@@ -208,21 +243,21 @@ export default function CustomerDashboard() {
         </section>
 
         {/* 6. DATA TABLE SECTION: Bottom padding to finish the page */}
-        <section className="px-4 pb-12">
-          <Card className="shadow-sm">
-            {isLoading ? (
-              <TableSkeleton />
-            ) : (
-              <CommonDataTable
-                columns={performanceColumns}
-                data={tableData}
-                headerTitle="Top Customers"
-                pagination={pagination}
-                onNext={handleNext}
-                onPrev={handlePrev}
-              />
-            )}
-          </Card>
+        <section className="px-2 pb-12">
+          {/* <Card className="shadow-xm"> */}
+          {isLoading ? (
+            <TableSkeleton />
+          ) : (
+            <CommonDataTable
+              columns={performanceColumns}
+              data={tableData}
+              headerTitle="Top Customers"
+              pagination={pagination}
+              onNext={handleNext}
+              onPrev={handlePrev}
+            />
+          )}
+          {/* </Card> */}
         </section>
       </div>
     </div>

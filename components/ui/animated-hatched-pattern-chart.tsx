@@ -60,7 +60,7 @@ export function AnimatedHatchedPatternAreaChart({
     React.useState<ActiveProperty | null>(null);
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>

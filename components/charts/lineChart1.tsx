@@ -33,7 +33,7 @@ const data = [
 
 export default function LineCharts1() {
   return (
-    <Card className="flex flex-col w-full max-w-sm shadow-sm">
+    <Card className="flex flex-col w-full max-w-sm shadow-xm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           Traffic Overview

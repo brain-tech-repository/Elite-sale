@@ -95,8 +95,8 @@ export function AdvancedBarChart({ data = [] }: { data: any[] }) {
             <XAxis
               dataKey="name"
               tickLine={false}
-              axisLine={false}
-              interval={9} // 👈 shows every 10th item (01, 11, 21...)
+              axisLine={true} // ✅ show axis line
+              interval={2} // 👈 shows every 10th item (01, 11, 21...)
             />
 
             {/* Y Axis */}

@@ -150,7 +150,7 @@ export default function MyForm({ onFilter }: Props) {
                       <Button
                         variant="outline"
                         className={cn(
-                          "pl-3 text-left font-normal shadow-sm w-full",
+                          "pl-3 text-left font-normal shadow-xm w-full",
                           !dateRange?.from && "text-muted-foreground",
                         )}
                       >
@@ -276,13 +276,13 @@ export default function MyForm({ onFilter }: Props) {
           />
 
           <div className="flex gap-x-6 lg:pt-5">
-            <Button type="submit" variant="outline" className="shadow-sm">
+            <Button type="submit" variant="outline" className="shadow-xm">
               Filter
             </Button>
             <Button
               type="button"
               variant="outline"
-              className="shadow-sm"
+              className="shadow-xm"
               onClick={() => form.reset()}
             >
               Reset

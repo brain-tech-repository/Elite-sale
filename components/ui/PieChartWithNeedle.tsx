@@ -1,6 +1,6 @@
 "use client";
 
-import { Pie, PieChart, ResponsiveContainer } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Customized } from "recharts";
 import {
   Card,
   CardContent,
@@ -46,52 +46,58 @@ const NEEDLE_COLOR = "#64748B";
 const renderNeedle = (
   value: number,
   data: any[],
-  cx: number,
-  cy: number,
   innerRadius: number,
   outerRadius: number,
 ) => {
-  const total = data.reduce((acc, cur) => acc + cur.value, 0);
-
-  const angle = 180 * (value / total);
-
-  const needleLength = innerRadius + (outerRadius - innerRadius) * 0.9;
-
-  const rad = Math.PI / 180;
-  const x = cx + needleLength * Math.cos(Math.PI - angle * rad);
-  const y = cy - needleLength * Math.sin(Math.PI - angle * rad);
-
   return (
-    <g>
-      <circle cx={cx} cy={cy} r={5} fill={NEEDLE_COLOR} />
-      <line
-        x1={cx}
-        y1={cy}
-        x2={x}
-        y2={y}
-        stroke={NEEDLE_COLOR}
-        strokeWidth={3}
-      />
-    </g>
+    <Customized
+      component={({ width, height }: any) => {
+        // dynamically calculate the center using the chart's current dimensions
+        // to match the Pie's cx="50%" and cy="80%"
+        const cx = (width || 0) / 2;
+        const cy = (height || 0) * 0.8;
+
+        const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
+        const angle = 180 * (value / total);
+        const needleLength = innerRadius + (outerRadius - innerRadius) * 0.9;
+
+        const rad = Math.PI / 180;
+        const x = cx + needleLength * Math.cos(Math.PI - angle * rad);
+        const y = cy - needleLength * Math.sin(Math.PI - angle * rad);
+
+        return (
+          <g>
+            <circle cx={cx} cy={cy} r={5} fill={NEEDLE_COLOR} />
+            <line
+              x1={cx}
+              y1={cy}
+              x2={x}
+              y2={y}
+              stroke={NEEDLE_COLOR}
+              strokeWidth={3}
+            />
+          </g>
+        );
+      }}
+    />
   );
 };
 
 /* ---------------- COMPONENT ---------------- */
 
 export function GaugePieChartCard() {
-  const cx = 150;
-  const cy = 130; // Reduced from 160 to pull the chart up
-  const innerRadius = 70;
+  // Using consistent radiuses for both the Pie and Needle
+  const innerRadius = 60;
   const outerRadius = 100;
 
   return (
-    <Card className="shadow-sm h-full flex flex-col">
-      <CardHeader className=" gap-2">
+    <Card className="shadow-xm h-full flex flex-col">
+      <CardHeader className="gap-1">
         <div className="flex items-center justify-between text-sm">
           <CardTitle>Performance Gauge</CardTitle>
         </div>
 
-        <div className="flex items-center space-x-4 text-xs ">
+        <div className="flex items-center space-x-4 text-xs">
           <span>DTM</span>
           <Switch id="airplane-mode" />
           <span>MTY</span>
@@ -99,11 +105,11 @@ export function GaugePieChartCard() {
       </CardHeader>
 
       {/* 👇 Make content grow */}
-      <CardContent className="flex-1 pt-0 mt-0">
-        <ChartContainer config={chartConfig}>
+      <CardContent className="lg:h-[110px]">
+        <ChartContainer config={chartConfig} className="p-0 m-0">
           <div className="w-full h-full min-h-[130px] flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+              <PieChart className="p-0 m-0">
                 <Pie
                   data={chartData}
                   dataKey="value"
@@ -111,11 +117,11 @@ export function GaugePieChartCard() {
                   endAngle={0}
                   cx="50%"
                   cy="80%"
-                  innerRadius={60}
-                  outerRadius={100}
+                  innerRadius={innerRadius}
+                  outerRadius={outerRadius}
                 />
 
-                {renderNeedle(score, chartData, 110, 100, 70, 110)}
+                {renderNeedle(score, chartData, innerRadius, outerRadius)}
 
                 <ChartTooltip
                   cursor={false}

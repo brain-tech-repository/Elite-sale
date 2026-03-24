@@ -19,13 +19,18 @@ import { SectionCards } from "./components/section-cards";
 import { performanceColumns } from "./components/columns";
 /* API */
 import {
+  useBrandLinePerformance,
   useBrandPerformance,
+  useCustomerLinePerformance,
   useCustomerSegmentPerformance,
   useMaterialGroupPerformance,
+  useMaterialLinePerformance,
   useMonthlySalesTrend,
+  useRegionLinePerformance,
   useRegionPerformance,
   useYearlySalesTrend,
 } from "./useSales";
+
 import { fallbackTableData } from "./components/data/fallback";
 // import { GaugeChart } from "@/components/ui/PieChartWithNeedle";
 import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
@@ -57,6 +62,11 @@ export default function Salesdashboa() {
   const { data: customerSegmentPerformance = [], isLoading: customerLoading } =
     useCustomerSegmentPerformance(filters);
 
+  const { data: regionLineData } = useRegionLinePerformance();
+  const { data: brandLineData } = useBrandLinePerformance();
+  const { data: materialLineData } = useMaterialLinePerformance();
+  const { data: customerLineData } = useCustomerLinePerformance();
+
   /* DATA TRANSFORM */
 
   const regionTable = regionPerformance?.Result?.table_data?.length
@@ -64,9 +74,8 @@ export default function Salesdashboa() {
     : fallbackTableData;
 
   const regionPie = regionPerformance?.Result?.pie_chart ?? [];
-
   const regionLine =
-    regionPerformance?.Result?.line_chart?.map((item: any) => ({
+    regionLineData?.Result?.line_chart?.map((item: any) => ({
       month: item.label,
       desktop: item.y,
     })) ?? [];
@@ -78,7 +87,7 @@ export default function Salesdashboa() {
   const brandPie = brandPerformance?.Result?.pie_chart ?? [];
 
   const brandLine =
-    brandPerformance?.Result?.line_chart?.map((item: any) => ({
+    brandLineData?.Result?.line_chart?.map((item: any) => ({
       month: item.label,
       desktop: item.y,
     })) ?? [];
@@ -90,7 +99,7 @@ export default function Salesdashboa() {
   const materialPie = materialGroupPerformance?.Result?.pie_chart ?? [];
 
   const materialLine =
-    materialGroupPerformance?.Result?.line_chart?.map((item: any) => ({
+    materialLineData?.Result?.line_chart?.map((item: any) => ({
       month: item.label,
       desktop: item.y,
     })) ?? [];
@@ -102,11 +111,10 @@ export default function Salesdashboa() {
   const customerPie = customerSegmentPerformance?.Result?.pie_chart ?? [];
 
   const customerLine =
-    customerSegmentPerformance?.Result?.line_chart?.map((item: any) => ({
+    customerLineData?.Result?.line_chart?.map((item: any) => ({
       month: item.label,
       desktop: item.y,
     })) ?? [];
-
   const formattedData = (monthlyData || []).map((item: any) => ({
     month: item.month ?? "",
     pv: Number(item.desktop ?? 0),
@@ -167,31 +175,40 @@ export default function Salesdashboa() {
         <section>
           <DataTableSubHeader title="Region Performance" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
-            {regionLoading ? (
-              <>
+            <>
+              {/* TABLE */}
+              {regionLoading ? (
                 <TableSkeleton />
-                <ChartSkeleton />
-                <ChartSkeleton />
-              </>
-            ) : (
-              <>
+              ) : (
                 <CommonDataTable
                   columns={performanceColumns}
                   data={regionTable}
                   pageSize={5}
                   title="Region Performance"
                 />
+              )}
+
+              {/* PIE */}
+              {regionLoading ? (
+                <ChartSkeleton />
+              ) : (
                 <RoundedPieChart
                   title="Sales By Region Contribution"
                   data={regionPie}
                 />
+              )}
+
+              {/* LINE → ALWAYS SHOW (NO loading) */}
+              {regionLineData ? (
                 <RainbowGlowGradientLineChart
                   title="Region Monthly Sales Trend"
                   data={regionLine}
                   showYearSelector={false}
                 />
-              </>
-            )}
+              ) : (
+                <ChartSkeleton />
+              )}
+            </>
           </div>
         </section>
 
@@ -199,31 +216,40 @@ export default function Salesdashboa() {
         <section>
           <DataTableSubHeader title="Brand Performance" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 ">
-            {brandLoading ? (
-              <>
+            <>
+              {/* TABLE */}
+              {brandLoading ? (
                 <TableSkeleton />
-                <ChartSkeleton />
-                <ChartSkeleton />
-              </>
-            ) : (
-              <>
+              ) : (
                 <CommonDataTable
                   columns={performanceColumns}
                   data={brandTable}
                   pageSize={5}
                   title="Brand Performance"
                 />
+              )}
+
+              {/* PIE */}
+              {brandLoading ? (
+                <ChartSkeleton />
+              ) : (
                 <RoundedPieChart
                   title="Sales By Brand Contribution"
                   data={brandPie}
                 />
+              )}
+
+              {/* LINE */}
+              {brandLineData ? (
                 <RainbowGlowGradientLineChart
                   title="Brand Monthly Sales Trend"
                   data={brandLine}
                   showYearSelector={false}
                 />
-              </>
-            )}
+              ) : (
+                <ChartSkeleton />
+              )}
+            </>
           </div>
         </section>
 
@@ -231,31 +257,40 @@ export default function Salesdashboa() {
         <section>
           <DataTableSubHeader title="Material Group" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
-            {materialLoading ? (
-              <>
+            <>
+              {/* TABLE */}
+              {materialLoading ? (
                 <TableSkeleton />
-                <ChartSkeleton />
-                <ChartSkeleton />
-              </>
-            ) : (
-              <>
+              ) : (
                 <CommonDataTable
                   columns={performanceColumns}
                   data={materialTable}
                   pageSize={5}
                   title="Material Group"
                 />
+              )}
+
+              {/* PIE */}
+              {materialLoading ? (
+                <ChartSkeleton />
+              ) : (
                 <RoundedPieChart
                   title="Sales By Material Group Contribution"
                   data={materialPie}
                 />
+              )}
+
+              {/* LINE */}
+              {materialLineData ? (
                 <RainbowGlowGradientLineChart
                   title="Material Group Monthly Sales Trend"
                   data={materialLine}
                   showYearSelector={false}
                 />
-              </>
-            )}
+              ) : (
+                <ChartSkeleton />
+              )}
+            </>
           </div>
         </section>
 
@@ -263,31 +298,40 @@ export default function Salesdashboa() {
         <section>
           <DataTableSubHeader title="Customer Segment Performance" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
-            {customerLoading ? (
-              <>
+            <>
+              {/* TABLE */}
+              {customerLoading ? (
                 <TableSkeleton />
-                <ChartSkeleton />
-                <ChartSkeleton />
-              </>
-            ) : (
-              <>
+              ) : (
                 <CommonDataTable
                   columns={performanceColumns}
                   data={customerTable}
                   pageSize={5}
                   title="Customer Segment"
                 />
+              )}
+
+              {/* PIE */}
+              {customerLoading ? (
+                <ChartSkeleton />
+              ) : (
                 <RoundedPieChart
                   title="Sales By Customer Segment Contribution"
                   data={customerPie}
                 />
+              )}
+
+              {/* LINE */}
+              {customerLineData ? (
                 <RainbowGlowGradientLineChart
                   title="Customer Segment Monthly Sales Trend"
                   data={customerLine}
                   showYearSelector={false}
                 />
-              </>
-            )}
+              ) : (
+                <ChartSkeleton />
+              )}
+            </>
           </div>
         </section>
       </div>

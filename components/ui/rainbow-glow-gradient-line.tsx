@@ -40,16 +40,14 @@ interface Props {
   height?: number | string; // 👈 add this
 }
 
-const fallbackData = [
-  [
-    { month: "Jan", desktop: 120 },
-    { month: "Mar", desktop: 250 },
-    { month: "May", desktop: 180 },
-    { month: "Jul", desktop: 310 },
-    { month: "Sep", desktop: 220 },
-    { month: "Nov", desktop: 270 },
-  ],
-];
+// const fallbackData = [
+//   { month: "Jan", desktop: 120 },
+//   { month: "Mar", desktop: 250 },
+//   { month: "May", desktop: 180 },
+//   { month: "Jul", desktop: 310 },
+//   { month: "Sep", desktop: 220 },
+//   { month: "Nov", desktop: 270 },
+// ];
 
 const years = Array.from({ length: 2030 - 2001 + 1 }, (_, i) =>
   (2001 + i).toString(),
@@ -70,7 +68,8 @@ export function RainbowGlowGradientLineChart({
   const start = page * ITEMS_PER_PAGE;
   const visibleYears = years.slice(start, start + ITEMS_PER_PAGE);
 
-  const chartData = data && data.length > 0 ? data : fallbackData;
+  // const chartData = data && data.length > 0 ? data : fallbackData;
+  const chartData = data ?? [];
 
   // const firstLabel = chartData[0]?.month;
 
@@ -79,7 +78,7 @@ export function RainbowGlowGradientLineChart({
   // const customTicks = isNumeric ? ["1", "11", "21", "31"] : undefined;
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm">
       <CardHeader className="flex flex-row items-start justify-between">
         <CardTitle className=" text-sm">{title}</CardTitle>
         {/* <CardDescription>
@@ -135,7 +134,7 @@ export function RainbowGlowGradientLineChart({
         className="w-full"
         style={{ height: typeof height === "number" ? `${height}px` : height }}
       >
-        <ResponsiveContainer width="106%" height="100%">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
             margin={{
@@ -166,7 +165,7 @@ export function RainbowGlowGradientLineChart({
             /> */}
             <YAxis
               width={60}
-              tickCount={7}
+              tickCount={8}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value: number) => {

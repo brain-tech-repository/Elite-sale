@@ -78,7 +78,7 @@ export function GaugePieChartCard() {
   const outerRadius = 100;
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm">Performance Gauge</CardTitle>

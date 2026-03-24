@@ -1,55 +1,64 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Sale } from "../types"
-
-
+import { ColumnDef } from "@tanstack/react-table";
+import { Sale } from "../types";
 
 export const salesColumns: ColumnDef<Sale>[] = [
+  { accessorKey: "sno", header: "S. No." },
+  { accessorKey: "route", header: "Route" },
+  { accessorKey: "warehouse", header: "Warehouse" },
+  { accessorKey: "salesman", header: "Salesman" },
+
+  { accessorKey: "totalCustomer", header: "Total Customer" },
+  { accessorKey: "totalVisitDays", header: "Total Visit Days" },
+  { accessorKey: "plannedVisit", header: "Planned Visit" },
+  // { accessorKey: "unplannedVisit", header: "Unplanned Visit" },
+
   {
-    accessorKey: "id",
-    header: "Order ID",
-  },
-  {
-    accessorKey: "customer",
-    header: "Customer",
-  },
-  {
-    accessorKey: "product",
-    header: "Product",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount (₹)",
+    accessorKey: "dropRate",
+    header: "Drop Rate %",
     cell: ({ row }) => (
-      <span className="font-medium text-emerald-600">
-        ₹{row.original.amount.toLocaleString()}
+      <span className="text-blue-600 font-medium">
+        {row.original.dropRate}%
       </span>
     ),
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status
 
-      return (
-        <span
-          className={`px-2 py-1 text-xs rounded-md font-medium ${
-            status === "Completed"
-              ? "bg-emerald-100 text-emerald-700"
-              : status === "Pending"
-              ? "bg-pink-100 text-pink-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {status}
-        </span>
-      )
-    },
-  },
+  // { accessorKey: "avgTimeSpend", header: "Avg. Time Spend / Outlet" },
+  // { accessorKey: "totalInvoice", header: "Total Invoice No." },
+  // { accessorKey: "avgInvoicePerDay", header: "Avg. Invoice / Day" },
+
   {
-    accessorKey: "date",
-    header: "Date",
+    accessorKey: "salesValue",
+    header: "Sales (₹)",
+    cell: ({ row }) => (
+      <span className="text-emerald-600 font-medium">
+        ₹{row.original.salesValue.toLocaleString()}
+      </span>
+    ),
   },
-]
+
+  { accessorKey: "salesPerDay", header: "Sales / Day" },
+
+  {
+    accessorKey: "totalCollection",
+    header: "Total Collection",
+    cell: ({ row }) => (
+      <span className="text-green-600 font-medium">
+        ₹{row.original.totalCollection.toLocaleString()}
+      </span>
+    ),
+  },
+
+  { accessorKey: "collectionPerDay", header: "Collection / Day" },
+
+  {
+    accessorKey: "pendingCollection",
+    header: "Pending Collection",
+    cell: ({ row }) => (
+      <span className="text-red-600 font-medium">
+        ₹{row.original.pendingCollection.toLocaleString()}
+      </span>
+    ),
+  },
+];

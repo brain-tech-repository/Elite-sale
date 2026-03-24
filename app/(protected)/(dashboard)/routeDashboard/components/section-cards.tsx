@@ -51,28 +51,27 @@ export function SectionCards({ filters }: Props) {
     {
       title: "Total Customers",
       value: result?.total_customers ?? 0,
-      color: "bg-gradient-to-r from-[#134E5E] to-[#71B280]",
+      color: "bg-gradient-to-r from-[#134E5E] to-[#71B280] text-white",
     },
     {
       title: "Avg. Customers per Route",
       value: result?.avg_customers_per_route ?? 0,
-      color: "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364]",
+      color:
+        "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364] text-white",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1">
       {statsData.map((card, index) => (
         <AnimatedCard key={index} index={index}>
-          <Card
-            className={`rounded-xl border-none shadow-md hover:shadow-xl transition-all duration-300 text-white ${card.color}`}
-          >
-            <CardHeader className="flex flex-col gap-2 px-4">
-              <CardDescription className="text-xs uppercase tracking-wide text-white/80">
+          <Card className={`py-2 px-2 shadow-xm ${card.color}`}>
+            <CardHeader className="">
+              <CardDescription className="text-sm font-semibold text-white">
                 {card.title}
               </CardDescription>
 
-              <CardTitle className="text-2xl font-bold">
+              <CardTitle className="text-base font-semibold tabular-nums">
                 {card.value.toLocaleString("en-IN")}
               </CardTitle>
             </CardHeader>

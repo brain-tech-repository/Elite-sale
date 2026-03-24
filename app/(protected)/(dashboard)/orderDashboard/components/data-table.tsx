@@ -409,7 +409,7 @@ export function DataTable({
           className="max-w-sm"
         />
 
-        <div className="flex items-center gap-2 shadow-sm">
+        <div className="flex items-center gap-2 shadow-xm">
           {/* Column Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -496,7 +496,7 @@ export function DataTable({
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      No results found.
                     </TableCell>
                   </TableRow>
                 )}

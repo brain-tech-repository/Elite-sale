@@ -11,7 +11,12 @@ import { salesColumns } from "./components/columns";
 import { Card } from "@/components/ui/card";
 import GrowthLines from "@/components/growthlines";
 import { AdvancedBarChart } from "@/components/ui/advancebar";
-import { SalesFilterPayload } from "./types";
+import {
+  RouteExpense,
+  RouteSales,
+  RouteSalesCollection,
+  SalesFilterPayload,
+} from "./types";
 import { useState } from "react";
 import { useRegionPerformance } from "../customerDashboard/useCustomers";
 import {
@@ -20,14 +25,28 @@ import {
   useMonthlyCompareDropSizeVolume,
   useMonthlyTrend,
 } from "./useRoutes";
+import { routeSalesColumns } from "./components/column1";
+import { routeExpenseColumns } from "./components/column2";
+import { routeSalesCollectionColumns } from "./components/column3";
 
-type Sale = {
-  id: string;
-  customer: string;
-  product: string;
-  amount: number;
-  status: "Completed" | "Pending" | "Cancelled";
-  date: string;
+export type Sale = {
+  sno: number;
+  route: string;
+  warehouse: string;
+  salesman: string;
+  totalCustomer: number;
+  totalVisitDays: number;
+  plannedVisit: number;
+  unplannedVisit: number;
+  dropRate: number;
+  avgTimeSpend: string;
+  totalInvoice: number;
+  avgInvoicePerDay: number;
+  salesValue: number;
+  salesPerDay: number;
+  totalCollection: number;
+  collectionPerDay: number;
+  pendingCollection: number;
 };
 export default function Salesdashboa() {
   // 🔹 Global filters → used for charts + table
@@ -56,167 +75,210 @@ export default function Salesdashboa() {
 
   const data: Sale[] = [
     {
-      id: "ORD-001",
-      customer: "Amit ",
-      product: "Premium ",
-      amount: 450,
-      status: "Completed",
-      date: "02 Mar",
+      sno: 1,
+      route: "Route A",
+      warehouse: "WH-01",
+      salesman: "Amit Kumar",
+      totalCustomer: 120,
+      totalVisitDays: 26,
+      plannedVisit: 200,
+      unplannedVisit: 40,
+      dropRate: 12,
+      avgTimeSpend: "15 min",
+      totalInvoice: 180,
+      avgInvoicePerDay: 7,
+      salesValue: 125000,
+      salesPerDay: 4800,
+      totalCollection: 100000,
+      collectionPerDay: 3800,
+      pendingCollection: 25000,
     },
     {
-      id: "ORD-002",
-      customer: "Priya Singh",
-      product: "Mock Test Series",
-      amount: 320,
-      status: "Pending",
-      date: "01 Mar 2026",
-    },
-    {
-      id: "ORD-003",
-      customer: "Rahul Verma",
-      product: "Recorded Batch",
-      amount: 210,
-      status: "Cancelled",
-      date: "28 Feb 2026",
-    },
-    {
-      id: "ORD-003",
-      customer: "Rahul Verma",
-      product: "Recorded Batch",
-      amount: 210,
-      status: "Cancelled",
-      date: "28 Feb 2026",
+      sno: 2,
+      route: "Route B",
+      warehouse: "WH-02",
+      salesman: "Priya Singh",
+      totalCustomer: 90,
+      totalVisitDays: 24,
+      plannedVisit: 150,
+      unplannedVisit: 30,
+      dropRate: 10,
+      avgTimeSpend: "12 min",
+      totalInvoice: 140,
+      avgInvoicePerDay: 6,
+      salesValue: 98000,
+      salesPerDay: 4100,
+      totalCollection: 85000,
+      collectionPerDay: 3500,
+      pendingCollection: 13000,
     },
   ];
 
-  const datas: any[] = [
-    { label: "Sales Growth", value: 75 },
-    { label: "Customer Growth", value: 45 },
-    { label: "Revenue Growth", value: 90 },
+  const routeSalesData: RouteSales[] = [
+    {
+      route: "Route A",
+      todaySales: 12000,
+      yesterdaySales: 9500,
+      weeklySales: 65000,
+      last14DaysSales: 120000,
+      monthSales: 240000,
+      quarterSales: 720000,
+      yearSales: 2800000,
+    },
+    {
+      route: "Route B",
+      todaySales: 9000,
+      yesterdaySales: 8700,
+      weeklySales: 54000,
+      last14DaysSales: 100000,
+      monthSales: 210000,
+      quarterSales: 650000,
+      yearSales: 2500000,
+    },
+    {
+      route: "Route C",
+      todaySales: 15000,
+      yesterdaySales: 11000,
+      weeklySales: 78000,
+      last14DaysSales: 140000,
+      monthSales: 300000,
+      quarterSales: 900000,
+      yearSales: 3200000,
+    },
   ];
 
-  const salesTrend1 = [
-    { month: "Jan", desktop: 100 },
-    { month: "Feb", desktop: 8000 },
-    { month: "Mar", desktop: 4000 },
-    { month: "Apr", desktop: 2000 },
+  const routeExpenseData: RouteExpense[] = [
+    { route: "Route A", totalExpense: 45000 },
+    { route: "Route B", totalExpense: 38000 },
+    { route: "Route C", totalExpense: 52000 },
+    { route: "Route D", totalExpense: 29000 },
   ];
 
-  const salesTrend2 = [
-    { month: "Jan", desktop: 8000 },
-    { month: "Feb", desktop: 1000 },
-    { month: "Mar", desktop: 2000 },
-    { month: "Apr", desktop: 7000 },
+  const routeSalesCollectionData: RouteSalesCollection[] = [
+    { route: "Route A", totalSales: 120000, totalCollection: 95000 },
+    { route: "Route B", totalSales: 98000, totalCollection: 87000 },
+    { route: "Route C", totalSales: 150000, totalCollection: 120000 },
+    { route: "Route D", totalSales: 87000, totalCollection: 65000 },
   ];
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* ================= HEADER ================= */}
-      <div className="px-6 py-6">
-        <DataTableHeader title="Route Dashboard" />
-      </div>
+      <div className="@container/main flex flex-1 flex-col">
+        {/* ================= HEADER ================= */}
+        <header className="py-8 px-2">
+          <DataTableHeader title="Route Dashboard" />
+        </header>
 
-      {/* ================= FILTER SECTION ================= */}
-      <section className="px-6 pb-6">
-        <Card className="shadow-sm">
-          <MyForm
-            onFilter={(f) => {
-              setGlobalFilters(f);
-            }}
-          />
-        </Card>
-      </section>
-
-      {/* ================= KPI CARDS ================= */}
-      <section className="px-6 pb-6">
-        <SectionCards filters={globalFilters} />
-      </section>
-
-      {/* ================= TOP CHARTS ================= */}
-      <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
-        <GrowthLines data={regionData} isLoading={regionLoading} />
-        <AdvancedBarChart data={monthlyTrend} />
-
-        {/* Right side stacked charts */}
-        <div className="flex flex-col gap-6">
-          <RainbowGlowGradientLineChart
-            title="Drop Size by Revenue"
-            height={160}
-            showYearSelector={false}
-            data={CompareDropSizeRevenue}
-          />
-
-          <RainbowGlowGradientLineChart
-            height={160}
-            showYearSelector={false}
-            data={CompareDropSizeVolume}
-            title="Drop Size by Volume"
-          />
-        </div>
-      </section>
-
-      {/* ================= ROUTE PERFORMANCE ================= */}
-      <section className="px-6 pb-8">
-        <DataTableSubHeader title="Route Performance" />
-
-        <div className="mt-4">
-          <Card className="shadow-sm">
-            <MyForm1 />
+        <div className="px-2 mb-8">
+          <Card className="shadow-xs lg:px-5">
+            <MyForm
+              onFilter={(f) => {
+                setGlobalFilters(f);
+                setTableFilters((prev) => ({
+                  ...prev,
+                  page: 1,
+                }));
+              }}
+            />
           </Card>
         </div>
 
-        <div className="grid gap-6 mt-2 grid-cols-1 lg:grid-cols-2">
-          <CommonDataTable
-            title="TOP PERFORMER"
-            columns={salesColumns}
-            data={data}
-            pageSize={5}
-          />
-          <RainbowGlowGradientLineChart title="Monthly Route Performance" />
-        </div>
-      </section>
+        <section className="px-2 mb-6">
+          <SectionCards filters={globalFilters} />
+        </section>
 
-      {/* ================= EXPENSE ANALYSIS ================= */}
-      <section className="px-6 pb-8">
-        <DataTableSubHeader title="Route Expense Analysis" />
+        <section className="grid px-2 mb-6 gap-2 grid-cols-1 lg:grid-cols-[20%_40%_40%]">
+          <GrowthLines data={regionData} isLoading={regionLoading} />
 
-        <div className="grid gap-6 mt-2 grid-cols-1 lg:grid-cols-2">
-          <CommonDataTable
-            title="Expense By Route"
-            columns={salesColumns}
-            data={data}
-            pageSize={5}
-          />
-          <RainbowGlowGradientLineChart title="Monthly Expense by Route" />
-        </div>
-      </section>
+          <AdvancedBarChart data={monthlyTrend} />
 
-      {/* ================= SALES REPORT ================= */}
-      <section className="px-6 pb-8">
-        <DataTableSubHeader title="Route Wise Sales Report" />
+          <div className="flex flex-col gap-2">
+            <RainbowGlowGradientLineChart
+              title="Drop Size by Revenue"
+              height={160}
+              showYearSelector={false}
+              data={CompareDropSizeRevenue}
+            />
 
-        <div className="mt-2">
+            <RainbowGlowGradientLineChart
+              height={160}
+              showYearSelector={false}
+              data={CompareDropSizeVolume}
+              title="Drop Size by Volume"
+            />
+          </div>
+        </section>
+
+        {/* ================= ROUTE PERFORMANCE ================= */}
+        <section className="px-2 mb-6">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Performance" />
+          </div>
+
+          <Card className="shadow-xs lg:px-5">
+            <MyForm1 />
+          </Card>
+
+          <div className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-2">
+            <CommonDataTable
+              title="TOP PERFORMER"
+              columns={routeSalesCollectionColumns}
+              data={routeSalesCollectionData}
+              pageSize={5}
+            />
+
+            <RainbowGlowGradientLineChart title="Monthly Route Performance" />
+          </div>
+        </section>
+
+        {/* ================= EXPENSE ================= */}
+        <section className="px-2 mb-6">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Expense Analysis" />
+          </div>
+
+          <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
+            <CommonDataTable
+              tableWidth="100%"
+              title="Expense By Route"
+              columns={routeExpenseColumns}
+              data={routeExpenseData}
+              pageSize={5}
+            />
+
+            <RainbowGlowGradientLineChart title="Monthly Expense by Route" />
+          </div>
+        </section>
+
+        {/* ================= SALES REPORT ================= */}
+        <section className="px-2 mb-6">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Wise Sales Report" />
+          </div>
+
           <CommonDataTable
             title="Sale By Route"
-            columns={salesColumns}
-            data={data}
+            columns={routeSalesColumns}
+            data={routeSalesData}
             pageSize={5}
           />
-        </div>
-      </section>
+        </section>
 
-      {/* ================= EFFICIENCY OVERVIEW ================= */}
-      <section className="px-6 pb-10">
-        <DataTableSubHeader title="Route Efficency Overview" />
-        <div className="mt-2">
+        {/* ================= EFFICIENCY ================= */}
+        <section className="px-2 pb-12">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Efficiency Overview" />
+          </div>
+
           <CommonDataTable
-            title="Route Efficency"
+            tableWidth="1600px"
+            title="Route Efficiency"
             columns={salesColumns}
             data={data}
             pageSize={5}
           />
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

@@ -32,13 +32,9 @@ const fetchMaster = async (
   const filteredParams = Object.fromEntries(
     Object.entries(params).filter(([_, value]) => value),
   );
-
   const query = new URLSearchParams(filteredParams).toString();
-
   const url = query ? `${endpoint}?${query}` : endpoint;
-
   const { data } = await api.get(url);
-
   return data;
 };
 
@@ -72,10 +68,8 @@ export const useWarehouses = (regionId?: string) =>
       const data = await fetchMaster("/dashboard/customer/filters/warehouses", {
         region_id: regionId || "",
       });
-
       return mapOptions(data);
     },
-
     enabled: !!regionId,
     refetchOnWindowFocus: false,
   });

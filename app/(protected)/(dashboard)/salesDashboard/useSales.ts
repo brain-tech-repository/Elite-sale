@@ -302,3 +302,43 @@ export const useCustomerSegmentPerformance = (filters: any) => {
     enabled: !!filters,
   });
 };
+
+export const useRegionLinePerformance = () => {
+  return useQuery({
+    queryKey: ["region-line-performance"],
+    queryFn: () => fetchPerformance("get_region_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false, // no filters
+  });
+};
+
+export const useBrandLinePerformance = () => {
+  return useQuery({
+    queryKey: ["brand-line-performance"],
+    queryFn: () => fetchPerformance("get_brand_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false,
+  });
+};
+
+export const useMaterialLinePerformance = () => {
+  return useQuery({
+    queryKey: ["material-line-performance"],
+    queryFn: () => fetchPerformance("get_material_group_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false,
+  });
+};
+
+export const useCustomerLinePerformance = () => {
+  return useQuery({
+    queryKey: ["customer-line-performance"],
+    queryFn: () => fetchPerformance("get_customer_segment_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false,
+  });
+};

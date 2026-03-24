@@ -1,7 +1,15 @@
 "use client";
 
 import { TrendingDown } from "lucide-react";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  XAxis,
+  YAxis,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import React from "react";
 
 import {
   Card,
@@ -18,58 +26,28 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-import { Badge } from "@/components/ui/badge";
-import React from "react";
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Legend, ResponsiveContainer } from "recharts";
-
 export const description = "A bar chart";
-
-/* ---------------- CUSTOM LEGEND RENDERER ---------------- */
-/* ---------------- CUSTOM LEGEND ---------------- */
-
-const renderCustomLegend = (props: any) => {
-  const { payload } = props;
-
-  return (
-    <ul className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-x-4 gap-y-2 mb-6 pl-6 sm:pl-10">
-      {payload.map((entry: any, index: number) => (
-        <li
-          key={`item-${index}`}
-          className="flex items-center gap-2 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground"
-        >
-          <div
-            className="h-2 w-2 rounded-full shrink-0"
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="truncate">{entry.value}</span>
-        </li>
-      ))}
-    </ul>
-  );
-};
 
 /* ---------------- REGION COLOR PALETTE ---------------- */
 
-const regionColors = [
-  "#5887eb", // blue
-  "#2ebe8e", // emerald
-  "#7476f1", // indigo
-  "#24b9a8", // teal
-  "#617591", // slate
-  "#2d99b4", // cyan
-  "#6059eb", // violet
-  "#059669", // green
-];
+const regionColorMap: Record<string, string> = {
+  "Mid West": "#1f77b4",
+  "North West": "#15427e",
+  "South West": "#2ca02c",
+  Nile: "#d62728",
+  "Central 2": "#9467bd",
+  "Central 1": "#8c564b",
+  Albertine: "#af6ba6",
+  "West Nile": "#7f7f7f",
+  East: "#bcbd22",
+  North: "#17becf",
+  "LAKE ZONE": "#4e79a7",
+  "west w": "#f28e2b",
+  north: "#b35f61",
+  south: "#76b7b2",
+  METRO: "#59a14f",
+};
+
 /* ---------------- CHART CONFIG ---------------- */
 
 const chartConfig = {
@@ -93,8 +71,10 @@ interface Props {
 export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
   const [activeProperty, setActiveProperty] =
     React.useState<ActiveProperty>("all");
-
   const [isMobile, setIsMobile] = React.useState(false);
+
+  // NEW: State to track which regions are currently hidden
+  const [hiddenRegions, setHiddenRegions] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
@@ -103,29 +83,62 @@ export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  /* ... existing imports and renderCustomLegend ... */
+  // NEW: Toggle function for hiding/showing regions
+  const toggleRegion = (region: string) => {
+    setHiddenRegions(
+      (prev) =>
+        prev.includes(region)
+          ? prev.filter((r) => r !== region) // Show it if it was hidden
+          : [...prev, region], // Hide it if it was visible
+    );
+  };
 
-  // export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
-  // ... existing state and useEffect ...
+  /* ---------------- CUSTOM LEGEND RENDERER (Moved inside to access state) ---------------- */
+  const renderCustomLegend = (props: any) => {
+    const { payload } = props;
+
+    return (
+      <ul className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-x-4 gap-y-2  pl-2 sm:pl-10">
+        {payload.map((entry: any, index: number) => {
+          const isHidden = hiddenRegions.includes(entry.value);
+
+          return (
+            <li
+              key={`item-${index}`}
+              onClick={() => toggleRegion(entry.value)}
+              // Added cursor-pointer, transition, and an opacity change if hidden
+              className={`flex items-center gap-2 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground cursor-pointer transition-opacity duration-200 ${
+                isHidden
+                  ? "opacity-40 line-through"
+                  : "opacity-100 hover:opacity-80"
+              }`}
+            >
+              <div
+                className="h-2 w-2 rounded-full shrink-0"
+                style={{ backgroundColor: isHidden ? "#ccc" : entry.color }}
+              />
+              <span className="truncate">{entry.value}</span>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
 
   return (
-    <Card>
-      <CardHeader>{/* ... existing Header content ... */}</CardHeader>
+    <Card className="p-[0px] m-[0px]">
+      {/* <CardHeader>... existing Header content ...</CardHeader> */}
 
-      <CardContent>
+      <CardContent className="p-[0px] m-[0px]">
         <ChartContainer
           config={chartConfig}
-          /* Increased height on mobile (h-[450px]) to fit legend + graph */
-          className="w-full h-[500px] sm:h-[350px]"
+          className="w-full h-[500px] sm:h-[550px] m-0 p-0"
         >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               accessibilityLayer
               data={data}
               layout="vertical"
-              /* Added top: 40 to give the legend room. 
-                 Changed left: 10 so the Y-Axis labels aren't cut off.
-              */
               margin={{ left: 10, right: 10, top: 40, bottom: 10 }}
             >
               <YAxis
@@ -151,14 +164,16 @@ export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
               />
 
               {/* DYNAMIC REGION BARS */}
-              {regions.map((region, index) => (
+              {regions.map((region) => (
                 <Bar
                   key={region}
                   stackId="a"
                   barSize={12}
                   dataKey={region}
-                  fill={regionColors[index % regionColors.length]}
-                  radius={4}
+                  // NEW: Pass the hide prop conditionally based on state
+                  hide={hiddenRegions.includes(region)}
+                  fill={regionColorMap[region] || "#ccc"}
+                  radius={1}
                   shape={(props: any) => (
                     <CustomGradientBar
                       {...props}
@@ -204,6 +219,7 @@ const CustomGradientBar = (
             ? `url(#glow-chart-${dataKey})`
             : undefined
         }
+        className="transition-all duration-300 ease-in-out"
       />
 
       <defs>

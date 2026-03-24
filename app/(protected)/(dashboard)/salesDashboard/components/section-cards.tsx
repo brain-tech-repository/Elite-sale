@@ -108,7 +108,7 @@ export function SectionCards({ filters }: Props) {
       {cardsData.map((card, index) => (
         <AnimatedCard key={index} index={index}>
           <Card
-            className={`rounded-xl border-none shadow-sm  p-3 ${card.color}`}
+            className={`rounded-xl border-none shadow-xm  p-3 ${card.color}`}
           >
             <CardHeader className="px-2 flex flex-col items-center lg:items-start ">
               <CardDescription className="text-xs font-bold uppercase tracking-wider text-white dark:text-gray-400">

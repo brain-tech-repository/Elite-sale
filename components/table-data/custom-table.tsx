@@ -13,6 +13,7 @@ import React from "react";
 interface Props<T> {
   columns: any[];
   data: T[];
+  tableWidth?: string; // ✅ ADD THIS
   isFetching?: boolean;
   pageSize?: number;
   pageCount?: number;
@@ -24,6 +25,7 @@ interface Props<T> {
 export function CommonDataTable<T>({
   columns,
   data,
+  tableWidth = "100%",
   isFetching = false,
   pageSize = 10,
   pageCount,
@@ -67,8 +69,11 @@ export function CommonDataTable<T>({
             </h3>
           </div>
         )}
-        <div className="overflow-x-auto ">
-          <div className="max-h-[320px] overflow-y-auto">
+        <div className="w-full overflow-x-auto overflow-y-hidden">
+          <div
+            className="max-h-[320px] overflow-y-auto"
+            style={{ minWidth: tableWidth }}
+          >
             <table className="w-full border-collapse text-sm">
               {/* Header */}
 
