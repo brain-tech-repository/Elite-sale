@@ -54,7 +54,7 @@ export function SectionCards() {
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
           <Card
-            className={`p-4  hover:shadow-xl transition-all duration-300 rounded-xl border shadow-sm ${card.color}`}
+            className={`p-4  hover:shadow-xl transition-all duration-300 rounded-xl border shadow-xm ${card.color}`}
           >
             <CardHeader className="p-2">
               <CardDescription className="text-sm font-medium text-muted-foreground">

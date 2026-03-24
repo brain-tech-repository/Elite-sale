@@ -63,10 +63,10 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
 
 export function SectionCards() {
   return (
-    <Card className="grid grid-cols-1 gap-3 shadow-sm px-5">
+    <Card className="grid grid-cols-1 gap-3 shadow-xm px-5">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
-          <Card className={`py-1 px-3 shadow-sm ${card.color}`}>
+          <Card className={`py-1 px-3 shadow-xm ${card.color}`}>
             <CardHeader className="px-1 space-y-1">
               <CardDescription className="text-[15px]">
                 {card.title}

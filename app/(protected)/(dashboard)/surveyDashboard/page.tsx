@@ -21,7 +21,7 @@ export default function Salesdashboa() {
 
         {activeTable === "customers" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-sm py-2">
+            <Card className="shadow-xm py-2">
               <CommonDataTable
                 columns={sectionColumns}
                 data={data}
@@ -34,7 +34,7 @@ export default function Salesdashboa() {
 
         {activeTable === "users" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-sm py-2">
+            <Card className="shadow-xm py-2">
               <CommonDataTable
                 columns={sectionColumns}
                 data={data}
@@ -46,7 +46,7 @@ export default function Salesdashboa() {
         )}
         {activeTable === "country" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-sm py-2">
+            <Card className="shadow-xm py-2">
               <CommonDataTable
                 columns={sectionColumns}
                 data={data}
@@ -58,7 +58,7 @@ export default function Salesdashboa() {
         )}
         {activeTable === "surveys" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-sm py-2">
+            <Card className="shadow-xm py-2">
               <CommonDataTable
                 columns={sectionColumns}
                 data={data}

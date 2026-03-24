@@ -67,10 +67,10 @@ export function SectionCards({ filters }: Props) {
     },
   ];
   return (
-    <Card className="grid grid-cols-1 gap-1 shadow-sm px-5">
+    <Card className="grid grid-cols-1 gap-1 shadow-xm px-5">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
-          <Card className={`py-2 px-2 shadow-sm ${card.color}`}>
+          <Card className={`py-2 px-2 shadow-xm ${card.color}`}>
             <CardHeader className="">
               <CardDescription className="text-sm font-semibold text-white">
                 {card.title}

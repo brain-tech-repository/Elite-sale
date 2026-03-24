@@ -111,7 +111,7 @@ export default function MyForm1() {
                         <Button
                           variant="outline"
                           className={cn(
-                            "pl-3 text-left font-normal shadow-sm w-full",
+                            "pl-3 text-left font-normal shadow-xm w-full",
                             !dateRange?.from && "text-muted-foreground"
                           )}
                         >
@@ -158,7 +158,7 @@ export default function MyForm1() {
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <FormControl className="shadow-sm w-full">
+                    <FormControl className="shadow-xm w-full">
                       <SelectTrigger>
                         <SelectValue placeholder="Select Route" />
                       </SelectTrigger>
@@ -177,14 +177,14 @@ export default function MyForm1() {
             />
 
             <div className="flex gap-6 pt-6">
-              <Button type="submit" variant="outline" className="shadow-sm">
+              <Button type="submit" variant="outline" className="shadow-xm">
                 Filter
               </Button>
 
               <Button
                 type="button"
                 variant="outline"
-                className="shadow-sm"
+                className="shadow-xm"
                 onClick={() => form.reset()}
               >
                 Reset

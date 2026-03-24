@@ -50,7 +50,7 @@ export function SectionCards({ onCardClick }: any) {
         <Card
           key={card.id}
           onClick={() => onCardClick(card.id)}
-          className={`p-4 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 rounded-xl border shadow-sm ${card.color}`}
+          className={`p-4 cursor-pointer shadow-xm hover:shadow-xl transition-all duration-300 rounded-xl border shadow-xm ${card.color}`}
         >
           <CardHeader className="p-2 flex justify-between items-start">
             <div className="space-y-1">

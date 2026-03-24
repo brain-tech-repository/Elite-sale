@@ -65,7 +65,7 @@ export function GlowingRadialChart({
   const [activeBrowser, setActiveBrowser] = React.useState<ActiveBrowser>(null);
 
   return (
-    <Card className="flex flex-col shadow-sm">
+    <Card className="flex flex-col shadow-xm">
       <CardHeader className="items-center pb-0">
         <CardTitle>{title}</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
@@ -94,7 +94,7 @@ export function GlowingRadialChart({
               cornerRadius={10}
               dataKey="visitors"
               background
-              className="drop-shadow-sm"
+              className="drop-shadow-xm"
             >
               {chartData.map((entry, index) => (
                 <Cell

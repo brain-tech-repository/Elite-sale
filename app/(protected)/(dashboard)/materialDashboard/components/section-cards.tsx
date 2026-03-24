@@ -91,7 +91,7 @@ export function SectionCards() {
         return (
           <AnimatedCard key={index}>
             <Card
-              className={`p-4 shadow-sm hover:shadow-xl transition-all duration-300 rounded-xl border  shadow-sm ${card.color}`}
+              className={`p-4 shadow-xm hover:shadow-xl transition-all duration-300 rounded-xl border  shadow-xm ${card.color}`}
             >
               <CardHeader className="p-2 flex justify-between items-start">
                 <div className="space-y-1">

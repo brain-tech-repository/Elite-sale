@@ -62,7 +62,7 @@ export function AutoComplete({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn(width, "justify-between shadow-sm overflow-hidden")}
+          className={cn(width, "justify-between shadow-xm overflow-hidden")}
           disabled={disabled}
         >
           {/* TRUNCATE LONG TEXT */}

@@ -46,7 +46,7 @@ export function GlowingLineChart({
   description = "January - June 2024", // Default description
 }: RoundedPieChartProps) {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

@@ -46,7 +46,7 @@ export function HighlightedMultipleBarChart() {
   }, [activeIndex]);
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm">
       <CardHeader>
         <CardTitle>
           Bar Chart - Multiple
