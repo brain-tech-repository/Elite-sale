@@ -66,19 +66,14 @@ export type Sale = {
   totalCustomer: number;
   totalVisitDays: number;
   plannedVisit: number;
-  unplannedVisit: number;
+  dropRate: number;
 
-  dropRate: number; // ✅ ADD THIS
-  avgTimeSpend: string; // ✅ ADD THIS
-  totalInvoice: number; // ✅ ADD THIS
-  avgInvoicePerDay: number; // ✅ ADD THIS
+  salesValue: number;
+  salesPerDay: number;
 
-  salesValue: number; // ✅ ADD THIS
-  salesPerDay: number; // ✅ ADD THIS
-
-  totalCollection: number; // ✅ ADD THIS
-  collectionPerDay: number; // ✅ ADD THIS
-  pendingCollection: number; // ✅ ADD THIS
+  totalCollection: number;
+  collectionPerDay: number;
+  pendingCollection: number;
 };
 
 export type RouteSales = {

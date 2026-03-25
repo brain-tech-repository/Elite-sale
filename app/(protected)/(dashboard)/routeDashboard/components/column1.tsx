@@ -1,10 +1,10 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { RouteSales } from "../types";
+import { RouteSalesCollection } from "../types"; // ✅ FIX
 import { formatCurrency } from "@/lib/firmate-currency";
 
-export const routeSalesCollectionColumns: ColumnDef<RouteSales>[] = [
+export const routeSalesCollectionColumns: ColumnDef<RouteSalesCollection>[] = [
   {
     accessorKey: "route",
     header: "Route",
