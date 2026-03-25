@@ -2,55 +2,29 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { RouteSales } from "../types";
+import { formatCurrency } from "@/lib/firmate-currency";
 
-export const routeSalesColumns: ColumnDef<RouteSales>[] = [
+export const routeSalesCollectionColumns: ColumnDef<RouteSales>[] = [
   {
     accessorKey: "route",
     header: "Route",
   },
-
   {
-    accessorKey: "todaySales",
-    header: "Today Sales",
+    accessorKey: "totalSales",
+    header: "Total Sales",
     cell: ({ row }) => (
       <span className="text-emerald-600 font-medium">
-        ₹{row.original.todaySales.toLocaleString()}
+        {formatCurrency(row.original.totalSales)}
       </span>
     ),
   },
-
   {
-    accessorKey: "yesterdaySales",
-    header: "Yesterday Sales",
+    accessorKey: "totalCollection",
+    header: "Total Collection",
     cell: ({ row }) => (
-      <span className="text-gray-700">
-        ₹{row.original.yesterdaySales.toLocaleString()}
+      <span className="text-blue-600 font-medium">
+        {formatCurrency(row.original.totalCollection)}
       </span>
     ),
-  },
-
-  {
-    accessorKey: "weeklySales",
-    header: "Weekly Sales",
-  },
-
-  {
-    accessorKey: "last14DaysSales",
-    header: "Last 14 Days Sales",
-  },
-
-  {
-    accessorKey: "monthSales",
-    header: "Month Sales",
-  },
-
-  {
-    accessorKey: "quarterSales",
-    header: "Quarter Sales",
-  },
-
-  {
-    accessorKey: "yearSales",
-    header: "Year Sales",
   },
 ];

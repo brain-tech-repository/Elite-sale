@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Sale } from "../types";
+import { formatCurrency } from "@/lib/firmate-currency";
 
 export const salesColumns: ColumnDef<Sale>[] = [
   { accessorKey: "sno", header: "S. No." },
@@ -9,56 +10,43 @@ export const salesColumns: ColumnDef<Sale>[] = [
   { accessorKey: "warehouse", header: "Warehouse" },
   { accessorKey: "salesman", header: "Salesman" },
 
-  { accessorKey: "totalCustomer", header: "Total Customer" },
-  { accessorKey: "totalVisitDays", header: "Total Visit Days" },
+  { accessorKey: "totalCustomer", header: "Customers" },
+  { accessorKey: "totalVisitDays", header: "Visit Days" },
   { accessorKey: "plannedVisit", header: "Planned Visit" },
-  // { accessorKey: "unplannedVisit", header: "Unplanned Visit" },
 
   {
     accessorKey: "dropRate",
-    header: "Drop Rate %",
-    cell: ({ row }) => (
-      <span className="text-blue-600 font-medium">
-        {row.original.dropRate}%
-      </span>
-    ),
+    header: "Drop %",
+    cell: ({ row }) => `${row.original.dropRate}%`,
   },
-
-  // { accessorKey: "avgTimeSpend", header: "Avg. Time Spend / Outlet" },
-  // { accessorKey: "totalInvoice", header: "Total Invoice No." },
-  // { accessorKey: "avgInvoicePerDay", header: "Avg. Invoice / Day" },
 
   {
     accessorKey: "salesValue",
     header: "Sales (₹)",
-    cell: ({ row }) => (
-      <span className="text-emerald-600 font-medium">
-        ₹{row.original.salesValue.toLocaleString()}
-      </span>
-    ),
+    cell: ({ row }) => formatCurrency(row.original.salesValue),
   },
 
-  { accessorKey: "salesPerDay", header: "Sales / Day" },
+  {
+    accessorKey: "salesPerDay",
+    header: "Sales / Day",
+    cell: ({ row }) => formatCurrency(row.original.salesPerDay),
+  },
 
   {
     accessorKey: "totalCollection",
-    header: "Total Collection",
-    cell: ({ row }) => (
-      <span className="text-green-600 font-medium">
-        ₹{row.original.totalCollection.toLocaleString()}
-      </span>
-    ),
+    header: "Collection",
+    cell: ({ row }) => formatCurrency(row.original.totalCollection),
   },
 
-  { accessorKey: "collectionPerDay", header: "Collection / Day" },
+  {
+    accessorKey: "collectionPerDay",
+    header: "Collection / Day",
+    cell: ({ row }) => formatCurrency(row.original.collectionPerDay),
+  },
 
   {
     accessorKey: "pendingCollection",
-    header: "Pending Collection",
-    cell: ({ row }) => (
-      <span className="text-red-600 font-medium">
-        ₹{row.original.pendingCollection.toLocaleString()}
-      </span>
-    ),
+    header: "Pending",
+    cell: ({ row }) => formatCurrency(row.original.pendingCollection),
   },
 ];

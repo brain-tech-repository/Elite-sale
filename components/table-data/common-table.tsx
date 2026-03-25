@@ -14,6 +14,7 @@ import { DataTableColumns } from "./data-table-columns";
 import { DataTablePagination } from "./data-table-pagination";
 import DataTableHeader from "./table-header";
 import { ColumnManager } from "./columnManager";
+import { Card } from "../ui/card";
 
 interface CommonTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -95,7 +96,7 @@ export function CommonDataTable<TData, TValue>({
   });
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <Card className="w-full flex flex-col gap-2 py-2 my-0">
       {headerTitle && <DataTableHeader title={headerTitle} />}
 
       <DataTableSearch table={table} />
@@ -111,6 +112,6 @@ export function CommonDataTable<TData, TValue>({
           onPrev={onPrev}
         />
       )}
-    </div>
+    </Card>
   );
 }

@@ -24,30 +24,16 @@ import {
   useMonthlyCompareDropSizeRevenue,
   useMonthlyCompareDropSizeVolume,
   useMonthlyTrend,
+  useRouteEfficiency,
+  useRouteExpense,
+  useRouteExpenseGraph,
+  useRoutePerformance,
+  useRoutePerformanceGraph,
+  useRouteWiseSales,
 } from "./useRoutes";
-import { routeSalesColumns } from "./components/column1";
+import { routeSalesCollectionColumns } from "./components/column1";
 import { routeExpenseColumns } from "./components/column2";
-import { routeSalesCollectionColumns } from "./components/column3";
-
-export type Sale = {
-  sno: number;
-  route: string;
-  warehouse: string;
-  salesman: string;
-  totalCustomer: number;
-  totalVisitDays: number;
-  plannedVisit: number;
-  unplannedVisit: number;
-  dropRate: number;
-  avgTimeSpend: string;
-  totalInvoice: number;
-  avgInvoicePerDay: number;
-  salesValue: number;
-  salesPerDay: number;
-  totalCollection: number;
-  collectionPerDay: number;
-  pendingCollection: number;
-};
+import { routeSalesColumns } from "./components/column3";
 export default function Salesdashboa() {
   // 🔹 Global filters → used for charts + table
   const [globalFilters, setGlobalFilters] = useState<SalesFilterPayload>({});
@@ -73,93 +59,13 @@ export default function Salesdashboa() {
   const { data: CompareDropSizeVolume = [], isLoading: volumeLoading } =
     useMonthlyCompareDropSizeVolume(globalFilters);
 
-  const data: Sale[] = [
-    {
-      sno: 1,
-      route: "Route A",
-      warehouse: "WH-01",
-      salesman: "Amit Kumar",
-      totalCustomer: 120,
-      totalVisitDays: 26,
-      plannedVisit: 200,
-      unplannedVisit: 40,
-      dropRate: 12,
-      avgTimeSpend: "15 min",
-      totalInvoice: 180,
-      avgInvoicePerDay: 7,
-      salesValue: 125000,
-      salesPerDay: 4800,
-      totalCollection: 100000,
-      collectionPerDay: 3800,
-      pendingCollection: 25000,
-    },
-    {
-      sno: 2,
-      route: "Route B",
-      warehouse: "WH-02",
-      salesman: "Priya Singh",
-      totalCustomer: 90,
-      totalVisitDays: 24,
-      plannedVisit: 150,
-      unplannedVisit: 30,
-      dropRate: 10,
-      avgTimeSpend: "12 min",
-      totalInvoice: 140,
-      avgInvoicePerDay: 6,
-      salesValue: 98000,
-      salesPerDay: 4100,
-      totalCollection: 85000,
-      collectionPerDay: 3500,
-      pendingCollection: 13000,
-    },
-  ];
+  const { data: performance = [] } = useRoutePerformance(globalFilters);
+  const { data: expense = [] } = useRouteExpense(globalFilters);
+  const { data: sales = [] } = useRouteWiseSales(globalFilters);
+  const { data: efficiency = [] } = useRouteEfficiency(globalFilters);
 
-  const routeSalesData: RouteSales[] = [
-    {
-      route: "Route A",
-      todaySales: 12000,
-      yesterdaySales: 9500,
-      weeklySales: 65000,
-      last14DaysSales: 120000,
-      monthSales: 240000,
-      quarterSales: 720000,
-      yearSales: 2800000,
-    },
-    {
-      route: "Route B",
-      todaySales: 9000,
-      yesterdaySales: 8700,
-      weeklySales: 54000,
-      last14DaysSales: 100000,
-      monthSales: 210000,
-      quarterSales: 650000,
-      yearSales: 2500000,
-    },
-    {
-      route: "Route C",
-      todaySales: 15000,
-      yesterdaySales: 11000,
-      weeklySales: 78000,
-      last14DaysSales: 140000,
-      monthSales: 300000,
-      quarterSales: 900000,
-      yearSales: 3200000,
-    },
-  ];
-
-  const routeExpenseData: RouteExpense[] = [
-    { route: "Route A", totalExpense: 45000 },
-    { route: "Route B", totalExpense: 38000 },
-    { route: "Route C", totalExpense: 52000 },
-    { route: "Route D", totalExpense: 29000 },
-  ];
-
-  const routeSalesCollectionData: RouteSalesCollection[] = [
-    { route: "Route A", totalSales: 120000, totalCollection: 95000 },
-    { route: "Route B", totalSales: 98000, totalCollection: 87000 },
-    { route: "Route C", totalSales: 150000, totalCollection: 120000 },
-    { route: "Route D", totalSales: 87000, totalCollection: 65000 },
-  ];
+  const { data: performanceGraph } = useRoutePerformanceGraph();
+  const { data: expenseGraph } = useRouteExpenseGraph();
 
   return (
     <div className="flex flex-1 flex-col">
@@ -195,13 +101,13 @@ export default function Salesdashboa() {
           <div className="flex flex-col gap-2">
             <RainbowGlowGradientLineChart
               title="Drop Size by Revenue"
-              height={160}
+              height={150}
               showYearSelector={false}
               data={CompareDropSizeRevenue}
             />
 
             <RainbowGlowGradientLineChart
-              height={160}
+              height={150}
               showYearSelector={false}
               data={CompareDropSizeVolume}
               title="Drop Size by Volume"
@@ -223,11 +129,16 @@ export default function Salesdashboa() {
             <CommonDataTable
               title="TOP PERFORMER"
               columns={routeSalesCollectionColumns}
-              data={routeSalesCollectionData}
+              data={performance}
               pageSize={5}
             />
 
-            <RainbowGlowGradientLineChart title="Monthly Route Performance" />
+            <RainbowGlowGradientLineChart
+              title="Monthly Route Performance"
+              data={performanceGraph?.chart_data}
+              xKey="label"
+              yKey="y"
+            />
           </div>
         </section>
 
@@ -242,11 +153,16 @@ export default function Salesdashboa() {
               tableWidth="100%"
               title="Expense By Route"
               columns={routeExpenseColumns}
-              data={routeExpenseData}
+              data={expense}
               pageSize={5}
             />
 
-            <RainbowGlowGradientLineChart title="Monthly Expense by Route" />
+            <RainbowGlowGradientLineChart
+              title="Monthly Expense by Route"
+              data={expenseGraph?.chart_data}
+              xKey="label"
+              yKey="y"
+            />
           </div>
         </section>
 
@@ -259,7 +175,7 @@ export default function Salesdashboa() {
           <CommonDataTable
             title="Sale By Route"
             columns={routeSalesColumns}
-            data={routeSalesData}
+            data={sales}
             pageSize={5}
           />
         </section>
@@ -274,7 +190,7 @@ export default function Salesdashboa() {
             tableWidth="1600px"
             title="Route Efficiency"
             columns={salesColumns}
-            data={data}
+            data={efficiency}
             pageSize={5}
           />
         </section>

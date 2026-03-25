@@ -68,7 +68,7 @@ export function AnimatedHighlightedAreaChart({
   }, [data]);
 
   return (
-    <Card className="shadow-xm">
+    <Card className="shadow-xm py-3">
       <CardHeader className="flex flex-row items-start justify-between text-sm">
         <CardTitle>{title}</CardTitle>
 

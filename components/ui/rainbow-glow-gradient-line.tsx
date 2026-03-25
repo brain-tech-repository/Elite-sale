@@ -38,6 +38,8 @@ interface Props {
   year?: string;
   setYear?: (year: string) => void;
   height?: number | string; // 👈 add this
+  xKey?: string; // 👈 dynamic
+  yKey?: string; // 👈 dynamic
 }
 
 // const fallbackData = [
@@ -61,6 +63,8 @@ export function RainbowGlowGradientLineChart({
   year,
   setYear,
   height = 320, // 👈 default height
+  xKey = "month", // 👈 default
+  yKey = "desktop", // 👈 default
 }: Props) {
   const ITEMS_PER_PAGE = 15;
   const [page, setPage] = React.useState(0);
@@ -78,7 +82,7 @@ export function RainbowGlowGradientLineChart({
   // const customTicks = isNumeric ? ["1", "11", "21", "31"] : undefined;
 
   return (
-    <Card className="shadow-xm">
+    <Card className="shadow-xm py-3">
       <CardHeader className="flex flex-row items-start justify-between">
         <CardTitle className=" text-sm">{title}</CardTitle>
         {/* <CardDescription>
@@ -147,7 +151,8 @@ export function RainbowGlowGradientLineChart({
             <CartesianGrid strokeDasharray="3 3" />
             {/* UPDATED X-AXIS */}
             <XAxis
-              dataKey="month"
+              // dataKey="month"
+              dataKey={xKey}
               tickLine={false}
               axisLine={false}
               interval={1} // Guarantees the first and last items (e.g., 1 and 31) render
@@ -188,7 +193,7 @@ export function RainbowGlowGradientLineChart({
 
             <Line
               type="monotone"
-              dataKey="desktop"
+              dataKey={yKey}
               name="Sales"
               stroke="var(--chart-2)"
               strokeWidth={2}

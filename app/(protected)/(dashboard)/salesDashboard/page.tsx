@@ -53,6 +53,9 @@ export default function Salesdashboa() {
   const { data: regionPerformance = [], isLoading: regionLoading } =
     useRegionPerformance(filters);
 
+  const { data: brandTable = [], isLoading: brandLoadings } =
+    useBrandPerformance(filters);
+
   const { data: brandPerformance = [], isLoading: brandLoading } =
     useBrandPerformance(filters);
 
@@ -67,54 +70,16 @@ export default function Salesdashboa() {
   const { data: materialLineData } = useMaterialLinePerformance();
   const { data: customerLineData } = useCustomerLinePerformance();
 
-  /* DATA TRANSFORM */
-
-  const regionTable = regionPerformance?.Result?.table_data?.length
-    ? regionPerformance.Result.table_data
-    : fallbackTableData;
-
   const regionPie = regionPerformance?.Result?.pie_chart ?? [];
-  const regionLine =
-    regionLineData?.Result?.line_chart?.map((item: any) => ({
-      month: item.label,
-      desktop: item.y,
-    })) ?? [];
-
-  const brandTable = brandPerformance?.Result?.table_data?.length
-    ? brandPerformance.Result.table_data
-    : fallbackTableData;
-
   const brandPie = brandPerformance?.Result?.pie_chart ?? [];
-
-  const brandLine =
-    brandLineData?.Result?.line_chart?.map((item: any) => ({
-      month: item.label,
-      desktop: item.y,
-    })) ?? [];
-
-  const materialTable = materialGroupPerformance?.Result?.table_data?.length
-    ? materialGroupPerformance.Result.table_data
-    : fallbackTableData;
-
   const materialPie = materialGroupPerformance?.Result?.pie_chart ?? [];
-
-  const materialLine =
-    materialLineData?.Result?.line_chart?.map((item: any) => ({
-      month: item.label,
-      desktop: item.y,
-    })) ?? [];
-
-  const customerTable = customerSegmentPerformance?.Result?.table_data?.length
-    ? customerSegmentPerformance.Result.table_data
-    : fallbackTableData;
-
   const customerPie = customerSegmentPerformance?.Result?.pie_chart ?? [];
 
-  const customerLine =
-    customerLineData?.Result?.line_chart?.map((item: any) => ({
-      month: item.label,
-      desktop: item.y,
-    })) ?? [];
+  const regionLine = regionLineData?.Result?.line_chart ?? [];
+  const brandLine = brandLineData?.Result?.line_chart ?? [];
+  const materialLine = materialLineData?.Result?.line_chart ?? [];
+  const customerLine = customerLineData?.Result?.line_chart ?? [];
+
   const formattedData = (monthlyData || []).map((item: any) => ({
     month: item.month ?? "",
     pv: Number(item.desktop ?? 0),
@@ -182,7 +147,7 @@ export default function Salesdashboa() {
               ) : (
                 <CommonDataTable
                   columns={performanceColumns}
-                  data={regionTable}
+                  data={regionPerformance}
                   pageSize={5}
                   title="Region Performance"
                 />
@@ -201,6 +166,8 @@ export default function Salesdashboa() {
               {/* LINE → ALWAYS SHOW (NO loading) */}
               {regionLineData ? (
                 <RainbowGlowGradientLineChart
+                  xKey="label"
+                  yKey="y"
                   title="Region Monthly Sales Trend"
                   data={regionLine}
                   showYearSelector={false}
@@ -242,6 +209,8 @@ export default function Salesdashboa() {
               {/* LINE */}
               {brandLineData ? (
                 <RainbowGlowGradientLineChart
+                  xKey="label"
+                  yKey="y"
                   title="Brand Monthly Sales Trend"
                   data={brandLine}
                   showYearSelector={false}
@@ -264,7 +233,7 @@ export default function Salesdashboa() {
               ) : (
                 <CommonDataTable
                   columns={performanceColumns}
-                  data={materialTable}
+                  data={materialGroupPerformance}
                   pageSize={5}
                   title="Material Group"
                 />
@@ -283,6 +252,8 @@ export default function Salesdashboa() {
               {/* LINE */}
               {materialLineData ? (
                 <RainbowGlowGradientLineChart
+                  xKey="label"
+                  yKey="y"
                   title="Material Group Monthly Sales Trend"
                   data={materialLine}
                   showYearSelector={false}
@@ -305,7 +276,7 @@ export default function Salesdashboa() {
               ) : (
                 <CommonDataTable
                   columns={performanceColumns}
-                  data={customerTable}
+                  data={customerSegmentPerformance}
                   pageSize={5}
                   title="Customer Segment"
                 />
@@ -324,6 +295,8 @@ export default function Salesdashboa() {
               {/* LINE */}
               {customerLineData ? (
                 <RainbowGlowGradientLineChart
+                  xKey="label"
+                  yKey="y"
                   title="Customer Segment Monthly Sales Trend"
                   data={customerLine}
                   showYearSelector={false}

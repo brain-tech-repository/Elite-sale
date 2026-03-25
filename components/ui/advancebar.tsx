@@ -52,7 +52,7 @@ export function AdvancedBarChart({ data = [] }: { data: any[] }) {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full py-3">
       <CardHeader>
         <CardTitle>High-Density Traffic Metrics</CardTitle>
       </CardHeader>
@@ -80,9 +80,7 @@ export function AdvancedBarChart({ data = [] }: { data: any[] }) {
                 <stop offset="100%" stopColor="#2C5364" />
               </linearGradient>
             </defs>
-
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-
+            <CartesianGrid stroke="#e5e7eb" />
             {/* X Axis */}
             {/* <XAxis
               dataKey="name"
@@ -94,29 +92,25 @@ export function AdvancedBarChart({ data = [] }: { data: any[] }) {
             /> */}
             <XAxis
               dataKey="name"
-              tickLine={false}
+              tickLine={true}
               axisLine={true} // ✅ show axis line
               interval={2} // 👈 shows every 10th item (01, 11, 21...)
             />
-
             {/* Y Axis */}
             <YAxis
-              tickLine={false}
-              axisLine={false}
+              tickLine={true}
+              axisLine={true}
               width={30}
               tickFormatter={formatYAxis}
             />
-
             {/* Tooltip */}
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-
             {/* Legend */}
             <Legend
-              verticalAlign="top"
-              align="right"
+              verticalAlign="bottom"
+              align="center"
               onClick={(e: any) => handleLegendClick(e.dataKey)}
             />
-
             {/* ✅ Completion */}
             {visibleKeys.completion && (
               <Bar
@@ -137,7 +131,6 @@ export function AdvancedBarChart({ data = [] }: { data: any[] }) {
                 ))}
               </Bar>
             )}
-
             {/* ✅ Success */}
             {visibleKeys.success && (
               <Bar
@@ -158,7 +151,6 @@ export function AdvancedBarChart({ data = [] }: { data: any[] }) {
                 ))}
               </Bar>
             )}
-
             {/* ✅ Incompletion */}
             {visibleKeys.incompletion && (
               <Bar

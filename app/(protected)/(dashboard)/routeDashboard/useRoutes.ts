@@ -240,3 +240,144 @@ export const useMonthlyCompareDropSizeVolume = (filters?: SalesFilterPayload) =>
 
     refetchOnWindowFocus: false,
   });
+
+export const useRoutePerformance = (filters?: SalesFilterPayload) =>
+  useQuery({
+    queryKey: ["route-performance", filters],
+    queryFn: async () => {
+      const query = new URLSearchParams((filters ?? {}) as any).toString();
+
+      const { data } = await api.get(`/route-analysis/performance?${query}`);
+
+      return (
+        data?.data?.table_data?.map((item: any) => ({
+          route: item.name,
+          totalSales: item.total_sales ?? 0,
+          totalCollection: item.total_collection ?? 0,
+        })) || []
+      );
+    },
+  });
+
+export const useRoutePerformanceGraph = () =>
+  useQuery({
+    queryKey: ["route-performance-graph"], // 🔥 no filters
+
+    queryFn: async () => {
+      const { data } = await api.get(`/route-analysis/performance`);
+
+      return data?.data || {};
+    },
+
+    staleTime: Infinity, // 🔥 only first time load
+  });
+
+export const useRouteExpense = (filters?: SalesFilterPayload) =>
+  useQuery({
+    queryKey: ["route-expense", filters],
+    queryFn: async () => {
+      const query = new URLSearchParams((filters ?? {}) as any).toString();
+
+      const { data } = await api.get(
+        `/route-analysis/expense-analysis?${query}`,
+      );
+
+      return (
+        data?.data?.table_data?.map((item: any) => ({
+          route: item.route_name,
+          totalExpense: item.total_expense ?? 0,
+        })) || []
+      );
+    },
+  });
+
+export const useRouteExpenseGraph = () =>
+  useQuery({
+    queryKey: ["route-expense-graph"], // 🔥 no filters
+
+    queryFn: async () => {
+      const { data } = await api.get(`/route-analysis/expense-analysis`);
+
+      return data?.data || {};
+    },
+
+    staleTime: Infinity,
+  });
+
+export const useRouteWiseSales = (filters?: SalesFilterPayload) =>
+  useQuery({
+    queryKey: ["route-sales", filters],
+    queryFn: async () => {
+      const query = new URLSearchParams((filters ?? {}) as any).toString();
+
+      const { data } = await api.get(`/route-analysis/wise-sales?${query}`);
+
+      return (
+        data?.data?.map((item: any) => ({
+          route: item.route_name,
+          todaySales: item.today_sales ?? 0,
+          yesterdaySales: item.yesterday_sales ?? 0,
+          weeklySales: item.weekly_sales ?? 0,
+          last14DaysSales: item.last_14_days_sales ?? 0,
+          monthSales: item.month_sales ?? 0,
+          quarterSales: item.quarter_sales ?? 0,
+          yearSales: item.year_sales ?? 0,
+        })) || []
+      );
+    },
+  });
+
+export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
+  useQuery({
+    queryKey: ["route-efficiency", filters],
+    queryFn: async () => {
+      const query = new URLSearchParams((filters ?? {}) as any).toString();
+
+      const { data } = await api.get(
+        `/route-analysis/efficiency-overview?${query}`,
+      );
+
+      return (
+        data?.data?.map((item: any, index: number) => ({
+          sno: index + 1,
+          route: item.route_name,
+          warehouse: item.warehouse_name,
+          salesman: item.salesman_name,
+
+          totalCustomer: item.total_customer ?? 0,
+          totalVisitDays: item.total_visit_days ?? 0,
+          plannedVisit: item.planned_visit ?? 0,
+          dropRate: item.drop_rate ?? 0,
+
+          salesValue: item.sales_inv_value ?? 0,
+          salesPerDay: item.sales_per_day ?? 0,
+
+          totalCollection: item.total_collection ?? 0,
+          collectionPerDay: item.collection_per_day ?? 0,
+          pendingCollection: item.pending_collection ?? 0,
+        })) || []
+      );
+    },
+  });
+
+// export const useRoutePerformance = (filters?: SalesFilterPayload) =>
+//   useQuery({
+//     queryKey: ["route-performance", filters],
+//     queryFn: async () => {
+//       const query = new URLSearchParams(filters as any).toString();
+//       const { data } = await api.get(`/route-analysis/performance?${query}`);
+
+//       const res = data?.data || {};
+
+//       return {
+//         tableData:
+//           res?.table_data?.map((item: any) => ({
+//             route: item.name,
+//             totalSales: item.total_sales ?? 0,
+//             totalCollection: item.total_collection ?? 0,
+//           })) || [],
+
+//         chartData: res?.chart_data || [],
+//       };
+//     },
+//   });

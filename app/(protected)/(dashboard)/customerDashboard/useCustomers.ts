@@ -144,20 +144,41 @@ export const useMonthlyTrend = (filters?: SalesFilterPayload) =>
       const query = new URLSearchParams(
         (filters ?? {}) as Record<string, string>,
       ).toString();
+
       const { data } = await api.get(
         `/dashboard/customer/monthly-trend?${query}`,
       );
 
-      return (
-        data?.data?.map((item: any) => ({
-          month: item.label,
-          desktop: item.y,
-        })) || []
-      );
+      // ✅ direct return (no mapping)
+      return data?.data || [];
     },
 
     refetchOnWindowFocus: false,
   });
+
+// export const useMonthlyTrend = (filters?: SalesFilterPayload) =>
+//   useQuery({
+//     queryKey: ["customer-monthly-trend", filters],
+
+//     queryFn: async () => {
+//       const query = new URLSearchParams(
+//         (filters ?? {}) as Record<string, string>,
+//       ).toString();
+
+//       const { data } = await api.get(
+//         `/dashboard/customer/monthly-trend?${query}`,
+//       );
+
+//       return (
+//         data?.data?.map((item: any) => ({
+//           label: item.label, // ✅ matches xKey
+//           y: Number(item.y), // ✅ matches yKey
+//         })) || []
+//       );
+//     },
+
+//     refetchOnWindowFocus: false,
+//   });
 
 /* ========================================================================== */
 /*                           REGION PERFORMANCE                               */

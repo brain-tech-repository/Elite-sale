@@ -26,34 +26,6 @@ import {
 import { SectionCardsSkeleton } from "@/components/ui/SectionCardsSkeleton";
 
 export default function CustomerDashboard() {
-  const dummyTableData = [
-    {
-      serial_no: 1,
-      date: "2026-03-18",
-      customer_code: "CUS00857",
-      customer_category_name: "Cosmetic Store",
-      customer_name: "PAMELLA B.CENTRE",
-      last_transaction: "38,509,000.00",
-      total_collection: "0.00",
-      total_invoice_value: "0.00",
-      amount: "0.00",
-      total_invoice_amount: "38,509,000.00",
-      per_day: "38,509,000.00",
-    },
-    {
-      serial_no: 2,
-      date: "2026-03-17",
-      customer_code: "CUS00999",
-      customer_category_name: "Retail Store",
-      customer_name: "ABC MART",
-      last_transaction: "12,000.00",
-      total_collection: "5,000.00",
-      total_invoice_value: "7,000.00",
-      amount: "2,000.00",
-      total_invoice_amount: "12,000.00",
-      per_day: "6,000.00",
-    },
-  ];
   /* =========================
      STATE MANAGEMENT
   ========================= */
@@ -139,12 +111,12 @@ export default function CustomerDashboard() {
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col">
         {/* 1. PAGE HEADER SECTION: Standardized padding */}
-        <header className="py-8 px-2">
+        <header className="py-6 px-2">
           <DataTableHeader title="Customers Dashboard" />
         </header>
 
         {/* 2. TOP FILTER SECTION: Consistent bottom margin to separate from KPI */}
-        <div className="px-2 mb-8">
+        <div className="px-2 mb-4">
           <Card className="shadow-xm lg:px-5">
             <MyForm
               onFilter={(f) => {
@@ -170,6 +142,8 @@ export default function CustomerDashboard() {
             <ChartSkeleton />
           ) : (
             <RainbowGlowGradientLineChart
+              xKey="label"
+              yKey="y"
               height={300}
               title="Monthly Trend of Customers Creation"
               showYearSelector={false}

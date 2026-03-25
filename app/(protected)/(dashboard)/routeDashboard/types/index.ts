@@ -83,13 +83,16 @@ export type Sale = {
 
 export type RouteSales = {
   route: string;
-  todaySales: number;
-  yesterdaySales: number;
+
   weeklySales: number;
   last14DaysSales: number;
   monthSales: number;
   quarterSales: number;
   yearSales: number;
+  todaySales: number;
+  yesterdaySales: number;
+  totalSales: number;
+  totalCollection: number;
 };
 
 export type RouteExpense = {
