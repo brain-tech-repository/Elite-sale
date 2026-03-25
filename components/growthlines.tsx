@@ -61,7 +61,7 @@ const GrowthLines: React.FC<GrowthLinesProps> = ({ data, isLoading }) => {
   }
 
   return (
-    <Card className="w-full shadow-md p-6 rounded-xl">
+    <Card className="w-full shadow-md p-6 rounded-xl pt-3">
       <div className="w-full space-y-6">
         {items.slice(0, 3).map((item, index) => {
           const gradient = gradients[index % gradients.length];

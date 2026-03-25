@@ -48,7 +48,7 @@ export default function Page({ children }: PageProps) {
         </header>
 
         {/* MAIN CONTENT AREA */}
-        <main className="flex-1 p-5">
+        <main className="flex-1 p-2">
           <div className="">{children}</div>
         </main>
       </SidebarInset>

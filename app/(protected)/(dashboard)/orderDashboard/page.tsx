@@ -20,7 +20,7 @@ export default function Salesdashboa() {
           {/* FILTERS */}
 
           <div className="lg:px-6 px-1 pb-4 ">
-            <Card className="shadow-sm lg:px-5 ">
+            <Card className="shadow-xm lg:px-5 ">
               {" "}
               <MyForm />
             </Card>
@@ -33,7 +33,7 @@ export default function Salesdashboa() {
           </section>
           <section className="lg:px-6 px-1 pb-10 space-y-4">
             <div className="lg:col-span-1">
-              <Card className="shadow-sm py-2">
+              <Card className="shadow-xm py-2">
                 <CommonDataTable
                   columns={sectionColumns}
                   data={data}

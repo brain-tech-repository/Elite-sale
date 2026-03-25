@@ -196,14 +196,14 @@ export default function MyForm() {
 
         {/* Buttons */}
         <div className="flex w-full justify-start gap-6 pt-2">
-          <Button type="submit" variant="outline" className="shadow-sm">
+          <Button type="submit" variant="outline" className="shadow-xm">
             Filter
           </Button>
 
           <Button
             type="button"
             variant="outline"
-            className="shadow-sm"
+            className="shadow-xm"
             onClick={() => form.reset()}
           >
             Reset

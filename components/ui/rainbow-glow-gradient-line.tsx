@@ -38,18 +38,18 @@ interface Props {
   year?: string;
   setYear?: (year: string) => void;
   height?: number | string; // 👈 add this
+  xKey?: string; // 👈 dynamic
+  yKey?: string; // 👈 dynamic
 }
 
-const fallbackData = [
-  [
-    { month: "Jan", desktop: 120 },
-    { month: "Mar", desktop: 250 },
-    { month: "May", desktop: 180 },
-    { month: "Jul", desktop: 310 },
-    { month: "Sep", desktop: 220 },
-    { month: "Nov", desktop: 270 },
-  ],
-];
+// const fallbackData = [
+//   { month: "Jan", desktop: 120 },
+//   { month: "Mar", desktop: 250 },
+//   { month: "May", desktop: 180 },
+//   { month: "Jul", desktop: 310 },
+//   { month: "Sep", desktop: 220 },
+//   { month: "Nov", desktop: 270 },
+// ];
 
 const years = Array.from({ length: 2030 - 2001 + 1 }, (_, i) =>
   (2001 + i).toString(),
@@ -63,6 +63,8 @@ export function RainbowGlowGradientLineChart({
   year,
   setYear,
   height = 320, // 👈 default height
+  xKey = "month", // 👈 default
+  yKey = "desktop", // 👈 default
 }: Props) {
   const ITEMS_PER_PAGE = 15;
   const [page, setPage] = React.useState(0);
@@ -70,7 +72,8 @@ export function RainbowGlowGradientLineChart({
   const start = page * ITEMS_PER_PAGE;
   const visibleYears = years.slice(start, start + ITEMS_PER_PAGE);
 
-  const chartData = data && data.length > 0 ? data : fallbackData;
+  // const chartData = data && data.length > 0 ? data : fallbackData;
+  const chartData = data ?? [];
 
   // const firstLabel = chartData[0]?.month;
 
@@ -79,7 +82,7 @@ export function RainbowGlowGradientLineChart({
   // const customTicks = isNumeric ? ["1", "11", "21", "31"] : undefined;
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm py-3">
       <CardHeader className="flex flex-row items-start justify-between">
         <CardTitle className=" text-sm">{title}</CardTitle>
         {/* <CardDescription>
@@ -135,7 +138,7 @@ export function RainbowGlowGradientLineChart({
         className="w-full"
         style={{ height: typeof height === "number" ? `${height}px` : height }}
       >
-        <ResponsiveContainer width="106%" height="100%">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
             margin={{
@@ -148,7 +151,8 @@ export function RainbowGlowGradientLineChart({
             <CartesianGrid strokeDasharray="3 3" />
             {/* UPDATED X-AXIS */}
             <XAxis
-              dataKey="month"
+              // dataKey="month"
+              dataKey={xKey}
               tickLine={false}
               axisLine={false}
               interval={1} // Guarantees the first and last items (e.g., 1 and 31) render
@@ -166,7 +170,7 @@ export function RainbowGlowGradientLineChart({
             /> */}
             <YAxis
               width={60}
-              tickCount={7}
+              tickCount={8}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value: number) => {
@@ -189,7 +193,7 @@ export function RainbowGlowGradientLineChart({
 
             <Line
               type="monotone"
-              dataKey="desktop"
+              dataKey={yKey}
               name="Sales"
               stroke="var(--chart-2)"
               strokeWidth={2}

@@ -52,7 +52,7 @@ export default function Salesdashboa() {
           </div>
           {/* FILTERS */}
           <div className="lg:px-6 px-1 pb-4">
-            <Card className="shadow-sm">
+            <Card className="shadow-xm">
               {" "}
               <MyForm />
             </Card>

@@ -73,7 +73,7 @@ export default function BarChart() {
   return (
     <>
       {" "}
-      <Card className="shadow-sm px-5">
+      <Card className="shadow-xm px-5">
         <Bar data={data} options={options} />
       </Card>
     </>

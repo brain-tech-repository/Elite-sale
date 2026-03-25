@@ -1,12 +1,10 @@
 "use client";
 
 import * as React from "react";
-
 import {
   useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
-  // getPaginationRowModel,
   getSortedRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
@@ -14,8 +12,9 @@ import {
 import { DataTableSearch } from "./data-table-search";
 import { DataTableColumns } from "./data-table-columns";
 import { DataTablePagination } from "./data-table-pagination";
-import DataTableSubHeader from "./data-table-sub-header";
 import DataTableHeader from "./table-header";
+import { ColumnManager } from "./columnManager";
+import { Card } from "../ui/card";
 
 interface CommonTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,44 +31,80 @@ export function CommonDataTable<TData, TValue>({
   headerTitle,
   columns,
   data,
-  pageSize = 10,
-  pagination, // ✅ server pagination
+  pagination,
   onNext,
   onPrev,
 }: CommonTableProps<TData, TValue>) {
-  // const [pagination, setPagination] = React.useState({
-  //   pageIndex: 0,
-  //   pageSize: pageSize,
-  // });
+  // ✅ Ensure stable column IDs
+  const columnIds = React.useMemo(
+    () =>
+      columns.map(
+        (col, index) =>
+          (col.id as string) ||
+          (("accessorKey" in col && col.accessorKey) as string) ||
+          `col_${index}`,
+      ),
+    [columns],
+  );
+
+  const [columnOrder, setColumnOrder] = React.useState<string[]>([]);
+
+  // ✅ Load from localStorage
+  React.useEffect(() => {
+    const saved = localStorage.getItem("table-column-order");
+
+    if (saved) {
+      setColumnOrder(JSON.parse(saved));
+    } else {
+      setColumnOrder(columnIds);
+    }
+  }, [columnIds]);
+  // ✅ Load from localStorage
+  React.useEffect(() => {
+    if (columnOrder.length) {
+      localStorage.setItem("table-column-order", JSON.stringify(columnOrder));
+    }
+  }, [columnOrder]);
+  const columnsMap = React.useMemo(() => {
+    const map: Record<string, string> = {};
+
+    columns.forEach((col, index) => {
+      const id =
+        ("id" in col && col.id) ||
+        ("accessorKey" in col && col.accessorKey) ||
+        `col_${index}`;
+
+      const label = typeof col.header === "string" ? col.header : id;
+
+      map[id as string] = label as string;
+    });
+
+    return map;
+  }, [columns]);
 
   const table = useReactTable({
     data,
     columns,
-    // state: {
-    //   pagination,
-    // },
-
-    // onPaginationChange: setPagination,
+    state: {
+      columnOrder,
+    },
+    onColumnOrderChange: setColumnOrder,
 
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <Card className="w-full flex flex-col gap-2 py-2 my-0">
       {headerTitle && <DataTableHeader title={headerTitle} />}
 
-      {/* SEARCH */}
       <DataTableSearch table={table} />
 
-      {/* TABLE */}
       <div className="overflow-hidden rounded-lg border">
         <DataTableColumns table={table} columnsLength={columns.length} />
       </div>
 
-      {/* PAGINATION */}
       {pagination && onNext && onPrev && (
         <DataTablePagination
           pagination={pagination}
@@ -77,6 +112,6 @@ export function CommonDataTable<TData, TValue>({
           onPrev={onPrev}
         />
       )}
-    </div>
+    </Card>
   );
 }

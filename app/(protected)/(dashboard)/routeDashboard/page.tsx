@@ -11,7 +11,12 @@ import { salesColumns } from "./components/columns";
 import { Card } from "@/components/ui/card";
 import GrowthLines from "@/components/growthlines";
 import { AdvancedBarChart } from "@/components/ui/advancebar";
-import { SalesFilterPayload } from "./types";
+import {
+  RouteExpense,
+  RouteSales,
+  RouteSalesCollection,
+  SalesFilterPayload,
+} from "./types";
 import { useState } from "react";
 import { useRegionPerformance } from "../customerDashboard/useCustomers";
 import {
@@ -19,16 +24,16 @@ import {
   useMonthlyCompareDropSizeRevenue,
   useMonthlyCompareDropSizeVolume,
   useMonthlyTrend,
+  useRouteEfficiency,
+  useRouteExpense,
+  useRouteExpenseGraph,
+  useRoutePerformance,
+  useRoutePerformanceGraph,
+  useRouteWiseSales,
 } from "./useRoutes";
-
-type Sale = {
-  id: string;
-  customer: string;
-  product: string;
-  amount: number;
-  status: "Completed" | "Pending" | "Cancelled";
-  date: string;
-};
+import { routeSalesCollectionColumns } from "./components/column1";
+import { routeExpenseColumns } from "./components/column2";
+import { routeSalesColumns } from "./components/column3";
 export default function Salesdashboa() {
   // 🔹 Global filters → used for charts + table
   const [globalFilters, setGlobalFilters] = useState<SalesFilterPayload>({});
@@ -54,169 +59,142 @@ export default function Salesdashboa() {
   const { data: CompareDropSizeVolume = [], isLoading: volumeLoading } =
     useMonthlyCompareDropSizeVolume(globalFilters);
 
-  const data: Sale[] = [
-    {
-      id: "ORD-001",
-      customer: "Amit ",
-      product: "Premium ",
-      amount: 450,
-      status: "Completed",
-      date: "02 Mar",
-    },
-    {
-      id: "ORD-002",
-      customer: "Priya Singh",
-      product: "Mock Test Series",
-      amount: 320,
-      status: "Pending",
-      date: "01 Mar 2026",
-    },
-    {
-      id: "ORD-003",
-      customer: "Rahul Verma",
-      product: "Recorded Batch",
-      amount: 210,
-      status: "Cancelled",
-      date: "28 Feb 2026",
-    },
-    {
-      id: "ORD-003",
-      customer: "Rahul Verma",
-      product: "Recorded Batch",
-      amount: 210,
-      status: "Cancelled",
-      date: "28 Feb 2026",
-    },
-  ];
+  const { data: performance = [] } = useRoutePerformance(globalFilters);
+  const { data: expense = [] } = useRouteExpense(globalFilters);
+  const { data: sales = [] } = useRouteWiseSales(globalFilters);
+  const { data: efficiency = [] } = useRouteEfficiency(globalFilters);
 
-  const datas: any[] = [
-    { label: "Sales Growth", value: 75 },
-    { label: "Customer Growth", value: 45 },
-    { label: "Revenue Growth", value: 90 },
-  ];
-
-  const salesTrend1 = [
-    { month: "Jan", desktop: 100 },
-    { month: "Feb", desktop: 8000 },
-    { month: "Mar", desktop: 4000 },
-    { month: "Apr", desktop: 2000 },
-  ];
-
-  const salesTrend2 = [
-    { month: "Jan", desktop: 8000 },
-    { month: "Feb", desktop: 1000 },
-    { month: "Mar", desktop: 2000 },
-    { month: "Apr", desktop: 7000 },
-  ];
+  const { data: performanceGraph } = useRoutePerformanceGraph();
+  const { data: expenseGraph } = useRouteExpenseGraph();
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* ================= HEADER ================= */}
-      <div className="px-6 py-6">
-        <DataTableHeader title="Route Dashboard" />
-      </div>
+      <div className="@container/main flex flex-1 flex-col">
+        {/* ================= HEADER ================= */}
+        <header className="py-8 px-2">
+          <DataTableHeader title="Route Dashboard" />
+        </header>
 
-      {/* ================= FILTER SECTION ================= */}
-      <section className="px-6 pb-6">
-        <Card className="shadow-sm">
-          <MyForm
-            onFilter={(f) => {
-              setGlobalFilters(f);
-            }}
-          />
-        </Card>
-      </section>
-
-      {/* ================= KPI CARDS ================= */}
-      <section className="px-6 pb-6">
-        <SectionCards filters={globalFilters} />
-      </section>
-
-      {/* ================= TOP CHARTS ================= */}
-      <section className="grid gap-6 px-6 pb-8 grid-cols-1 lg:grid-cols-3">
-        <GrowthLines data={regionData} isLoading={regionLoading} />
-        <AdvancedBarChart data={monthlyTrend} />
-
-        {/* Right side stacked charts */}
-        <div className="flex flex-col gap-6">
-          <RainbowGlowGradientLineChart
-            title="Drop Size by Revenue"
-            height={160}
-            showYearSelector={false}
-            data={CompareDropSizeRevenue}
-          />
-
-          <RainbowGlowGradientLineChart
-            height={160}
-            showYearSelector={false}
-            data={CompareDropSizeVolume}
-            title="Drop Size by Volume"
-          />
-        </div>
-      </section>
-
-      {/* ================= ROUTE PERFORMANCE ================= */}
-      <section className="px-6 pb-8">
-        <DataTableSubHeader title="Route Performance" />
-
-        <div className="mt-4">
-          <Card className="shadow-sm">
-            <MyForm1 />
+        <div className="px-2 mb-8">
+          <Card className="shadow-xs lg:px-5">
+            <MyForm
+              onFilter={(f) => {
+                setGlobalFilters(f);
+                setTableFilters((prev) => ({
+                  ...prev,
+                  page: 1,
+                }));
+              }}
+            />
           </Card>
         </div>
 
-        <div className="grid gap-6 mt-2 grid-cols-1 lg:grid-cols-2">
-          <CommonDataTable
-            title="TOP PERFORMER"
-            columns={salesColumns}
-            data={data}
-            pageSize={5}
-          />
-          <RainbowGlowGradientLineChart title="Monthly Route Performance" />
-        </div>
-      </section>
+        <section className="px-2 mb-6">
+          <SectionCards filters={globalFilters} />
+        </section>
 
-      {/* ================= EXPENSE ANALYSIS ================= */}
-      <section className="px-6 pb-8">
-        <DataTableSubHeader title="Route Expense Analysis" />
+        <section className="grid px-2 mb-6 gap-2 grid-cols-1 lg:grid-cols-[20%_40%_40%]">
+          <GrowthLines data={regionData} isLoading={regionLoading} />
 
-        <div className="grid gap-6 mt-2 grid-cols-1 lg:grid-cols-2">
-          <CommonDataTable
-            title="Expense By Route"
-            columns={salesColumns}
-            data={data}
-            pageSize={5}
-          />
-          <RainbowGlowGradientLineChart title="Monthly Expense by Route" />
-        </div>
-      </section>
+          <AdvancedBarChart data={monthlyTrend} />
 
-      {/* ================= SALES REPORT ================= */}
-      <section className="px-6 pb-8">
-        <DataTableSubHeader title="Route Wise Sales Report" />
+          <div className="flex flex-col gap-2">
+            <RainbowGlowGradientLineChart
+              title="Drop Size by Revenue"
+              height={150}
+              showYearSelector={false}
+              data={CompareDropSizeRevenue}
+            />
 
-        <div className="mt-2">
+            <RainbowGlowGradientLineChart
+              height={150}
+              showYearSelector={false}
+              data={CompareDropSizeVolume}
+              title="Drop Size by Volume"
+            />
+          </div>
+        </section>
+
+        {/* ================= ROUTE PERFORMANCE ================= */}
+        <section className="px-2 mb-6">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Performance" />
+          </div>
+
+          <Card className="shadow-xs lg:px-5">
+            <MyForm1 />
+          </Card>
+
+          <div className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-2">
+            <CommonDataTable
+              title="TOP PERFORMER"
+              columns={routeSalesCollectionColumns}
+              data={performance}
+              pageSize={5}
+            />
+
+            <RainbowGlowGradientLineChart
+              title="Monthly Route Performance"
+              data={performanceGraph?.chart_data}
+              xKey="label"
+              yKey="y"
+            />
+          </div>
+        </section>
+
+        {/* ================= EXPENSE ================= */}
+        <section className="px-2 mb-6">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Expense Analysis" />
+          </div>
+
+          <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
+            <CommonDataTable
+              tableWidth="100%"
+              title="Expense By Route"
+              columns={routeExpenseColumns}
+              data={expense}
+              pageSize={5}
+            />
+
+            <RainbowGlowGradientLineChart
+              title="Monthly Expense by Route"
+              data={expenseGraph?.chart_data}
+              xKey="label"
+              yKey="y"
+            />
+          </div>
+        </section>
+
+        {/* ================= SALES REPORT ================= */}
+        <section className="px-2 mb-6">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Wise Sales Report" />
+          </div>
+
           <CommonDataTable
             title="Sale By Route"
-            columns={salesColumns}
-            data={data}
+            columns={routeSalesColumns}
+            data={sales}
             pageSize={5}
           />
-        </div>
-      </section>
+        </section>
 
-      {/* ================= EFFICIENCY OVERVIEW ================= */}
-      <section className="px-6 pb-10">
-        <DataTableSubHeader title="Route Efficency Overview" />
-        <div className="mt-2">
+        {/* ================= EFFICIENCY ================= */}
+        <section className="px-2 pb-12">
+          <div className="mb-4">
+            <DataTableSubHeader title="Route Efficiency Overview" />
+          </div>
+
           <CommonDataTable
-            title="Route Efficency"
+            tableWidth="1600px"
+            title="Route Efficiency"
             columns={salesColumns}
-            data={data}
+            data={efficiency}
             pageSize={5}
           />
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

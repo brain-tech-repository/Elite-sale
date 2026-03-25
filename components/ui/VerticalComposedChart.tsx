@@ -23,7 +23,7 @@ const data = [
 
 const VerticalComposedChart = () => {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm">
       <ResponsiveContainer width="100%" height={250}>
         <ComposedChart
           layout="vertical"

@@ -42,7 +42,7 @@ const chartConfig = {
 
 export function RainbowGlowGradientLineCharts() {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm">
       <CardHeader>
         <CardTitle>
           Rainbow Line Chart

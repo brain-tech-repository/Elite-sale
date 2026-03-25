@@ -1,55 +1,52 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Sale } from "../types"
-
-
+import { ColumnDef } from "@tanstack/react-table";
+import { Sale } from "../types";
+import { formatCurrency } from "@/lib/firmate-currency";
 
 export const salesColumns: ColumnDef<Sale>[] = [
-  {
-    accessorKey: "id",
-    header: "Order ID",
-  },
-  {
-    accessorKey: "customer",
-    header: "Customer",
-  },
-  {
-    accessorKey: "product",
-    header: "Product",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount (₹)",
-    cell: ({ row }) => (
-      <span className="font-medium text-emerald-600">
-        ₹{row.original.amount.toLocaleString()}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status
+  { accessorKey: "sno", header: "S. No." },
+  { accessorKey: "route", header: "Route" },
+  { accessorKey: "warehouse", header: "Warehouse" },
+  { accessorKey: "salesman", header: "Salesman" },
 
-      return (
-        <span
-          className={`px-2 py-1 text-xs rounded-md font-medium ${
-            status === "Completed"
-              ? "bg-emerald-100 text-emerald-700"
-              : status === "Pending"
-              ? "bg-pink-100 text-pink-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {status}
-        </span>
-      )
-    },
-  },
+  { accessorKey: "totalCustomer", header: "Customers" },
+  { accessorKey: "totalVisitDays", header: "Visit Days" },
+  { accessorKey: "plannedVisit", header: "Planned Visit" },
+
   {
-    accessorKey: "date",
-    header: "Date",
+    accessorKey: "dropRate",
+    header: "Drop %",
+    cell: ({ row }) => `${row.original.dropRate}%`,
   },
-]
+
+  {
+    accessorKey: "salesValue",
+    header: "Sales (₹)",
+    cell: ({ row }) => formatCurrency(row.original.salesValue),
+  },
+
+  {
+    accessorKey: "salesPerDay",
+    header: "Sales / Day",
+    cell: ({ row }) => formatCurrency(row.original.salesPerDay),
+  },
+
+  {
+    accessorKey: "totalCollection",
+    header: "Collection",
+    cell: ({ row }) => formatCurrency(row.original.totalCollection),
+  },
+
+  {
+    accessorKey: "collectionPerDay",
+    header: "Collection / Day",
+    cell: ({ row }) => formatCurrency(row.original.collectionPerDay),
+  },
+
+  {
+    accessorKey: "pendingCollection",
+    header: "Pending",
+    cell: ({ row }) => formatCurrency(row.original.pendingCollection),
+  },
+];

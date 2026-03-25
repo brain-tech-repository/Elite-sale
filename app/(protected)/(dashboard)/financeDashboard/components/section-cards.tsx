@@ -122,7 +122,7 @@ export function SectionCards() {
         return (
           <AnimatedCard key={index}>
             <Card
-              className={`p-3 rounded-xl border shadow-sm hover:shadow-xl transition-all shadow-sm ${card.color}`}
+              className={`p-3 rounded-xl border shadow-xm hover:shadow-xl transition-all shadow-xm ${card.color}`}
             >
               <CardHeader className="p-0 space-y-1">
                 <CardDescription className="text-sm font-medium text-muted-foreground">

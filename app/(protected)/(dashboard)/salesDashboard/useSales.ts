@@ -264,8 +264,11 @@ export const useMaterials = (
 export const useRegionPerformance = (filters: any) => {
   return useQuery({
     queryKey: ["region-performance", filters],
-    queryFn: () => fetchPerformance("get_region_performance", filters),
-    enabled: !!filters,
+    queryFn: async () => {
+      const res = await fetchPerformance("get_region_performance", filters);
+
+      return res?.Result?.table_data || []; // 👈 no fallback, just safe empty array
+    },
   });
 };
 
@@ -275,8 +278,11 @@ export const useRegionPerformance = (filters: any) => {
 export const useBrandPerformance = (filters: any) => {
   return useQuery({
     queryKey: ["brand-performance", filters],
-    queryFn: () => fetchPerformance("get_brand_performance", filters),
-    enabled: !!filters,
+    queryFn: async () => {
+      const res = await fetchPerformance("get_brand_performance", filters);
+      return res?.Result?.table_data || [];
+    },
+    // enabled: !!filters,
   });
 };
 
@@ -286,8 +292,14 @@ export const useBrandPerformance = (filters: any) => {
 export const useMaterialGroupPerformance = (filters: any) => {
   return useQuery({
     queryKey: ["material-group-performance", filters],
-    queryFn: () => fetchPerformance("get_material_group_performance", filters),
-    enabled: !!filters,
+    queryFn: async () => {
+      const res = await fetchPerformance(
+        "get_material_group_performance",
+        filters,
+      );
+      return res?.Result?.table_data || [];
+    },
+    // enabled: !!filters,
   });
 };
 
@@ -297,8 +309,52 @@ export const useMaterialGroupPerformance = (filters: any) => {
 export const useCustomerSegmentPerformance = (filters: any) => {
   return useQuery({
     queryKey: ["customer-segment-performance", filters],
-    queryFn: () =>
-      fetchPerformance("get_customer_segment_performance", filters),
-    enabled: !!filters,
+    queryFn: async () => {
+      const res = await fetchPerformance(
+        "get_customer_segment_performance",
+        filters,
+      );
+      return res?.Result?.table_data || [];
+    },
+    // enabled: !!filters,
+  });
+};
+export const useRegionLinePerformance = () => {
+  return useQuery({
+    queryKey: ["region-line-performance"],
+    queryFn: () => fetchPerformance("get_region_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false, // no filters
+  });
+};
+
+export const useBrandLinePerformance = () => {
+  return useQuery({
+    queryKey: ["brand-line-performance"],
+    queryFn: () => fetchPerformance("get_brand_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false,
+  });
+};
+
+export const useMaterialLinePerformance = () => {
+  return useQuery({
+    queryKey: ["material-line-performance"],
+    queryFn: () => fetchPerformance("get_material_group_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false,
+  });
+};
+
+export const useCustomerLinePerformance = () => {
+  return useQuery({
+    queryKey: ["customer-line-performance"],
+    queryFn: () => fetchPerformance("get_customer_segment_performance", {}),
+    staleTime: Infinity, // ✅ no refetch
+    refetchOnWindowFocus: false, // ✅ no refetch on tab focus
+    refetchOnMount: false,
   });
 };

@@ -68,7 +68,7 @@ export function AnimatedHighlightedAreaChart({
   }, [data]);
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-xm py-3">
       <CardHeader className="flex flex-row items-start justify-between text-sm">
         <CardTitle>{title}</CardTitle>
 
@@ -124,7 +124,7 @@ export function AnimatedHighlightedAreaChart({
               />
               <YAxis
                 width={55} // 👈 control axis width (increase if labels cut)
-                tickCount={7} // 👈 control number of ticks (reduce gap)
+                tickCount={8} // 👈 control number of ticks (reduce gap)
                 tickLine={false}
                 axisLine={false}
                 /* Strictly uses k (thousands) for all values */

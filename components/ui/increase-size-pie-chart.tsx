@@ -69,7 +69,7 @@ export function IncreaseSizePieChart({
   description = "January - June 2024", // Default description
 }: RoundedPieChartProps) {
   return (
-    <Card className="flex flex-col shadow-sm">
+    <Card className="flex flex-col shadow-xm">
       <CardHeader className="items-center pb-0">
         <CardTitle>{title}</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
