@@ -91,7 +91,7 @@ export function GaugePieChartCard() {
   const outerRadius = 100;
 
   return (
-    <Card className="shadow-xm h-full flex flex-col">
+    <Card className="shadow-xm h-full flex flex-col py-3">
       <CardHeader className="gap-1">
         <div className="flex items-center justify-between text-sm">
           <CardTitle>Performance Gauge</CardTitle>
