@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { RouteSales } from "../types";
-import { formatCurrency } from "@/lib/firmate-currency";
+import { formatNumber } from "@/lib/format-number";
 
 export const routeSalesColumns: ColumnDef<RouteSales>[] = [
   {
@@ -13,42 +13,42 @@ export const routeSalesColumns: ColumnDef<RouteSales>[] = [
   {
     accessorKey: "todaySales",
     header: "Today Sales",
-    cell: ({ row }) => formatCurrency(row.original.todaySales),
+    cell: ({ row }) => formatNumber(row.original.todaySales),
   },
 
   {
     accessorKey: "yesterdaySales",
     header: "Yesterday Sales",
-    cell: ({ row }) => formatCurrency(row.original.yesterdaySales),
+    cell: ({ row }) => formatNumber(row.original.yesterdaySales),
   },
 
   {
     accessorKey: "weeklySales",
     header: "Weekly Sales",
-    cell: ({ row }) => formatCurrency(row.original.weeklySales),
+    cell: ({ row }) => formatNumber(row.original.weeklySales),
   },
 
   {
     accessorKey: "last14DaysSales",
     header: "Last 14 Days",
-    cell: ({ row }) => formatCurrency(row.original.last14DaysSales),
+    cell: ({ row }) => formatNumber(row.original.last14DaysSales),
   },
 
   {
     accessorKey: "monthSales",
     header: "Month",
-    cell: ({ row }) => formatCurrency(row.original.monthSales),
+    cell: ({ row }) => formatNumber(row.original.monthSales),
   },
 
   {
     accessorKey: "quarterSales",
     header: "Quarter",
-    cell: ({ row }) => formatCurrency(row.original.quarterSales),
+    cell: ({ row }) => formatNumber(row.original.quarterSales),
   },
 
   {
     accessorKey: "yearSales",
     header: "Year",
-    cell: ({ row }) => formatCurrency(row.original.yearSales),
+    cell: ({ row }) => formatNumber(row.original.yearSales),
   },
 ];

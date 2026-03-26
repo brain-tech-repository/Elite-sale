@@ -101,7 +101,7 @@ export default function Salesdashboa() {
         <SectionCards filters={filters} />
 
         {/* TOP CHARTS */}
-        <section className="grid grid-cols-1   lg:grid-cols-[38%_38%_24%] gap-1 items-stretch">
+        <section className="grid grid-cols-1 lg:pe-2  lg:grid-cols-[38%_38%_24%] gap-1 items-stretch">
           {yearlyLoading ? (
             <ChartSkeleton />
           ) : (
@@ -181,8 +181,8 @@ export default function Salesdashboa() {
 
         {/* BRAND */}
         <section>
-          <DataTableSubHeader title="Brand Performance" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 ">
+          <DataTableSubHeader title="Brand Performance " />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             <>
               {/* TABLE */}
               {brandLoading ? (

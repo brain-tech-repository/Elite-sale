@@ -2,7 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { RouteExpense } from "../types";
-import { formatCurrency } from "@/lib/firmate-currency";
+// import { formatCurrency } from "@/lib/firmate-currency";
+import { formatNumber } from "@/lib/format-number";
 
 export const routeExpenseColumns: ColumnDef<RouteExpense>[] = [
   {
@@ -14,7 +15,7 @@ export const routeExpenseColumns: ColumnDef<RouteExpense>[] = [
     header: "Total Expense",
     cell: ({ row }) => (
       <span className="text-sky-600 font-medium">
-        {formatCurrency(row.original.totalExpense)}
+        {formatNumber(row.original.totalExpense)}
       </span>
     ),
   },

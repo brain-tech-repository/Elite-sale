@@ -131,7 +131,7 @@ export default function CustomerDashboard() {
         </div>
 
         {/* 3. KPI & TREND SECTION: Uses 'gap-6' for inner grid spacing and 'mb-6' for section separation */}
-        <section className="grid gap-1 px-2 mb-6 grid-cols-1  lg:grid-cols-[28%_44%_28%] gap-1 items-stretch">
+        <section className="grid gap-1 px-3 mb-6 grid-cols-1  lg:grid-cols-[28%_44%_28%] gap-1 items-stretch">
           {monthlyLoading ? (
             <SectionCardsSkeleton />
           ) : (

@@ -41,7 +41,7 @@ const GrowthLines: React.FC<GrowthLinesProps> = ({ data, isLoading }) => {
 
   if (isLoading) {
     return (
-      <Card className="w-full shadow-md p-6 rounded-xl space-y-6">
+      <Card className="w-full shadow-sm p-6 rounded-xl space-y-6">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="space-y-3">
             <div className="h-3 w-1/3 bg-gray-200 animate-pulse rounded" />

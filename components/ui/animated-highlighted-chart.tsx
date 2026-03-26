@@ -130,13 +130,13 @@ export function AnimatedHighlightedAreaChart({
                 /* Strictly uses k (thousands) for all values */
                 tickFormatter={(value: number) => {
                   if (value >= 1_000_000_000) {
-                    return `${(value / 1_000_000_000).toFixed(1)}B`;
+                    return `${value / 1_000_000_000}B`;
                   }
                   if (value >= 1_000_000) {
-                    return `${(value / 1_000_000).toFixed(1)}M`;
+                    return `${value / 1_000_000}M`;
                   }
                   if (value >= 1_000) {
-                    return `${(value / 1_000).toFixed(1)}K`;
+                    return `${value / 1_000}K`;
                   }
                   return value.toString();
                 }}

@@ -94,18 +94,12 @@ export function GaugePieChartCard() {
         <div className="flex items-center justify-between text-sm">
           <CardTitle>Performance Gauge</CardTitle>
         </div>
-
-        <div className="flex items-center space-x-4 text-xs">
-          <span>DTM</span>
-          <Switch id="airplane-mode" />
-          <span>MTY</span>
-        </div>
       </CardHeader>
 
       {/* 2. Added aggressive negative margin (-mt-12) to pull it up */}
-      <CardContent className="lg:h-[140px] -mt-6 sm:-mt-10 relative z-0">
+      <CardContent className="lg:h-[90px] -mt-6 sm:-mt-10 relative z-0">
         <ChartContainer config={chartConfig} className="p-0 m-0">
-          <div className="w-full h-[140px] flex items-center justify-center">
+          <div className="w-full h-[120px] flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart className="p-0 m-0">
                 <Pie

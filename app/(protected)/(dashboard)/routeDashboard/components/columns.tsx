@@ -2,7 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Sale } from "../types";
-import { formatCurrency } from "@/lib/firmate-currency";
+// import { formatNumber } from "@/lib/firmate-currency";
+import { formatNumber } from "@/lib/format-number";
 
 export const salesColumns: ColumnDef<Sale>[] = [
   { accessorKey: "sno", header: "S. No." },
@@ -23,30 +24,30 @@ export const salesColumns: ColumnDef<Sale>[] = [
   {
     accessorKey: "salesValue",
     header: "Sales (₹)",
-    cell: ({ row }) => formatCurrency(row.original.salesValue),
+    cell: ({ row }) => formatNumber(row.original.salesValue),
   },
 
   {
     accessorKey: "salesPerDay",
     header: "Sales / Day",
-    cell: ({ row }) => formatCurrency(row.original.salesPerDay),
+    cell: ({ row }) => formatNumber(row.original.salesPerDay),
   },
 
   {
     accessorKey: "totalCollection",
     header: "Collection",
-    cell: ({ row }) => formatCurrency(row.original.totalCollection),
+    cell: ({ row }) => formatNumber(row.original.totalCollection),
   },
 
   {
     accessorKey: "collectionPerDay",
     header: "Collection / Day",
-    cell: ({ row }) => formatCurrency(row.original.collectionPerDay),
+    cell: ({ row }) => formatNumber(row.original.collectionPerDay),
   },
 
   {
     accessorKey: "pendingCollection",
     header: "Pending",
-    cell: ({ row }) => formatCurrency(row.original.pendingCollection),
+    cell: ({ row }) => formatNumber(row.original.pendingCollection),
   },
 ];

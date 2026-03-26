@@ -61,20 +61,13 @@ export function CommonDataTable<T>({
 
   return (
     <>
-      <div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-sm pt-2">
-        {title && (
-          <div className="px-4 py-1 border-b border-gray-200">
-            <h3 className="text-base font-semibold text-gray-800 text-sm">
-              {title}
-            </h3>
-          </div>
-        )}
-        <div className="w-full overflow-x-auto overflow-y-hidden">
+      <div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-sm flex flex-col h-[350px]">
+        <div className="w-full overflow-x-auto overflow-y-hidden flex-1">
           <div
-            className="max-h-[320px] overflow-y-auto"
+            className="h-full overflow-y-auto  rounded-t-xl"
             style={{ minWidth: tableWidth }}
           >
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse text-sm ">
               {/* Header */}
 
               <thead className="sticky top-0 bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] text-gray-800">
@@ -142,7 +135,7 @@ export function CommonDataTable<T>({
                   <tr>
                     <td
                       colSpan={columns.length}
-                      className="py-10 text-center text-gray-400"
+                      className="h-[245px] text-center text-gray-400 align-middle"
                     >
                       No data found
                     </td>
@@ -154,29 +147,30 @@ export function CommonDataTable<T>({
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between rounded-b-xl border-gray-200 border-t bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3">
+        <div className="mt-auto flex items-center justify-between rounded-b-xl border-gray-200 border-t bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3">
           <span className="text-gray-600 text-sm">
             Page {pagination.pageIndex + 1} of {table.getPageCount()}
           </span>
-
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-sky-400 hover:via-white hover:to-blue-300 disabled:opacity-40"
-            >
-              Previous
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="rounded-md bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] px-4 py-1.5 text-slate-800 text-sm font-medium shadow-sm transition-all duration-300 hover:brightness-95 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Previous
+              </button>
 
-            <button
-              type="button"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="rounded-md bg-gradient-to-r from-pink-100 via-white to-sky-200 px-4 py-1 text-gray-800 text-sm shadow-sm transition-all duration-300 hover:from-sky-400 hover:via-white hover:to-blue-300 disabled:opacity-40"
-            >
-              Next
-            </button>
+              <button
+                type="button"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="rounded-md bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] px-4 py-1.5 text-slate-800 text-sm font-medium shadow-sm transition-all duration-300 hover:brightness-95 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>

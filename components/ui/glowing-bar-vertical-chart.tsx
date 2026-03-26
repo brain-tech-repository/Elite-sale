@@ -129,10 +129,10 @@ export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
     <Card className="p-[0px] m-[0px]">
       {/* <CardHeader>... existing Header content ...</CardHeader> */}
 
-      <CardContent className="p-[0px] m-[0px]">
+      <CardContent className="">
         <ChartContainer
           config={chartConfig}
-          className="w-full h-[500px] sm:h-[550px] m-0 p-0"
+          className="w-full h-[500px] sm:h-[550px]"
         >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -142,12 +142,13 @@ export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
               margin={{ left: 10, right: 10, top: 40, bottom: 10 }}
             >
               <YAxis
+                width={80}
                 type="category"
                 dataKey="category"
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                tickFormatter={(value: string) => value.slice(0, 3)}
+                tickFormatter={(value: string) => value}
               />
 
               <XAxis type="number" hide />

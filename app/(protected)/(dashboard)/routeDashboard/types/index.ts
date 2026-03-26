@@ -99,4 +99,6 @@ export type RouteSalesCollection = {
   route: string;
   totalSales: number;
   totalCollection: number;
+  totalReturn: number;
+  totalExchange: number;
 };

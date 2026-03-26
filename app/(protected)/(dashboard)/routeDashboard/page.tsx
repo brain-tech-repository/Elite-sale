@@ -38,6 +38,10 @@ export default function Salesdashboa() {
   // 🔹 Global filters → used for charts + table
   const [globalFilters, setGlobalFilters] = useState<SalesFilterPayload>({});
 
+  const [performanceType, setPerformanceType] = useState<"routes" | "salesmen">(
+    "routes",
+  );
+
   // 🔹 Table-specific filters → pagination + table form
   const [tableFilters, setTableFilters] = useState<SalesFilterPayload>({
     page: 1,
@@ -59,7 +63,10 @@ export default function Salesdashboa() {
   const { data: CompareDropSizeVolume = [], isLoading: volumeLoading } =
     useMonthlyCompareDropSizeVolume(globalFilters);
 
-  const { data: performance = [] } = useRoutePerformance(globalFilters);
+  const { data: performance = [] } = useRoutePerformance(
+    globalFilters,
+    performanceType,
+  );
   const { data: expense = [] } = useRouteExpense(globalFilters);
   const { data: sales = [] } = useRouteWiseSales(globalFilters);
   const { data: efficiency = [] } = useRouteEfficiency(globalFilters);
@@ -71,12 +78,12 @@ export default function Salesdashboa() {
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col">
         {/* ================= HEADER ================= */}
-        <header className="py-8 px-2">
+        <header className="py-4 px-2">
           <DataTableHeader title="Route Dashboard" />
         </header>
 
-        <div className="px-2 mb-8">
-          <Card className="shadow-xs lg:px-5">
+        <div className="px-2">
+          <Card className="shadow-xs lg:px-4  mb-4">
             <MyForm
               onFilter={(f) => {
                 setGlobalFilters(f);
@@ -93,7 +100,7 @@ export default function Salesdashboa() {
           <SectionCards filters={globalFilters} />
         </section>
 
-        <section className="grid px-2 mb-6 gap-2 grid-cols-1 lg:grid-cols-[20%_40%_40%]">
+        <section className="grid px-2 lg:pe-6 mb-6 gap-2 grid-cols-1 lg:grid-cols-[20%_40%_40%]">
           <GrowthLines data={regionData} isLoading={regionLoading} />
 
           <AdvancedBarChart data={monthlyTrend} />
@@ -121,8 +128,12 @@ export default function Salesdashboa() {
             <DataTableSubHeader title="Route Performance" />
           </div>
 
-          <Card className="shadow-xs lg:px-5">
-            <MyForm1 />
+          <Card className="shadow-xs lg:px-2">
+            <MyForm1
+              onTypeChange={(type) => {
+                setPerformanceType(type);
+              }}
+            />
           </Card>
 
           <div className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-2">
