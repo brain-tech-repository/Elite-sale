@@ -59,7 +59,7 @@ export function RainbowGlowGradientLineChart({
   title = "Sales Trends",
   description = "Monthly Sales",
   data = [],
-  showYearSelector = true,
+  showYearSelector = false,
   year,
   setYear,
   height = 300, // 👈 default height
@@ -170,7 +170,7 @@ export function RainbowGlowGradientLineChart({
             /> */}
             <YAxis
               width={60}
-              tickCount={8}
+              tickCount={7}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value: number) => {

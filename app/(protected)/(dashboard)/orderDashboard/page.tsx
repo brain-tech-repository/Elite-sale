@@ -6,7 +6,7 @@ import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle2";
 import data from "./components/data.json";
 import { Card } from "@/components/ui/card";
 import { sectionColumns } from "./components/columns";
-import { CommonDataTable } from "@/components/table-data/common-table";
+import { CommonDataTables } from "@/components/table-data/common-tables";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
 import { useMonthlyCompareDropSizeVolume } from "../routeDashboard/useRoutes";
 import { SalesFilterPayload } from "../customerDashboard/types";
@@ -78,24 +78,20 @@ export default function Salesdashboa() {
           {/* TOP CHARTS */}
           <section className="grid gap-1 lg:px-5 px-1 pb-8 grid-cols-1 lg:grid-cols-[30%_40%_30%]">
             <SectionCards />
-            <RainbowGlowGradientLineChart
-              height={350}
-              showYearSelector={false}
-            />
+            <RainbowGlowGradientLineChart height={350} />
 
             <div className="flex flex-col gap-2">
               <GaugePieChartCard />
 
               <RainbowGlowGradientLineChart
                 height={150}
-                showYearSelector={false}
                 data={CompareDropSizeVolume}
                 title="Drop Size by Volume"
               />
             </div>
           </section>
           <section className="lg:px-6 px-1  space-y-4">
-            <CommonDataTable
+            <CommonDataTables
               columns={performanceColumns}
               data={tableData}
               headerTitle="Top Customers"

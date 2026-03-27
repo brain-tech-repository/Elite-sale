@@ -17,6 +17,7 @@ const gradients = [
   "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364]",
   "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775]",
   "bg-gradient-to-r from-[#243748] to-[#4B749F]",
+  "bg-gradient-to-r from-[#134E5E] to-[#71B280]",
 ];
 
 // ---------------- Component ----------------
@@ -35,6 +36,10 @@ const GrowthLines: React.FC<GrowthLinesProps> = ({ data, isLoading }) => {
         {
           label: "Incompletion Rate",
           value: data.incompletion_rate,
+        },
+        {
+          label: "Closure Rate", // ✅ NEW
+          value: data.completion_rate,
         },
       ]
     : [];
@@ -63,7 +68,7 @@ const GrowthLines: React.FC<GrowthLinesProps> = ({ data, isLoading }) => {
   return (
     <Card className="w-full shadow-md p-6 rounded-xl pt-3">
       <div className="w-full space-y-6">
-        {items.slice(0, 3).map((item, index) => {
+        {items.slice(0, 4).map((item, index) => {
           const gradient = gradients[index % gradients.length];
 
           return (

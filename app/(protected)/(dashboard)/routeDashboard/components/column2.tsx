@@ -14,9 +14,7 @@ export const routeExpenseColumns: ColumnDef<RouteExpense>[] = [
     accessorKey: "totalExpense",
     header: "Total Expense",
     cell: ({ row }) => (
-      <span className="text-sky-600 font-medium">
-        {formatNumber(row.original.totalExpense)}
-      </span>
+      <span className="">{formatNumber(row.original.totalExpense)}</span>
     ),
   },
 ];

@@ -7,6 +7,7 @@ import { SectionCards } from "./components/section-cards";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
 import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { CommonDataTable } from "@/components/table-data/custom-table";
+import { CommonDataTables } from "@/components/table-data/common-tables";
 import { salesColumns } from "./components/columns";
 import { Card } from "@/components/ui/card";
 import GrowthLines from "@/components/growthlines";
@@ -17,7 +18,7 @@ import {
   RouteSalesCollection,
   SalesFilterPayload,
 } from "./types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRegionPerformance } from "../customerDashboard/useCustomers";
 import {
   useGrowthPerformance,
@@ -34,6 +35,7 @@ import {
 import { routeSalesCollectionColumns } from "./components/column1";
 import { routeExpenseColumns } from "./components/column2";
 import { routeSalesColumns } from "./components/column3";
+import { TableSkeleton } from "@/components/ui/dashboard-skeleton";
 export default function Salesdashboa() {
   // 🔹 Global filters → used for charts + table
   const [globalFilters, setGlobalFilters] = useState<SalesFilterPayload>({});
@@ -68,11 +70,51 @@ export default function Salesdashboa() {
     performanceType,
   );
   const { data: expense = [] } = useRouteExpense(globalFilters);
-  const { data: sales = [] } = useRouteWiseSales(globalFilters);
-  const { data: efficiency = [] } = useRouteEfficiency(globalFilters);
+  // const { data: sales = [] } = useRouteWiseSales(globalFilters);
+  // const { data: efficiency = [] } = useRouteEfficiency(globalFilters);
 
   const { data: performanceGraph } = useRoutePerformanceGraph();
   const { data: expenseGraph } = useRouteExpenseGraph();
+
+  // mvfdnbkgb
+  const { data: efficiencyRes, isLoading: efficiencyloading } =
+    useRouteEfficiency(tableFilters);
+
+  const tableData = efficiencyRes?.tableData ?? [];
+  const pagination = efficiencyRes?.pagination;
+
+  const [allData, setAllData] = useState<any[]>([]);
+  const page = tableFilters.page ?? 1;
+
+  useEffect(() => {
+    if (tableData.length) {
+      setAllData((prev) =>
+        tableFilters.page === 1 ? tableData : [...prev, ...tableData],
+      );
+    }
+  }, [tableData]);
+
+  const isInitialLoading = efficiencyloading && page === 1;
+  const isFetchingMore = efficiencyloading && page > 1;
+
+  const { data: salesRes, isLoading: salesLoading } =
+    useRouteWiseSales(tableFilters);
+
+  const salesTableData = salesRes?.tableData ?? [];
+  const salesPagination = salesRes?.pagination;
+
+  const [salesAllData, setSalesAllData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (salesTableData.length) {
+      setSalesAllData((prev) =>
+        tableFilters.page === 1 ? salesTableData : [...prev, ...salesTableData],
+      );
+    }
+  }, [salesTableData]);
+
+  const isSalesInitialLoading = salesLoading && page === 1;
+  const isSalesFetchingMore = salesLoading && page > 1;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -109,13 +151,11 @@ export default function Salesdashboa() {
             <RainbowGlowGradientLineChart
               title="Drop Size by Revenue"
               height={150}
-              showYearSelector={false}
               data={CompareDropSizeRevenue}
             />
 
             <RainbowGlowGradientLineChart
               height={150}
-              showYearSelector={false}
               data={CompareDropSizeVolume}
               title="Drop Size by Volume"
             />
@@ -145,6 +185,7 @@ export default function Salesdashboa() {
             />
 
             <RainbowGlowGradientLineChart
+              height={280}
               title="Monthly Route Performance"
               data={performanceGraph?.chart_data}
               xKey="label"
@@ -169,6 +210,7 @@ export default function Salesdashboa() {
             />
 
             <RainbowGlowGradientLineChart
+              height={280}
               title="Monthly Expense by Route"
               data={expenseGraph?.chart_data}
               xKey="label"
@@ -182,13 +224,22 @@ export default function Salesdashboa() {
           <div className="mb-4">
             <DataTableSubHeader title="Route Wise Sales Report" />
           </div>
-
-          <CommonDataTable
-            title="Sale By Route"
-            columns={routeSalesColumns}
-            data={sales}
-            pageSize={5}
-          />
+          {isSalesInitialLoading ? (
+            <TableSkeleton />
+          ) : (
+            <CommonDataTables
+              columns={routeSalesColumns}
+              data={salesAllData}
+              pagination={salesPagination}
+              isFetchingMore={isSalesFetchingMore}
+              onNext={() =>
+                setTableFilters((prev) => ({
+                  ...prev,
+                  page: (prev.page ?? 1) + 1,
+                }))
+              }
+            />
+          )}
         </section>
 
         {/* ================= EFFICIENCY ================= */}
@@ -197,13 +248,22 @@ export default function Salesdashboa() {
             <DataTableSubHeader title="Route Efficiency Overview" />
           </div>
 
-          <CommonDataTable
-            tableWidth="1600px"
-            title="Route Efficiency"
-            columns={salesColumns}
-            data={efficiency}
-            pageSize={5}
-          />
+          {isInitialLoading ? (
+            <TableSkeleton />
+          ) : (
+            <CommonDataTables
+              columns={salesColumns}
+              data={allData}
+              pagination={pagination}
+              isFetchingMore={isFetchingMore}
+              onNext={() =>
+                setTableFilters((prev) => ({
+                  ...prev,
+                  page: (prev.page ?? 1) + 1,
+                }))
+              }
+            />
+          )}
         </section>
       </div>
     </div>

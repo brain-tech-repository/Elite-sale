@@ -1,5 +1,5 @@
 import api from "@/lib/apiClient";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { ApiResponse, SelectOption, SalesFilterPayload } from "./types";
 
@@ -361,19 +361,26 @@ export const useRouteWiseSales = (filters?: SalesFilterPayload) =>
 
       const { data } = await api.get(`/route-analysis/wise-sales?${query}`);
 
-      return (
-        data?.data?.map((item: any) => ({
-          route: item.route_name,
-          todaySales: item.today_sales ?? 0,
-          yesterdaySales: item.yesterday_sales ?? 0,
-          weeklySales: item.weekly_sales ?? 0,
-          last14DaysSales: item.last_14_days_sales ?? 0,
-          monthSales: item.month_sales ?? 0,
-          quarterSales: item.quarter_sales ?? 0,
-          yearSales: item.year_sales ?? 0,
-        })) || []
-      );
+      return {
+        tableData:
+          data?.data?.map((item: any, index: number) => ({
+            sno: index + 1,
+            route: item.route_name,
+
+            todaySales: item.today_sales ?? 0,
+            yesterdaySales: item.yesterday_sales ?? 0,
+            weeklySales: item.weekly_sales ?? 0,
+            last14DaysSales: item.last_14_days_sales ?? 0,
+            monthSales: item.month_sales ?? 0,
+            quarterSales: item.quarter_sales ?? 0,
+            yearSales: item.year_sales ?? 0,
+          })) || [],
+
+        pagination: data?.pagination, // ✅ IMPORTANT
+      };
     },
+    placeholderData: keepPreviousData, // ✅ correct
+    refetchOnWindowFocus: false,
   });
 
 export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
@@ -386,25 +393,30 @@ export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
         `/route-analysis/efficiency-overview?${query}`,
       );
 
-      return (
-        data?.data?.map((item: any, index: number) => ({
-          sno: index + 1,
-          route: item.route_name,
-          warehouse: item.warehouse_name,
-          salesman: item.salesman_name,
+      return {
+        tableData:
+          data?.data?.map((item: any, index: number) => ({
+            sno: index + 1,
+            route: item.route_name,
+            warehouse: item.warehouse_name,
+            salesman: item.salesman_name,
 
-          totalCustomer: item.total_customer ?? 0,
-          totalVisitDays: item.total_visit_days ?? 0,
-          plannedVisit: item.planned_visit ?? 0,
-          dropRate: item.drop_rate ?? 0,
+            totalCustomer: item.total_customer ?? 0,
+            totalVisitDays: item.total_visit_days ?? 0,
+            plannedVisit: item.planned_visit ?? 0,
+            dropRate: item.drop_rate ?? 0,
 
-          salesValue: item.sales_inv_value ?? 0,
-          salesPerDay: item.sales_per_day ?? 0,
+            salesValue: item.sales_inv_value ?? 0,
+            salesPerDay: item.sales_per_day ?? 0,
 
-          totalCollection: item.total_collection ?? 0,
-          collectionPerDay: item.collection_per_day ?? 0,
-          pendingCollection: item.pending_collection ?? 0,
-        })) || []
-      );
+            totalCollection: item.total_collection ?? 0,
+            collectionPerDay: item.collection_per_day ?? 0,
+            pendingCollection: item.pending_collection ?? 0,
+          })) || [],
+
+        pagination: data?.pagination, // ✅ VERY IMPORTANT
+      };
     },
+    placeholderData: keepPreviousData, // ✅ correct
+    refetchOnWindowFocus: false,
   });

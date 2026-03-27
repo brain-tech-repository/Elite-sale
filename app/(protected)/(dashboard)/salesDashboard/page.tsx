@@ -34,6 +34,8 @@ import {
 import { fallbackTableData } from "./components/data/fallback";
 // import { GaugeChart } from "@/components/ui/PieChartWithNeedle";
 import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
+import { AdvancedBarChart } from "@/components/ui/advancebar";
+import { AdvancedBarChart1 } from "@/components/ui/advancebar1";
 export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<any>(null);
   const [year, setYear] = React.useState("2025");
@@ -107,6 +109,7 @@ export default function Salesdashboa() {
           ) : (
             <div>
               <RainbowGlowGradientLineChart
+                showYearSelector={true}
                 height={220}
                 title="Sales By Yearly Trends"
                 description={`Sales overview for ${year}`}
@@ -133,6 +136,15 @@ export default function Salesdashboa() {
 
           <div>
             <GaugePieChartCard />
+          </div>
+        </section>
+        <section>
+          <DataTableSubHeader title="Target Overview" />
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-1 mt-4">
+            <>
+              {/* LINE → ALWAYS SHOW (NO loading) */}
+              <AdvancedBarChart1 height={300} />
+            </>
           </div>
         </section>
 
@@ -170,7 +182,6 @@ export default function Salesdashboa() {
                   yKey="y"
                   title="Region Monthly Sales Trend"
                   data={regionLine}
-                  showYearSelector={false}
                 />
               ) : (
                 <ChartSkeleton />
@@ -213,7 +224,6 @@ export default function Salesdashboa() {
                   yKey="y"
                   title="Brand Monthly Sales Trend"
                   data={brandLine}
-                  showYearSelector={false}
                 />
               ) : (
                 <ChartSkeleton />
@@ -256,7 +266,6 @@ export default function Salesdashboa() {
                   yKey="y"
                   title="Material Group Monthly Sales Trend"
                   data={materialLine}
-                  showYearSelector={false}
                 />
               ) : (
                 <ChartSkeleton />
@@ -299,7 +308,6 @@ export default function Salesdashboa() {
                   yKey="y"
                   title="Customer Segment Monthly Sales Trend"
                   data={customerLine}
-                  showYearSelector={false}
                 />
               ) : (
                 <ChartSkeleton />
