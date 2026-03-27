@@ -133,7 +133,7 @@ export default function MyForm({ onFilter }: Props) {
               </FormItem>
             )}
           />
-          <div className="flex gap-6 pt-6">
+          <div className="flex gap-2 pt-6">
             <Button type="submit" variant="outline" className="shadow-xm">
               Filter
             </Button>

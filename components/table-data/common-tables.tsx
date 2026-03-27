@@ -8,32 +8,41 @@ import {
   getSortedRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
-
+import InfiniteScroll from "react-infinite-scroll-component";
 import { DataTableSearch } from "./data-table-search";
 import { DataTableColumns } from "./data-table-columns";
 import { DataTablePagination } from "./data-table-pagination";
 import DataTableHeader from "./table-header";
 import { ColumnManager } from "./columnManager";
 import { Card } from "../ui/card";
+import MyForm1 from "../../app/(protected)/(dashboard)/customerDashboard/components/filter1"; // ✅ adjust path
 
 interface CommonTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageSize?: number;
   headerTitle?: string;
+  onFilter?: (filters: any) => void;
 
   pagination?: any;
   onNext?: () => void;
   onPrev?: () => void;
+  isFetchingMore?: boolean;
+  FilterComponent?: React.ComponentType<{
+    onFilter: (filters: any) => void;
+  }>;
 }
 
-export function CommonDataTable<TData, TValue>({
+export function CommonDataTables<TData, TValue>({
   headerTitle,
+  onFilter,
   columns,
   data,
   pagination,
   onNext,
   onPrev,
+  isFetchingMore,
+  FilterComponent, // ✅ ADD THIS
 }: CommonTableProps<TData, TValue>) {
   // ✅ Ensure stable column IDs
   const columnIds = React.useMemo(
@@ -95,14 +104,41 @@ export function CommonDataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
   });
 
+  const hasMore =
+    isFetchingMore ||
+    pagination?.current_page < pagination?.total_pages ||
+    pagination?.current_page < pagination?.last_page;
+
   return (
     <Card className="w-full flex flex-col gap-2 py-2 my-0">
-      {headerTitle && <DataTableHeader title={headerTitle} />}
+      <DataTableSearch
+        table={table}
+        onFilter={onFilter}
+        title={headerTitle}
+        FilterComponent={FilterComponent}
+      />
 
-      <DataTableSearch table={table} />
-
-      <div className="overflow-hidden rounded-lg border">
-        <DataTableColumns table={table} columnsLength={columns.length} />
+      <div className="rounded-lg border">
+        <InfiniteScroll
+          dataLength={data.length}
+          next={onNext!}
+          hasMore={hasMore}
+          loader={
+            <div className="flex justify-center py-4">
+              <div className="h-7 w-7 border-5 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+            </div>
+          }
+          endMessage={
+            !isFetchingMore && !hasMore ? (
+              <p className="text-center py-3 text-gray-500 text-sm">
+                No more data
+              </p>
+            ) : null
+          }
+          height={350}
+        >
+          <DataTableColumns table={table} columnsLength={columns.length} />
+        </InfiniteScroll>
       </div>
 
       {pagination && onNext && onPrev && (

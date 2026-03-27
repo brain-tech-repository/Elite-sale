@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+
 import { toast } from "sonner";
 
 import {
@@ -10,65 +11,64 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 
 import { Button } from "@/components/ui/button";
-import { AutoComplete, AutoCompleteOption } from "@/components/ui/autocomplete";
 
-/* =========================
-   SCHEMA
-========================= */
+import { Calendar } from "@/components/ui/calendar";
 
-const formSchema = z.object({
-  region: z.string().min(1, "Region is required"),
-  warehouse: z.string().min(1, "Warehouse is required"),
-  Brand: z.string().min(1, "Brand is required"),
-  material_group: z.string().min(1, "Material group is required"),
-  material: z.string().min(1, "Material is required"),
-});
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-type FormValues = z.infer<typeof formSchema>;
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
-/* =========================
-   OPTIONS
-========================= */
+/* HOOKS */
 
-const regionOptions: AutoCompleteOption[] = [
-  { value: "north", label: "North" },
-  { value: "south", label: "South" },
-  { value: "west", label: "West" },
-];
+import {
+  useRegions,
+  useWarehouses,
+  useBrands,
+  useMaterialGroups,
+  useMaterials,
+} from "../../salesDashboard/useSales";
+import { MultiSelect } from "@/components/ui/multi-select";
+import {
+  SalesFilterFormValues,
+  SalesFilterPayload,
+  salesFilterSchema,
+} from "../../salesDashboard/types/index";
+import { AutoComplete } from "@/components/ui/autocomplete";
 
-const warehouseOptions: AutoCompleteOption[] = [
-  { value: "wh1", label: "Warehouse 1" },
-  { value: "wh2", label: "Warehouse 2" },
-];
-
-const brandOptions: AutoCompleteOption[] = [
-  { value: "brand1", label: "Brand 1" },
-  { value: "brand2", label: "Brand 2" },
-];
-
-const groupOptions: AutoCompleteOption[] = [
-  { value: "group1", label: "Group 1" },
-  { value: "group2", label: "Group 2" },
-];
-
-const materialOptions: AutoCompleteOption[] = [
-  { value: "mat1", label: "Material 1" },
-  { value: "mat2", label: "Material 2" },
-];
+type Props = {
+  onFilter: (filters: SalesFilterPayload) => void;
+};
 
 /* =========================
    COMPONENT
 ========================= */
 
-export default function MyForm() {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+export default function MyForm({ onFilter }: Props) {
+  /* SEARCH STATES */
+
+  const [regionSearch, setRegionSearch] = useState("");
+  const [warehouseSearch, setWarehouseSearch] = useState("");
+  const [brandSearch, setBrandSearch] = useState("");
+  const [groupSearch, setGroupSearch] = useState("");
+  const [materialSearch, setMaterialSearch] = useState("");
+
+  /* FORM */
+
+  const form = useForm<SalesFilterFormValues>({
+    resolver: zodResolver(salesFilterSchema),
     defaultValues: {
+      dateRange: undefined,
       region: "",
       warehouse: "",
       Brand: "",
@@ -77,130 +77,235 @@ export default function MyForm() {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    try {
-      console.log(values);
-      toast.success("Form submitted successfully!");
-    } catch {
-      toast.error("Submission failed");
-    }
+  /* WATCH VALUES */
+
+  const regionValue = form.watch("region");
+  const materialTypeValue = form.watch("material_group");
+  const brandValue = form.watch("Brand");
+
+  /* API DATA */
+
+  const { data: regions = [] } = useRegions(regionSearch);
+
+  const { data: warehouses = [] } = useWarehouses(
+    regionValue || "",
+    warehouseSearch,
+  );
+
+  const { data: groups = [] } = useMaterialGroups(groupSearch);
+
+  const { data: brands = [] } = useBrands(materialTypeValue || "", brandSearch);
+
+  const { data: materials = [] } = useMaterials(
+    materialTypeValue || "",
+    brandValue || "",
+    materialSearch,
+  );
+
+  /* RESET DEPENDENT FIELDS */
+  useEffect(() => {
+    form.setValue("warehouse", "");
+  }, [regionValue]);
+
+  useEffect(() => {
+    form.setValue("Brand", "");
+    form.setValue("material", "");
+  }, [materialTypeValue]);
+
+  useEffect(() => {
+    form.setValue("material", "");
+  }, [brandValue]);
+
+  /* SUBMIT */
+
+  function onSubmit(values: SalesFilterFormValues) {
+    const filters: SalesFilterPayload = {
+      fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
+      todate: format(values.dateRange.to, "yyyy-MM-dd"),
+      region_id: values.region || "",
+      warehouse_id: values.warehouse || "",
+      brand_id: values.Brand || "",
+      material_type_id: values.material_group || "",
+      material_id: values.material || "",
+    };
+
+    onFilter(filters);
+
+    toast.success("Filters applied");
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-7xl mx-auto py-4 px-2"
+        className="space-y-4 max-w-7xl mx-auto py-1 px-2"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {/* Region */}
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-6">
+          {/* DATE RANGE */}
+          <FormField
+            control={form.control}
+            name="dateRange"
+            render={({ field }) => {
+              const dateRange = field.value as DateRange | undefined;
+              const isDateSelected = dateRange?.from && dateRange?.to;
+              return (
+                <FormItem>
+                  <FormLabel>Date Range</FormLabel>
+
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "pl-3 text-left font-normal shadow-xm w-full",
+                          !dateRange?.from && "text-muted-foreground",
+                        )}
+                      >
+                        {isDateSelected
+                          ? `${format(dateRange.from!, "dd/MM/yy")} - ${format(
+                              dateRange.to!,
+                              "dd/MM/yy",
+                            )}`
+                          : "Pick a date range"}
+
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+
+                    <PopoverContent align="start" className="p-0 w-auto">
+                      <Calendar
+                        mode="range"
+                        selected={dateRange}
+                        onSelect={(range) => field.onChange(range)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          {/* REGION */}
+
           <FormField
             control={form.control}
             name="region"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Region</FormLabel>
-                <FormControl>
-                  <AutoComplete
-                    options={regionOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select Region"
-                    searchPlaceholder="Search region..."
-                  />
-                </FormControl>
+                <AutoComplete
+                  enableSelectAll
+                  options={regions}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setRegionSearch(text.trim())}
+                  placeholder="Select region"
+                />
+
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Warehouse */}
+          {/* WAREHOUSE */}
+
           <FormField
             control={form.control}
             name="warehouse"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Warehouse</FormLabel>
-                <FormControl>
-                  <AutoComplete
-                    options={warehouseOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select Warehouse"
-                    searchPlaceholder="Search warehouse..."
-                  />
-                </FormControl>
+
+                <AutoComplete
+                  enableSelectAll
+                  options={warehouses}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setWarehouseSearch(text.trim())}
+                  placeholder="Select warehouse"
+                  disabled={!regionValue}
+                />
+
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Brand */}
-          <FormField
-            control={form.control}
-            name="Brand"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Material Brand</FormLabel>
-                <FormControl>
-                  <AutoComplete
-                    options={brandOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select Brand"
-                    searchPlaceholder="Search brand..."
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* MATERIAL TYPE */}
 
-          {/* Material Group */}
           <FormField
             control={form.control}
             name="material_group"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Material Group</FormLabel>
-                <FormControl>
-                  <AutoComplete
-                    options={groupOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select Material Group"
-                    searchPlaceholder="Search material group..."
-                  />
-                </FormControl>
+
+                <AutoComplete
+                  enableSelectAll
+                  options={groups}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setGroupSearch(text.trim())}
+                  placeholder="Select group"
+                />
+
                 <FormMessage />
               </FormItem>
             )}
           />
+          {/* BRAND */}
 
-          {/* Material */}
+          <FormField
+            control={form.control}
+            name="Brand"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Material Brand</FormLabel>
+
+                <AutoComplete
+                  enableSelectAll
+                  options={brands}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setBrandSearch(text.trim())}
+                  placeholder="Select brand"
+                  disabled={!materialTypeValue}
+                />
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* MATERIAL */}
+
           <FormField
             control={form.control}
             name="material"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Material</FormLabel>
-                <FormControl>
-                  <AutoComplete
-                    options={materialOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select Material"
-                    searchPlaceholder="Search material..."
-                  />
-                </FormControl>
+
+                <AutoComplete
+                  enableSelectAll
+                  options={materials}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onSearch={(text) => setMaterialSearch(text.trim())}
+                  placeholder="Select material"
+                  disabled={!materialTypeValue}
+                />
+
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
-        {/* Buttons */}
-        <div className="flex w-full justify-start gap-6 pt-2">
+        {/* BUTTONS */}
+
+        <div className="flex gap-x-6 ">
           <Button type="submit" variant="outline" className="shadow-xm">
             Filter
           </Button>

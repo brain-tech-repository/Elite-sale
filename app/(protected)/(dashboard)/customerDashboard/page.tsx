@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
@@ -15,7 +15,7 @@ import {
   useTopCustomersTable,
 } from "./useCustomers";
 import { SalesFilterPayload } from "./types";
-import { CommonDataTable } from "@/components/table-data/common-table";
+import { CommonDataTables } from "@/components/table-data/common-tables";
 import datas from "./components/data.json";
 import { performanceColumns } from "./components/columns";
 import MyForm1 from "./components/filter1";
@@ -56,6 +56,7 @@ export default function CustomerDashboard() {
 
   // Extract chart data safely
   const chartData = data?.chartData || [];
+
   const regions = data?.regions || [];
 
   /* =========================
@@ -80,7 +81,17 @@ export default function CustomerDashboard() {
   } = useTopCustomersTable(mergedTableFilters);
 
   // Extract table data safely
-  const tableData = tableDataRes?.tableData ?? [];
+  const [allData, setAllData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (tableDataRes?.tableData) {
+      setAllData((prev) =>
+        tableFilters.page === 1
+          ? tableDataRes.tableData
+          : [...prev, ...tableDataRes.tableData],
+      );
+    }
+  }, [tableDataRes]);
   // Extract pagination info from API
   const pagination = tableDataRes?.pagination;
 
@@ -107,6 +118,11 @@ export default function CustomerDashboard() {
       }));
     }
   };
+
+  const page = tableFilters.page ?? 1;
+  const isInitialLoading = isLoading && page === 1;
+  const isFetchingMore = isLoading && page > 1;
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col">
@@ -131,7 +147,7 @@ export default function CustomerDashboard() {
         </div>
 
         {/* 3. KPI & TREND SECTION: Uses 'gap-6' for inner grid spacing and 'mb-6' for section separation */}
-        <section className="grid gap-1 px-2 mb-6 grid-cols-1  lg:grid-cols-[28%_44%_28%] gap-1 items-stretch">
+        <section className="grid gap-1 px-3 mb-6 grid-cols-1  lg:grid-cols-[28%_44%_28%] gap-1 items-stretch">
           {monthlyLoading ? (
             <SectionCardsSkeleton />
           ) : (
@@ -146,7 +162,6 @@ export default function CustomerDashboard() {
               yKey="y"
               height={300}
               title="Monthly Trend of Customers Creation"
-              showYearSelector={false}
               data={monthlyTrend}
               year={"2025"}
               setYear={setYear}
@@ -203,7 +218,7 @@ export default function CustomerDashboard() {
           <div className="mb-4">
             <DataTableSubHeader title="Filter Records" />
           </div>
-          <Card className="shadow-xm">
+          {/* <Card className="shadow-xm">
             <MyForm1
               onFilter={(f) =>
                 setTableFilters((prev) => ({
@@ -213,22 +228,31 @@ export default function CustomerDashboard() {
                 }))
               }
             />
-          </Card>
+          </Card> */}
         </section>
 
         {/* 6. DATA TABLE SECTION: Bottom padding to finish the page */}
         <section className="px-2 pb-12">
           {/* <Card className="shadow-xm"> */}
-          {isLoading ? (
+          {isInitialLoading ? (
             <TableSkeleton />
           ) : (
-            <CommonDataTable
+            <CommonDataTables
               columns={performanceColumns}
-              data={tableData}
+              data={allData}
               headerTitle="Top Customers"
               pagination={pagination}
               onNext={handleNext}
               onPrev={handlePrev}
+              FilterComponent={MyForm1}
+              isFetchingMore={isFetchingMore} // ✅ important
+              onFilter={(filters) =>
+                setTableFilters((prev) => ({
+                  ...prev,
+                  ...filters,
+                  page: 1,
+                }))
+              }
             />
           )}
           {/* </Card> */}

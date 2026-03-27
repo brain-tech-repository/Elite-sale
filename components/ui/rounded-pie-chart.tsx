@@ -172,7 +172,7 @@ export function RoundedPieChart({
       <CardContent className="flex flex-col items-center p-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto w-full lg:h-[280px]"
+          className="mx-auto w-full lg:h-[246px]"
         >
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

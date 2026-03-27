@@ -59,10 +59,10 @@ export function RainbowGlowGradientLineChart({
   title = "Sales Trends",
   description = "Monthly Sales",
   data = [],
-  showYearSelector = true,
+  showYearSelector = false,
   year,
   setYear,
-  height = 320, // 👈 default height
+  height = 300, // 👈 default height
   xKey = "month", // 👈 default
   yKey = "desktop", // 👈 default
 }: Props) {
@@ -82,7 +82,7 @@ export function RainbowGlowGradientLineChart({
   // const customTicks = isNumeric ? ["1", "11", "21", "31"] : undefined;
 
   return (
-    <Card className="shadow-xm py-3">
+    <Card className="shadow-xm py-3 shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between">
         <CardTitle className=" text-sm">{title}</CardTitle>
         {/* <CardDescription>
@@ -170,18 +170,18 @@ export function RainbowGlowGradientLineChart({
             /> */}
             <YAxis
               width={60}
-              tickCount={8}
+              tickCount={7}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value: number) => {
                 if (value >= 1_000_000_000) {
-                  return `${(value / 1_000_000_000).toFixed(1)}B`;
+                  return `${Math.round(value / 1_000_000_000)}B`;
                 }
                 if (value >= 1_000_000) {
-                  return `${(value / 1_000_000).toFixed(1)}M`;
+                  return `${Math.round(value / 1_000_000)}M`;
                 }
                 if (value >= 1_000) {
-                  return `${(value / 1_000).toFixed(1)}K`;
+                  return `${Math.round(value / 1_000)}K`;
                 }
                 return value.toString();
               }}

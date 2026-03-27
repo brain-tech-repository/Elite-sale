@@ -91,9 +91,9 @@ export default function MyForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 max-w-5xl mx-auto py-4 px-2"
+        className="space-y-4 max-w-7xl mx-auto py-1 px-2"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
           {/* ================= Date Range ================= */}
 
           <FormField
@@ -192,22 +192,21 @@ export default function MyForm() {
               </FormItem>
             )}
           />
+          <div className="flex gap-2 mt-6">
+            <Button type="submit" variant="outline" className="shadow-xm">
+              Filter
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="shadow-xm"
+              onClick={() => form.reset()}
+            >
+              Reset
+            </Button>
+          </div>
         </div>
         {/* ================= Buttons ================= */}
-
-        <div className="flex gap-6 pt-2">
-          <Button type="submit" variant="outline" className="shadow-xm">
-            Filter
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="shadow-xm"
-            onClick={() => form.reset()}
-          >
-            Reset
-          </Button>
-        </div>
       </form>
     </Form>
   );

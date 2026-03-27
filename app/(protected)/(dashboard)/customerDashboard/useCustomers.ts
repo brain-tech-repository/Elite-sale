@@ -1,5 +1,5 @@
 import api from "@/lib/apiClient";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { ApiResponse, SelectOption, SalesFilterPayload } from "./types";
 
@@ -243,6 +243,6 @@ export const useTopCustomersTable = (
       };
     },
 
-    // keepPreviousData: true,
+    placeholderData: keepPreviousData, // ✅ correct
     refetchOnWindowFocus: false,
   });

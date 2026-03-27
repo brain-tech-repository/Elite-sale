@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { SectionCards } from "./components/section-cards";
 import { Card } from "@/components/ui/card";
-import { CommonDataTable } from "@/components/table-data/common-table";
+import { CommonDataTable } from "@/components/table-data/common-tables";
 import { sectionColumns } from "./components/columns";
 import data from "./components/data.json";
 

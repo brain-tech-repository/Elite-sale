@@ -7,6 +7,7 @@ import DataTableSubHeader from "@/components/table-data/data-table-sub-header";
 import { CommonDataTable } from "@/components/table-data/custom-table";
 import { salesColumns } from "./components/columns";
 import { Card } from "@/components/ui/card";
+import React from "react";
 type Sale = {
   id: string;
   customer: string;
@@ -16,6 +17,7 @@ type Sale = {
   date: string;
 };
 export default function Salesdashboa() {
+  const [filters, setFilters] = React.useState<any>(null);
   const data: Sale[] = [
     {
       id: "ORD-001",
@@ -54,7 +56,7 @@ export default function Salesdashboa() {
           <div className="lg:px-6 px-1 pb-4">
             <Card className="shadow-xm">
               {" "}
-              <MyForm />
+              <MyForm onFilter={setFilters} />
             </Card>
           </div>
           {/* KPI CARDS */}

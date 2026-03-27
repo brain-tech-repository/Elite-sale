@@ -52,9 +52,9 @@ export function AdvancedBarChart({ data = [] }: { data: any[] }) {
   };
 
   return (
-    <Card className="w-full py-3">
+    <Card className="w-full py-3 shadow-sm">
       <CardHeader>
-        <CardTitle>High-Density Traffic Metrics</CardTitle>
+        <CardTitle>Monthly Trend of Customers Creation</CardTitle>
       </CardHeader>
 
       <CardContent className="px-2">

@@ -11,8 +11,6 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 
-import { IconLayoutColumns, IconChevronDown } from "@tabler/icons-react";
-
 import {
   DndContext,
   closestCenter,
@@ -29,39 +27,41 @@ import {
 } from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical } from "lucide-react";
+
+import { GripVertical, SlidersHorizontal, Columns, Filter } from "lucide-react";
 
 interface DataTableSearchProps<TData> {
+  onFilter?: (filters: any) => void;
   table: Table<TData>;
+  title?: string;
+
+  FilterComponent?: React.ComponentType<{
+    onFilter: (filters: any) => void;
+  }>;
 }
 
-/* 🔥 Sortable Item */
 function SortableColumnItem({ column }: any) {
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id: column.id });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   return (
     <DropdownMenuCheckboxItem
       ref={setNodeRef}
-      style={style}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
       checked={column.getIsVisible()}
       onCheckedChange={(value) => column.toggleVisibility(!!value)}
       className="flex items-center justify-between capitalize"
     >
-      {/* Column Name */}
       <span>{column.id}</span>
 
-      {/* ✅ Drag Icon (RIGHT SIDE) */}
       <span
         {...attributes}
         {...listeners}
-        onClick={(e) => e.stopPropagation()} // prevent checkbox toggle
-        className="ml-2 cursor-grab active:cursor-grabbing"
+        onClick={(e) => e.stopPropagation()}
+        className="ml-2 cursor-grab"
       >
         <GripVertical size={14} />
       </span>
@@ -69,12 +69,17 @@ function SortableColumnItem({ column }: any) {
   );
 }
 
-export function DataTableSearch<TData>({ table }: DataTableSearchProps<TData>) {
+export function DataTableSearch<TData>({
+  table,
+  title,
+  onFilter,
+  FilterComponent,
+}: DataTableSearchProps<TData>) {
   const sensors = useSensors(useSensor(PointerSensor));
-
   const columnOrder = table.getState().columnOrder;
 
-  /* 🔥 Handle drag reorder */
+  const [openFilter, setOpenFilter] = React.useState(false);
+
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -93,47 +98,83 @@ export function DataTableSearch<TData>({ table }: DataTableSearchProps<TData>) {
     );
 
   return (
-    <div className="flex items-center justify-between px-4 lg:px-6 px-1 gap-4">
-      {/* 🔍 SEARCH */}
-      <Input
-        placeholder="Search sections..."
-        value={(table.getColumn("header")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("header")?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm"
-      />
+    <div className="flex flex-col gap-2 px-4 lg:px-6">
+      {/* 🔝 HEADER ROW */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        {/* ✅ TITLE (ONLY IF PASSED) */}
+        {title && (
+          <div className="flex items-center gap-2">
+            <div className="h-5 w-1 rounded-full bg-gradient-to-b from-sky-100 to-gray-300" />
+            <h1 className="font-bold text-gray-900 text-lg dark:text-gray-100">
+              {title}
+            </h1>
+          </div>
+        )}
 
-      <div className="flex items-center gap-2">
-        {/* 🔥 CUSTOMIZE + REORDER DROPDOWN */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
-              <IconLayoutColumns />
-              <span className="hidden lg:inline">Customize Columns</span>
-              <span className="lg:hidden">Columns</span>
-              <IconChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
+        {/* ✅ RIGHT SIDE → ALWAYS SHOW SEARCH + COLUMN */}
+        <div className="flex items-center gap-2 flex-wrap ml-auto">
+          {/* 🔍 SEARCH (ALWAYS) */}
+          <Input
+            placeholder="Search..."
+            value={
+              (table.getColumn("header")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("header")?.setFilterValue(event.target.value)
+            }
+            className="w-[200px]"
+          />
 
-          <DropdownMenuContent align="end" className="w-56 p-0">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
+          {/* 🧪 FILTER (ONLY IF PROVIDED) */}
+          {FilterComponent && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setOpenFilter((prev) => !prev)}
             >
-              <SortableContext
-                items={columnOrder}
-                strategy={verticalListSortingStrategy}
+              <Filter size={16} />
+            </Button>
+          )}
+
+          {/* ⚙️ COLUMN MANAGER (ALWAYS) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <SlidersHorizontal size={18} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end" className="w-56 p-0">
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
               >
-                {columns.map((column) => (
-                  <SortableColumnItem key={column.id} column={column} />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <SortableContext
+                  items={columnOrder}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {columns.map((column) => (
+                    <SortableColumnItem key={column.id} column={column} />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
+
+      {/* 🔽 FILTER PANEL */}
+      {openFilter && FilterComponent && (
+        <div className="border rounded-md p-3 bg-muted/30 w-full">
+          <FilterComponent
+            onFilter={(filters) => {
+              onFilter?.(filters);
+              setOpenFilter(false);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
