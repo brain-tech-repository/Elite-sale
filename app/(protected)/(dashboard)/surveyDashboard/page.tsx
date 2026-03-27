@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { SectionCards } from "./components/section-cards";
 import { Card } from "@/components/ui/card";
-import { CommonDataTable } from "@/components/table-data/common-tables";
+import { CommonDataTables } from "@/components/table-data/common-tables";
 import { sectionColumns } from "./components/columns";
 import data from "./components/data.json";
 
@@ -22,7 +22,7 @@ export default function Salesdashboa() {
         {activeTable === "customers" && (
           <div className="lg:px-6 px-1">
             <Card className="shadow-xm py-2">
-              <CommonDataTable
+              <CommonDataTables
                 columns={sectionColumns}
                 data={data}
                 pageSize={5}
@@ -35,7 +35,7 @@ export default function Salesdashboa() {
         {activeTable === "users" && (
           <div className="lg:px-6 px-1">
             <Card className="shadow-xm py-2">
-              <CommonDataTable
+              <CommonDataTables
                 columns={sectionColumns}
                 data={data}
                 pageSize={5}
@@ -47,7 +47,7 @@ export default function Salesdashboa() {
         {activeTable === "country" && (
           <div className="lg:px-6 px-1">
             <Card className="shadow-xm py-2">
-              <CommonDataTable
+              <CommonDataTables
                 columns={sectionColumns}
                 data={data}
                 pageSize={5}
@@ -59,7 +59,7 @@ export default function Salesdashboa() {
         {activeTable === "surveys" && (
           <div className="lg:px-6 px-1">
             <Card className="shadow-xm py-2">
-              <CommonDataTable
+              <CommonDataTables
                 columns={sectionColumns}
                 data={data}
                 pageSize={5}
