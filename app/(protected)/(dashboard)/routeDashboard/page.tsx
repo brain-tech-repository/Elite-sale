@@ -52,7 +52,7 @@ export default function Salesdashboa() {
   const { data: regionData, isLoading: regionLoading } =
     useGrowthPerformance(globalFilters);
   // 🔹 Year selector for charts
-  const [year, setYear] = useState("2025");
+  const [year, setYear] = useState("2026");
   /* =========================
          CHART API CALLS
       ========================= */
