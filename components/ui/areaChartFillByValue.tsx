@@ -90,17 +90,14 @@ export default function HoverAreaChart({
             {/* -------- Gradients -------- */}
 
             <defs>
+              <linearGradient id="stroke-uv" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#020617" />
+                <stop offset="100%" stopColor="#155e75" />
+              </linearGradient>
+
               <linearGradient id="grad-uv" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-uv)"
-                  stopOpacity={0.4}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-uv)"
-                  stopOpacity={0}
-                />
+                <stop offset="5%" stopColor="#020617" stopOpacity={0.5} />
+                <stop offset="95%" stopColor="#155e75" stopOpacity={0.05} />
               </linearGradient>
 
               <linearGradient id="grad-pv" x1="0" y1="0" x2="0" y2="1">
@@ -124,15 +121,14 @@ export default function HoverAreaChart({
             <Area
               dataKey="uv"
               type="natural"
-              stroke="var(--color-uv)"
+              stroke="url(#stroke-uv)" // 🔥 gradient line
               strokeWidth={2}
               fill={
-                activeProperty === "uv" ? "url(#pattern-uv)" : "url(#grad-uv)"
+                activeProperty === "uv" ? "url(#pattern-uv)" : "url(#grad-uv)" // 🌫️ lighter area
               }
               onMouseEnter={() => setActiveProperty("uv")}
               onMouseLeave={() => setActiveProperty(null)}
             />
-
             <Area
               dataKey="pv"
               type="natural"

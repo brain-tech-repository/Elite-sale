@@ -23,10 +23,10 @@ import {
 
 export interface DefaultBarChartProps {
   title?: string;
-  data: {
-    label: string | number;
-    current: number;
-    previous: number;
+  data?: {
+    label?: string | number;
+    current?: number;
+    previous?: number;
   }[];
   loading?: boolean;
   height?: number | string;

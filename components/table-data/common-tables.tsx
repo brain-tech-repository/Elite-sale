@@ -104,13 +104,15 @@ export function CommonDataTables<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
   });
 
-  const hasMore =
-    isFetchingMore ||
-    pagination?.current_page < pagination?.total_pages ||
-    pagination?.current_page < pagination?.last_page;
+  // const hasMore =
+  //   isFetchingMore ||
+  //   pagination?.current_page < pagination?.total_pages ||
+  //   pagination?.current_page < pagination?.last_page;
+
+  const hasMore = pagination?.current_page < pagination?.total_pages;
 
   return (
-    <Card className="w-full flex flex-col gap-2 py-2 my-0">
+    <Card className="w-full flex flex-col gap-2 pt-2 my-0 pb-0 mb-0">
       <DataTableSearch
         table={table}
         onFilter={onFilter}
@@ -135,19 +137,19 @@ export function CommonDataTables<TData, TValue>({
               </p>
             ) : null
           }
-          height={350}
+          height={300}
         >
           <DataTableColumns table={table} columnsLength={columns.length} />
         </InfiniteScroll>
       </div>
 
-      {pagination && onNext && onPrev && (
+      {/* {pagination && onNext && onPrev && (
         <DataTablePagination
           pagination={pagination}
           onNext={onNext}
           onPrev={onPrev}
         />
-      )}
+      )} */}
     </Card>
   );
 }

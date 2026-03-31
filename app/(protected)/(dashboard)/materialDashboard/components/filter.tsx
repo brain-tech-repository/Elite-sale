@@ -37,13 +37,13 @@ import {
   useBrands,
   useMaterialGroups,
   useMaterials,
-} from "../../salesDashboard/useSales";
+} from "../useMaterial";
 import { MultiSelect } from "@/components/ui/multi-select";
 import {
   SalesFilterFormValues,
   SalesFilterPayload,
   salesFilterSchema,
-} from "../../salesDashboard/types/index";
+} from "../types";
 import { AutoComplete } from "@/components/ui/autocomplete";
 
 type Props = {
@@ -119,6 +119,7 @@ export default function MyForm({ onFilter }: Props) {
   /* SUBMIT */
 
   function onSubmit(values: SalesFilterFormValues) {
+    console.log("jbchdbvh");
     const filters: SalesFilterPayload = {
       fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
       todate: format(values.dateRange.to, "yyyy-MM-dd"),
@@ -306,14 +307,13 @@ export default function MyForm({ onFilter }: Props) {
         {/* BUTTONS */}
 
         <div className="flex gap-x-6 ">
-          <Button type="submit" variant="outline" className="shadow-xm">
+          <Button type="submit" className="shadow-xm bg-[#022235]">
             Filter
           </Button>
 
           <Button
             type="button"
-            variant="outline"
-            className="shadow-xm"
+            className="shadow-xm bg-[#022235]"
             onClick={() => form.reset()}
           >
             Reset

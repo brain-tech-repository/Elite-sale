@@ -1,87 +1,78 @@
 "use client";
 
-import { motion } from "framer-motion";
-
+import { motion, useAnimation } from "framer-motion";
 import {
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useState } from "react";
+
+function AnimatedCard({ children }: { children: React.ReactNode }) {
+  const controls = useAnimation();
+
+  const handleHoverStart = async () => {
+    await controls.start({
+      rotateY: 360,
+      transition: { duration: 0.6, ease: "easeInOut" },
+    });
+    controls.set({ rotateY: 0 });
+  };
+
+  return <motion.div>{children}</motion.div>;
+}
 
 const cardsData = [
   {
-    title: "Asset Repair Cost Value",
-    value: "0.00",
-    message: "Total repair cost",
-    color: "bg-rose-50",
+    id: "surveys",
+    title: "Total Surveys",
+    value: "3",
+    message: "Surveys collected",
+    color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
   },
   {
-    title: "Asset Total",
-    value: "1",
-    message: "Total number of assets",
-    color: "bg-blue-50",
+    id: "country",
+    title: "IB Country",
+    value: "3",
+    message: "Countries available",
+    color: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
   },
   {
-    title: "Asset Value",
-    value: "0.00",
-    message: "Total asset value",
-    color: "bg-purple-50",
+    id: "users",
+    title: "IB Users",
+    value: "6",
+    message: "Active users",
+    color: "bg-gradient-to-r from-[#134E5E] to-[#71B280] text-white",
   },
   {
-    title: "Asset Net Book Value",
-    value: "0.00",
-    message: "Current net book value",
-    color: "bg-green-50",
-  },
-  {
-    title: "Asset Repair Cost Value",
-    value: "0.00",
-    message: "Total repair cost",
-    color: "bg-rose-50",
-  },
-
-  {
-    title: "Asset Net Book Value",
-    value: "0.00",
-    message: "Current net book value",
-    color: "bg-green-50",
+    id: "customers",
+    title: "IB Customers",
+    value: "26",
+    message: "Customer engagement",
+    color:
+      "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364] text-white",
   },
 ];
 
-function AnimatedCard({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      whileHover={{ scale: 1.04 }}
-      className="transition-all duration-200 hover:shadow-xl rounded-lg"
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-export function SectionCards() {
+export function SectionCards({ onCardClick }: any) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {cardsData.map((card, index) => (
-        <AnimatedCard key={index}>
+      {cardsData.map((card) => (
+        <AnimatedCard key={card.id}>
           <Card
-            className={`p-4  hover:shadow-xl transition-all duration-300 rounded-xl border shadow-xm ${card.color}`}
+            onClick={() => onCardClick(card.id)}
+            className={`py-2  shadow-sm ${card.color}`}
           >
-            <CardHeader className="p-2">
-              <CardDescription className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="">
+              <CardDescription className="text-sm font-semibold text-white">
                 {card.title}
               </CardDescription>
 
-              <CardTitle className="text-2xl font-bold tabular-nums tracking-tight">
+              <CardTitle className="text-base font-semibold tabular-nums">
                 {card.value}
               </CardTitle>
             </CardHeader>
-
-            <CardFooter className="text-sm text-muted-foreground p-2">
-              {card.message}
-            </CardFooter>
           </Card>
         </AnimatedCard>
       ))}

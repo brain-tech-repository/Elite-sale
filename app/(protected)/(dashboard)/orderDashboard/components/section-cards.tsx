@@ -8,9 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDashboardSummary } from "../../customerDashboard/useCustomers";
-import { SalesFilterPayload } from "../../customerDashboard/types";
+import { useOrderSummary } from "../useOrder";
+
 import { useState } from "react";
+import { OrderSummaryFilters } from "../types";
 
 function AnimatedCard({ children }: { children: React.ReactNode }) {
   const controls = useAnimation();
@@ -35,40 +36,55 @@ function AnimatedCard({ children }: { children: React.ReactNode }) {
   return <motion.div>{children}</motion.div>;
 }
 
+// type Props = {
+//   filters?: SalesFilterPayload;
+// };
+
 type Props = {
-  filters?: SalesFilterPayload;
+  filters?: OrderSummaryFilters;
 };
 
 export function SectionCards({ filters }: Props) {
-  const { data, isLoading } = useDashboardSummary(filters);
+  const { data, isLoading } = useOrderSummary(filters);
 
-  const result = data?.data || {};
+  const result = data?.data;
 
   const cardsData = [
     {
-      title: "Today",
-      value: result.today ?? 0,
+      title: "Total Orders",
+      value: result?.order?.count ?? 0,
+      subtitle: result?.order?.total ?? 0,
       color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
     },
     {
-      title: "This Month",
-      value: result.this_month ?? 0,
+      title: "Approved",
+      value: result?.approved?.count ?? 0,
+      subtitle: result?.approved?.total ?? 0,
       color: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
     },
     {
-      title: "Total Customer",
-      value: result.total_customer ?? 0,
+      title: "Pending",
+      value: result?.pending?.count ?? 0,
+      subtitle: result?.pending?.total ?? 0,
       color: "bg-gradient-to-r from-[#134E5E] to-[#71B280] text-white",
     },
     {
-      title: "Pending Approval",
-      value: result.pending_approval ?? 0,
+      title: "Delivery",
+      value: result?.delivery?.count ?? 0,
+      subtitle: result?.delivery?.total ?? 0,
       color:
         "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364] text-white",
     },
+    {
+      title: "Invoice",
+      value: result?.invoice?.count ?? 0,
+      subtitle: result?.invoice?.total ?? 0,
+      color: "bg-gradient-to-r from-[#42275a] to-[#734b6d] text-white",
+    },
   ];
+
   return (
-    <Card className="grid grid-cols-1 gap-1 shadow-xm px-5">
+    <Card className="grid grid-cols-1 gap-2 shadow-xm px-5">
       {cardsData.map((card, index) => (
         <AnimatedCard key={index}>
           <Card className={`py-2 px-2 shadow-xm ${card.color}`}>

@@ -1,162 +1,136 @@
 "use client";
 
-import { motion, useAnimation } from "framer-motion";
-import { useState } from "react";
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
-
+import { motion } from "framer-motion";
 import {
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 
 const cardsData = [
   {
-    title: "New Customers",
-    value: "1,234",
-    trend: -20,
-    message: "Needs attention",
-    footer: "Down 20%",
-    color: "bg-blue-50",
+    title: "Gross Profit",
+    value: 1288,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775]",
   },
   {
-    title: "Returning Customers",
-    value: "1,234",
-    trend: -20,
-    message: "Needs attention",
-    footer: "Down 20%",
-    color: "bg-purple-50",
+    title: "Gross Profit %",
+    value: 1287,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#243748] to-[#4B749F]",
   },
   {
-    title: "Active Accounts",
-    value: "45,678",
-    trend: 12.5,
-    message: "Exceeds target",
-    footer: "Strong retention",
-    color: "bg-green-50",
+    title: "Cost Of Good Sold",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#134E5E] to-[#71B280]",
   },
   {
-    title: "Growth Rate",
-    value: "4.5%",
-    trend: 4.5,
-    message: "Meets projection",
-    footer: "Steady increase",
-    color: "bg-indigo-50",
+    title: "Net Profit",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364]",
   },
   {
-    title: "Orders Sales",
-    value: "2,890",
-    trend: 8,
-    message: "This quarter",
-    footer: "Increasing sales",
-    color: "bg-amber-50",
+    title: "Gross Sales",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#09203f] to-[#537895]",
   },
   {
-    title: "Refund Rate",
-    value: "1.2%",
-    trend: -2,
-    message: "Improved quality",
-    footer: "Lower refunds",
-    color: "bg-rose-50",
+    title: "Net Sales",
+    value: 1285,
+    change: "175.5%",
+
+    color: "bg-gradient-to-r from-[#042f2e] to-[#14b8a6]",
   },
   {
-    title: "Total Revenue",
-    value: "$98,450",
-    trend: 10,
-    message: "Revenue growth",
-    footer: "Up this month",
-    color: "bg-emerald-50",
+    title: "Collection",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#020617] to-[#155e75]",
   },
   {
-    title: "Pending Orders",
-    value: "320",
-    trend: 5,
-    message: "Orders processing",
-    footer: "Slight increase",
-    color: "bg-yellow-50",
+    title: "Total Debt",
+    value: 1283,
+    change: "170.5%",
+    color: "bg-gradient-to-r from-[#134e4a] to-[#115e59]",
+  },
+  {
+    title: "Inventory Value",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#3f3f46] to-[#27272a]",
+  },
+  {
+    title: "Total Discount",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#1f2937] to-[#111827]",
+  },
+  {
+    title: "Total Returns",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#022c22] to-[#134e4a]",
+  },
+  {
+    title: "Total Expense",
+    value: 1283,
+    change: "175.5%",
+    color: "bg-gradient-to-r from-[#031e2f] to-[#0e7490]",
   },
 ];
 
-function AnimatedCard({ children }: { children: React.ReactNode }) {
-  const controls = useAnimation();
-  const [hovered, setHovered] = useState(false);
-
-  const handleHoverStart = async () => {
-    setHovered(true);
-    await controls.start({
-      rotateY: 360,
-      transition: { duration: 1.8, ease: "easeInOut" },
-    });
-    controls.set({ rotateY: 0 });
-  };
-
-  const handleHoverEnd = () => {
-    setHovered(false);
-    controls.stop();
-    controls.set({ rotateY: 0 });
-  };
-
+function AnimatedCard({
+  children,
+  index,
+}: {
+  children: React.ReactNode;
+  index: number;
+}) {
   return (
     <motion.div
-    // style={{ perspective: 1000 }}
-    // animate={controls}
-    // onHoverStart={handleHoverStart}
-    // onHoverEnd={handleHoverEnd}
-    // whileHover={{ scale: 1.04 }}
-    // className="transition-shadow hover:shadow-xl rounded-xl"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04 }}
+      whileHover={{ scale: 1.04 }}
     >
       {children}
     </motion.div>
   );
 }
 
+const formatNumber = (num: number) =>
+  new Intl.NumberFormat("en-IN").format(num);
+
 export function SectionCards() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {cardsData.map((card, index) => {
-        const isPositive = card.trend > 0;
-        const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown;
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-1">
+      {cardsData.map((card, index) => (
+        <AnimatedCard key={index} index={index}>
+          <Card
+            className={`rounded-xl border-none shadow-md p-4 text-white ${card.color}`}
+          >
+            <CardHeader className="px-2 flex flex-col gap-1">
+              <CardDescription className="text-xs font-semibold uppercase tracking-wide opacity-80 text-white">
+                {card.title}
+              </CardDescription>
 
-        return (
-          <AnimatedCard key={index}>
-            <Card
-              className={`p-3 rounded-xl border shadow-xm hover:shadow-xl transition-all shadow-xm ${card.color}`}
-            >
-              <CardHeader className="p-0 space-y-1">
-                <CardDescription className="text-sm font-medium text-muted-foreground">
-                  {card.title}
-                </CardDescription>
+              <CardTitle className="text-lg font-bold text-white">
+                {formatNumber(card.value)}
+              </CardTitle>
 
-                <CardTitle className="text-3xl font-bold tabular-nums">
-                  {card.value}
-                </CardTitle>
-              </CardHeader>
-
-              <CardFooter className="flex flex-col items-start gap-2 text-sm mt-1 p-0">
-                <div
-                  className={`flex items-center gap-1 font-semibold ${
-                    isPositive ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  <TrendIcon className="size-4" />
-                  {card.trend > 0 ? "+" : ""}
-                  {card.trend}%
-                </div>
-
-                <div className="text-muted-foreground text-xs">
-                  {card.footer}
-                </div>
-
-                <div className="text-muted-foreground text-xs">
-                  {card.message}
-                </div>
-              </CardFooter>
-            </Card>
-          </AnimatedCard>
-        );
-      })}
+              {/* 🔥 Percentage Change */}
+              {/* <p className="text-xs font-medium text-white/80">
+                ↑ {card.change}
+              </p> */}
+            </CardHeader>
+          </Card>
+        </AnimatedCard>
+      ))}
     </div>
   );
 }

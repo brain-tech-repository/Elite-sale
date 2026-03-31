@@ -58,6 +58,12 @@ const chartConfig = {
 //   { name: "Zone R", Target: 18500, Achievment: 17800 },
 // ];
 
+type ChartItem = {
+  name: string;
+  Target: number;
+  Achievment: number;
+};
+
 const fallbackData = Array.from({ length: 27 }, (_, i) => ({
   name: `R${i + 1}`,
   Target: 8000 + i * 300,
@@ -66,11 +72,14 @@ const fallbackData = Array.from({ length: 27 }, (_, i) => ({
 export function AdvancedBarChart1({
   data,
   height = 250, // ✅ default height
+  title = "Target Overview", // ✅ default title
 }: {
-  data?: any[];
+  data?: ChartItem[];
+  // data?: any[];
   height?: number;
+  title?: string; // ✅ new prop
 }) {
-  const chartData = data && data.length ? data : fallbackData;
+  const chartData: ChartItem[] = data && data.length > 0 ? data : fallbackData;
 
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const [hiddenKeys, setHiddenKeys] = React.useState<string[]>([]);
@@ -91,7 +100,7 @@ export function AdvancedBarChart1({
   return (
     <Card className="w-full py-3 shadow-sm">
       <CardHeader>
-        <CardTitle>Target Overview</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
 
       <CardContent className="px-2">

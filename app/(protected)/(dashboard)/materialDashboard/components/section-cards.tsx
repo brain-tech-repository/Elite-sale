@@ -1,46 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
-
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-/* =========================
-   DATA
-========================= */
-
-const cardsData = [
-  {
-    title: "New Customers",
-    value: "1,234",
-    trend: -20,
-    gradient: "from-[#0f2027] via-[#203a43] to-[#2c5364]",
-  },
-  {
-    title: "Return Customers",
-    value: "123",
-    trend: -20,
-    gradient: "from-[#134E5E] to-[#71B280]",
-  },
-  {
-    title: "Active Accounts",
-    value: "4,567",
-    trend: 1.5,
-    gradient: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
-  },
-  {
-    title: "Growth Rate",
-    value: "4.5%",
-    trend: 4.5,
-    gradient: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
-  },
-];
+import { useMaterialSummary } from "../useMaterial";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /* =========================
    ANIMATION
@@ -68,49 +36,69 @@ function AnimatedCard({
    COMPONENT
 ========================= */
 
-export function SectionCards() {
+interface Props {
+  filters?: any;
+}
+
+export function SectionCards({ filters }: Props) {
+  const { data, isLoading } = useMaterialSummary(filters);
+
+  const cardsData = [
+    {
+      title: "Total SKUs",
+      value: data?.total_skus ?? 0,
+      gradient: "from-[#1E6C8E] to-[#2E7775]",
+    },
+    {
+      title: "Active SKUs",
+      value: data?.active_skus ?? 0,
+      gradient: "from-[#243748] to-[#4B749F]",
+    },
+    {
+      title: "Inactive SKUs",
+      value: data?.inactive_skus ?? 0,
+      gradient: "from-[#134E5E] to-[#71B280]",
+    },
+    {
+      title: "Total Brands",
+      value: data?.total_brand ?? 0,
+      gradient: "from-[#0F2027] to-[#2C5364]",
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i} className="p-4 space-y-3">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-8 w-24" />
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-      {cardsData.map((card, index) => {
-        const isPositive = card.trend > 0;
-        const TrendIcon = isPositive ? IconTrendingUp : IconTrendingDown;
+      {cardsData.map((card, index) => (
+        <AnimatedCard key={index} index={index}>
+          <Card
+            className={`rounded-xl border-none shadow-xm p-3 text-white 
+            bg-gradient-to-r ${card.gradient}`}
+          >
+            <CardHeader className="p-1 flex flex-col gap-1">
+              <CardDescription className="text-xs uppercase tracking-wide text-white/80">
+                {card.title}
+              </CardDescription>
 
-        return (
-          <AnimatedCard key={index} index={index}>
-            <Card
-              className={`rounded-xl border-none shadow-xm p-3 text-white 
-              bg-gradient-to-r ${card.gradient}`}
-            >
-              <CardHeader className="p-1 flex flex-col gap-1">
-                {/* Title */}
-                <CardDescription className="text-xs uppercase tracking-wide text-white/80">
-                  {card.title}
-                </CardDescription>
-                {/* Value */}
-                <CardTitle className="text-lg font-semibold">
-                  {card.value}
-                </CardTitle>
-                {/* Trend Badge */}
-                {/* <div className="flex justify-end">
-                  <Badge
-                    variant="secondary"
-                    className={`text-[10px] px-2 py-[2px] flex items-center gap-1
-                      ${
-                        isPositive
-                          ? "bg-green-500/20 text-green-200"
-                          : "bg-red-500/20 text-red-200"
-                      }`}
-                  >
-                    <TrendIcon className="size-3" />
-                    {card.trend > 0 ? "+" : ""}
-                    {card.trend}%
-                  </Badge>
-                </div> */}
-              </CardHeader>
-            </Card>
-          </AnimatedCard>
-        );
-      })}
+              <CardTitle className="text-lg font-semibold">
+                {card.value}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        </AnimatedCard>
+      ))}
     </div>
   );
 }

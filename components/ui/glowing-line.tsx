@@ -84,7 +84,7 @@ export function GlowingLineChart({
             <Line
               dataKey="mobile"
               type="bump"
-              stroke="var(--chart-5)"
+              stroke="url(#mobileGradient)" // ✅ use gradient
               dot={false}
               strokeWidth={2}
               filter="url(#rainbow-line-glow)"
@@ -100,6 +100,26 @@ export function GlowingLineChart({
                 <feGaussianBlur stdDeviation="10" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
+            </defs>
+            <defs>
+              {/* Glow filter (already present) */}
+              <filter
+                id="rainbow-line-glow"
+                x="-20%"
+                y="-20%"
+                width="140%"
+                height="140%"
+              >
+                <feGaussianBlur stdDeviation="10" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+
+              {/* ✅ Gradient for mobile line */}
+              <linearGradient id="mobileGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#0F2027" />
+                <stop offset="50%" stopColor="#203A43" />
+                <stop offset="100%" stopColor="#2C5364" />
+              </linearGradient>
             </defs>
           </LineChart>
         </ChartContainer>

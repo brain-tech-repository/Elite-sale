@@ -31,27 +31,28 @@ const RADIAN = Math.PI / 180;
 
 const renderSmartLabel = (props: any) => {
   const { cx, cy, midAngle, outerRadius, percent, index, fill, name } = props;
+  const RADIAN = Math.PI / 180;
 
   // Configuration
   const sin = Math.sin(-midAngle * RADIAN);
   const cos = Math.cos(-midAngle * RADIAN);
   const isRightSide = cos >= 0;
 
-  // Point A: Edge of the pie
+  // 1. Point A: Edge of the pie
   const sx = cx + outerRadius * cos;
   const sy = cy + outerRadius * sin;
 
-  // Point B: The "elbow" of the connector
-  // We push the elbow out further to give labels more breathing room
-  const mx = cx + (outerRadius + 25) * cos;
-  const my = cy + (outerRadius + 25) * sin;
+  // 2. Point B: THE ELBOW (Reduced to 12 for "small lines")
+  // This brings the label much closer to the pie slice.
+  const elbowExtension = 12;
+  const mx = cx + (outerRadius + elbowExtension) * cos;
+  const my = cy + (outerRadius + elbowExtension) * sin;
 
-  // Point C: The text anchor (horizontal stretch)
-  const tx = isRightSide ? mx + 20 : mx - 20;
+  // 3. Point C: THE HORIZONTAL STRETCH (Small flat line)
+  const horizontalStretch = 10;
+  const tx = isRightSide ? mx + horizontalStretch : mx - horizontalStretch;
 
-  // Collision Logic:
-  // Since Recharts renders one by one, we use a simple global-ish
-  // coordinate tracker that resets based on the index.
+  // Collision Logic: Prevents "hiding" or overlapping at the top
   if (!window.__labelYCoords || index === 0) {
     window.__labelYCoords = { left: [], right: [] };
   }
@@ -59,13 +60,15 @@ const renderSmartLabel = (props: any) => {
   const list = isRightSide
     ? window.__labelYCoords.right
     : window.__labelYCoords.left;
-  let adjustedY = my;
-  const minGap = 20; // Increase this if text still overlaps vertically
 
-  // Simple iterative push: if too close to any previous label, move down
+  let adjustedY = my;
+  const minGap = 16; // Enough space for font size 11-12
+
+  // The fix for "Top Side": If the label is in the top half (my < cy),
+  // we push UP to keep it from drowning in the pie.
   list.forEach((prevY: number) => {
     if (Math.abs(adjustedY - prevY) < minGap) {
-      adjustedY = prevY + (my > cy ? minGap : -minGap);
+      adjustedY = my < cy ? prevY - minGap : prevY + minGap;
     }
   });
   list.push(adjustedY);
@@ -73,23 +76,22 @@ const renderSmartLabel = (props: any) => {
   return (
     <g>
       <path
+        // Using a shorter Quadratic Bezier curve for a cleaner "small line" look
         d={`M${sx},${sy} Q${mx},${my} ${mx},${adjustedY} L${tx},${adjustedY}`}
         stroke={fill}
-        strokeWidth={1.5}
+        strokeWidth={1}
         fill="none"
-        opacity={0.6}
       />
-      <circle cx={sx} cy={sy} r={2} fill={fill} />
       <text
         x={tx + (isRightSide ? 4 : -4)}
         y={adjustedY}
-        fill="#333"
+        fill="#444"
         textAnchor={isRightSide ? "start" : "end"}
         dominantBaseline="central"
         fontSize={11}
-        fontWeight="600"
+        fontWeight="bold"
       >
-        {` ${(percent * 100).toFixed(0)}%`}
+        {`${(percent * 100).toFixed(0)}%`}
       </text>
     </g>
   );
@@ -181,7 +183,7 @@ export function RoundedPieChart({
               />
               <Pie
                 data={updatedData}
-                innerRadius={30}
+                innerRadius={25}
                 outerRadius={90}
                 dataKey="value"
                 nameKey="name" // Ensure nameKey is present for tooltip/labels

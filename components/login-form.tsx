@@ -46,17 +46,19 @@ export function LoginForm({
       const data = response.data;
 
       if (data.status === "success") {
-        // ✅ Save token
-        CookieManager.set("token", data.token);
-        CookieManager.set("user", JSON.stringify(data.user));
+        // ✅ save cookie (same as working project)
+        CookieManager.set("token", data.token, {
+          path: "/",
+          sameSite: "lax",
+        });
 
-        // ✅ Success Toast
+        localStorage.setItem("user_auth_data", JSON.stringify(data.user));
+
         toast.success("Login successful 🎉");
 
-        // ✅ Redirect
-        router.push("/salesDashboard");
+        // ✅ IMPORTANT: use hard redirect (same as working project)
+        window.location.href = "/salesDashboard";
       } else {
-        // ❌ Error Toast
         toast.error(data.message || "Invalid credentials");
         setError(data.message || "Login failed");
       }
