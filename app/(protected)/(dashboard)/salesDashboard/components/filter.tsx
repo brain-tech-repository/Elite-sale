@@ -306,14 +306,13 @@ export default function MyForm({ onFilter }: Props) {
         {/* BUTTONS */}
 
         <div className="flex gap-x-6 ">
-          <Button type="submit" variant="outline" className="shadow-xm">
+          <Button type="submit" className="shadow-xm bg-[#022235] text-white">
             Filter
           </Button>
 
           <Button
             type="button"
-            variant="outline"
-            className="shadow-xm"
+            className="shadow-xm bg-[#022235]"
             onClick={() => form.reset()}
           >
             Reset

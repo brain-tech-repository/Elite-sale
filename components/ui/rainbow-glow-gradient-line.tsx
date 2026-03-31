@@ -62,7 +62,7 @@ export function RainbowGlowGradientLineChart({
   showYearSelector = false,
   year,
   setYear,
-  height = 300, // 👈 default height
+  height = 320, // 👈 default height
   xKey = "month", // 👈 default
   yKey = "desktop", // 👈 default
 }: Props) {

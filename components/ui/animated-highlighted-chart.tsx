@@ -35,6 +35,9 @@ interface Props {
   selectedMonth?: string | null;
   setSelectedMonth?: (month: string | null) => void;
   height?: number; // 👈 NEW
+  showMonthFilter?: boolean; // 👈 NEW
+  xKey?: string; // ✅ ADD THIS
+  yKey?: string; // ✅ ADD THIS
 }
 
 const months = [
@@ -59,6 +62,9 @@ export function AnimatedHighlightedAreaChart({
   selectedMonth,
   setSelectedMonth,
   height = 320, // 👈 default height
+  xKey,
+  yKey,
+  showMonthFilter = false, // 👈 default = visible
 }: Props) {
   /* FIX: We removed the .slice() logic here. 
      The monthly data for days 01-31 is already handled by your useMonthlySalesTrend hook.
@@ -73,28 +79,30 @@ export function AnimatedHighlightedAreaChart({
         <CardTitle>{title}</CardTitle>
 
         {/* Month Filter UI - UNCHANGED */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[110px]">
-              {selectedMonth ? selectedMonth.slice(0, 3) : "Month"}
-            </Button>
-          </PopoverTrigger>
+        {showMonthFilter && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-[110px]">
+                {selectedMonth ? selectedMonth.slice(0, 3) : "Month"}
+              </Button>
+            </PopoverTrigger>
 
-          <PopoverContent className="w-[200px]">
-            <div className="grid grid-cols-3 gap-2">
-              {months.map((month) => (
-                <Button
-                  key={month}
-                  variant={selectedMonth === month ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedMonth?.(month)}
-                >
-                  {month.slice(0, 3)}
-                </Button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+            <PopoverContent className="w-[200px]">
+              <div className="grid grid-cols-3 gap-2">
+                {months.map((month) => (
+                  <Button
+                    key={month}
+                    variant={selectedMonth === month ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setSelectedMonth?.(month)}
+                  >
+                    {month.slice(0, 3)}
+                  </Button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
       </CardHeader>
 
       <CardContent style={{ height }} className="w-full">
@@ -115,10 +123,8 @@ export function AnimatedHighlightedAreaChart({
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
-                dataKey="month"
-                type="number" // 👈 VERY IMPORTANT
-                domain={[1, 31]} // 👈 define range
-                ticks={[1, 5, 10, 15, 20, 25, 30]}
+                dataKey={xKey || "month"}
+                type="category" // ✅ FIX (important)
                 tickLine={false}
                 axisLine={false}
               />
@@ -166,9 +172,9 @@ export function AnimatedHighlightedAreaChart({
               <Legend />
               <Area
                 type="monotone"
-                dataKey="desktop"
+                dataKey={yKey || "desktop"}
                 name="Sales"
-                stroke="#0ea5e9" // sky-500
+                stroke="#0ea5e9"
                 fill="url(#salesGradient)"
                 strokeWidth={2}
                 isAnimationActive={true}

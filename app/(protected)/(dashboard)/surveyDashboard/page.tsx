@@ -6,13 +6,17 @@ import { Card } from "@/components/ui/card";
 import { CommonDataTables } from "@/components/table-data/common-tables";
 import { sectionColumns } from "./components/columns";
 import data from "./components/data.json";
+import DataTableHeader from "@/components/table-data/data-table-header";
 
 export default function Salesdashboa() {
   const [activeTable, setActiveTable] = useState<string | null>(null);
 
   return (
     <>
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col mt-6">
+        <div className=" py-6 px-6">
+          <DataTableHeader title=" IB Survey Dashboard" />
+        </div>
         <div className="lg:px-6 px-1 pb-6">
           <SectionCards onCardClick={(id: any) => setActiveTable(id)} />
         </div>
@@ -21,14 +25,12 @@ export default function Salesdashboa() {
 
         {activeTable === "customers" && (
           <div className="lg:px-6 px-1">
-            <Card className="shadow-xm py-2">
-              <CommonDataTables
-                columns={sectionColumns}
-                data={data}
-                pageSize={5}
-                headerTitle="Top Customers By"
-              />
-            </Card>
+            <CommonDataTables
+              columns={sectionColumns}
+              data={data}
+              pageSize={5}
+              headerTitle="Top Customers By"
+            />
           </div>
         )}
 

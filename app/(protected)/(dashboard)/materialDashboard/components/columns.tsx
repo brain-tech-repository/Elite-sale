@@ -1,61 +1,63 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table";
 
-export type Sale = {
-  id: string
-  customer: string
-  product: string
-  amount: number
-  status: "Completed" | "Pending" | "Cancelled"
-  date: string
-}
+export type MaterialPerformance = {
+  material_code: string;
+  material_description: string;
+  total_volume: number;
+  unit_price: number;
+  car: number;
+  pcs: number;
+  total_value: number;
+};
 
-export const salesColumns: ColumnDef<Sale>[] = [
+export const salesColumns: ColumnDef<MaterialPerformance>[] = [
   {
-    accessorKey: "id",
-    header: "Order ID",
-  },
-  {
-    accessorKey: "customer",
-    header: "Customer",
-  },
-  {
-    accessorKey: "product",
-    header: "Product",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount (₹)",
+    header: "Material Code",
+    accessorKey: "material_code",
     cell: ({ row }) => (
-      <span className="font-medium text-emerald-600">
-        ₹{row.original.amount.toLocaleString()}
+      <span className="font-medium">{row.original.material_code}</span>
+    ),
+  },
+  {
+    header: "Description",
+    accessorKey: "material_description",
+    cell: ({ row }) => (
+      <span className="text-muted-foreground">
+        {row.original.material_description}
       </span>
     ),
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status
-
-      return (
-        <span
-          className={`px-2 py-1 text-xs rounded-md font-medium ${
-            status === "Completed"
-              ? "bg-emerald-100 text-emerald-700"
-              : status === "Pending"
-              ? "bg-pink-100 text-pink-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {status}
-        </span>
-      )
-    },
+    header: "Volume",
+    accessorKey: "total_volume",
+    cell: ({ row }) => (
+      <span>{row.original.total_volume?.toLocaleString()}</span>
+    ),
   },
   {
-    accessorKey: "date",
-    header: "Date",
+    header: "Unit Price",
+    accessorKey: "unit_price",
+    cell: ({ row }) => (
+      <span>₹ {row.original.unit_price?.toLocaleString()}</span>
+    ),
   },
-]
+  {
+    header: "CAR",
+    accessorKey: "car",
+    cell: ({ row }) => <span>{row.original.car?.toLocaleString()}</span>,
+  },
+  {
+    header: "PCS",
+    accessorKey: "pcs",
+    cell: ({ row }) => <span>{row.original.pcs?.toLocaleString()}</span>,
+  },
+  {
+    header: "Total Value",
+    accessorKey: "total_value",
+    cell: ({ row }) => (
+      <span>₹ {row.original.total_value?.toLocaleString()}</span>
+    ),
+  },
+];

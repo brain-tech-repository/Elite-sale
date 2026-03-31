@@ -102,3 +102,28 @@ export type RouteSalesCollection = {
   totalReturn: number;
   totalExchange: number;
 };
+
+/* ========================================================================== */
+/*                        MATERIAL ANALYSIS TYPES                             */
+/* ========================================================================== */
+
+export interface MaterialOption {
+  material_code: string;
+  material_description: string;
+}
+
+export interface MaterialSummary {
+  total_skus: number;
+  active_skus: number;
+  inactive_skus: number;
+  total_brand: number;
+  date_range: {
+    from: string;
+    to: string;
+  };
+}
+
+export interface ChartPoint {
+  label: string;
+  y: number;
+}

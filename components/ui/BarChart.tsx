@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,6 +13,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { Card } from "./card";
+import { useRef } from "react";
 
 ChartJS.register(
   CategoryScale,
@@ -22,60 +24,130 @@ ChartJS.register(
   Title,
 );
 
-const labels: string[] = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-];
+interface Props {
+  title?: string;
+  data?: any[];
+  xKey?: string;
+  yKey?: string;
+  height?: number;
+  truncateLabel?: (val: string) => string;
+}
 
-const data: ChartData<"bar"> = {
-  labels,
-  datasets: [
-    {
-      label: "My First Dataset",
-      data: [65, 59, 80, 81, 56, 55, 40],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-        "rgba(255, 205, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(201, 203, 207, 0.2)",
-      ],
-      borderColor: [
-        "rgb(255, 99, 132)",
-        "rgb(255, 159, 64)",
-        "rgb(255, 205, 86)",
-        "rgb(75, 192, 192)",
-        "rgb(54, 162, 235)",
-        "rgb(153, 102, 255)",
-        "rgb(201, 203, 207)",
-      ],
-      borderWidth: 1,
+export default function GradientBarChart({
+  title = "Chart",
+  data = [],
+  xKey = "label",
+  yKey = "y",
+  height = 300,
+  truncateLabel,
+}: Props) {
+  const chartRef = useRef<any>(null);
+
+  // ✅ K / M / B formatter
+  const formatNumber = (value: number) => {
+    if (value >= 1_000_000_000) {
+      return (value / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
+    }
+    if (value >= 1_000_000) {
+      return (value / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (value >= 1_000) {
+      return (value / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return value.toString();
+  };
+
+  // ✅ CSS variable
+  const getCssVar = (name: string) =>
+    typeof window !== "undefined"
+      ? getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+      : "";
+
+  const chart2Color = getCssVar("--chart-3");
+
+  // ✅ Gradient
+  const getGradient = (ctx: any, chartArea: any) => {
+    const gradient = ctx.createLinearGradient(
+      chartArea.left,
+      0,
+      chartArea.right,
+      0,
+    );
+
+    gradient.addColorStop(0, "#0F2027");
+    gradient.addColorStop(0.5, "#203A43");
+    gradient.addColorStop(1, "#2C5364");
+
+    return gradient;
+  };
+
+  // ✅ Transform data
+  const labels = data.map((item) =>
+    truncateLabel ? truncateLabel(item[xKey]) : item[xKey],
+  );
+
+  const values = data.map((item) => item[yKey]);
+
+  const chartData: ChartData<"bar"> = {
+    labels,
+    datasets: [
+      {
+        label: title,
+        data: values,
+        backgroundColor: (context) => {
+          const { chart } = context;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return;
+          return getGradient(ctx, chartArea);
+        },
+        borderColor: chart2Color,
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options: ChartOptions<"bar"> = {
+    indexAxis: "y",
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          callback: function (value) {
+            return formatNumber(Number(value));
+          },
+        },
+      },
+      y: {
+        ticks: {
+          autoSkip: false,
+        },
+      },
     },
-  ],
-};
-
-const options: ChartOptions<"bar"> = {
-  scales: {
-    y: {
-      beginAtZero: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.dataset.label}: ${formatNumber(
+              context.raw as number,
+            )}`;
+          },
+        },
+      },
     },
-  },
-};
+  };
 
-export default function BarChart() {
   return (
-    <>
-      {" "}
-      <Card className="shadow-xm px-5">
-        <Bar data={data} options={options} />
-      </Card>
-    </>
+    <Card className="shadow-xm p-3">
+      <div className="text-sm font-medium mb-2">{title}</div>
+
+      <div style={{ height }}>
+        <Bar ref={chartRef} data={chartData} options={options} />
+      </div>
+    </Card>
   );
 }

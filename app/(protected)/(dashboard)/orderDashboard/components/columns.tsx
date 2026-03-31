@@ -1,56 +1,33 @@
-"use client"
+// columns.ts
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Section } from "../types/index"
-import { Badge } from "@/components/ui/badge"
-import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react"
+import { ColumnDef } from "@tanstack/react-table";
+import { OrderTableItem } from "../types";
 
-export const sectionColumns: ColumnDef<Section>[] = [
+export const columns: ColumnDef<OrderTableItem>[] = [
   {
-    accessorKey: "header",
-    header: "Header",
+    accessorKey: "Order No.",
+    header: "Order No.",
   },
-
   {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => (
-      <Badge variant="outline">
-        {row.original.type}
-      </Badge>
-    ),
+    accessorKey: "Order Date",
+    header: "Order Date",
+    cell: ({ row }) => row.getValue("Order Date") || "-",
   },
-
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="flex gap-2 items-center">
-
-        {row.original.status === "Done" ? (
-          <IconCircleCheckFilled className="text-green-500 size-4" />
-        ) : (
-          <IconLoader className="size-4 animate-spin" />
-        )}
-
-        {row.original.status}
-
-      </Badge>
-    ),
+    accessorKey: "Approved Date",
+    header: "Approved Date",
+    cell: ({ row }) => row.getValue("Approved Date") || "-",
   },
-
   {
-    accessorKey: "target",
-    header: "Target",
+    accessorKey: "Customer Name",
+    header: "Customer Name",
   },
-
   {
-    accessorKey: "limit",
-    header: "Limit",
+    accessorKey: "Order Value",
+    header: "Order Value",
   },
-
   {
-    accessorKey: "reviewer",
-    header: "Reviewer",
+    accessorKey: "Invoice Value",
+    header: "Invoice Value",
   },
-]
+];

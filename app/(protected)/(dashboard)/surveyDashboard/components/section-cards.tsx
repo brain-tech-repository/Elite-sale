@@ -1,12 +1,27 @@
 "use client";
 
+import { motion, useAnimation } from "framer-motion";
 import {
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useState } from "react";
+
+function AnimatedCard({ children }: { children: React.ReactNode }) {
+  const controls = useAnimation();
+
+  const handleHoverStart = async () => {
+    await controls.start({
+      rotateY: 360,
+      transition: { duration: 0.6, ease: "easeInOut" },
+    });
+    controls.set({ rotateY: 0 });
+  };
+
+  return <motion.div>{children}</motion.div>;
+}
 
 const cardsData = [
   {
@@ -14,32 +29,29 @@ const cardsData = [
     title: "Total Surveys",
     value: "3",
     message: "Surveys collected",
-    footer: "Active surveys",
-    color: "bg-blue-50",
+    color: "bg-gradient-to-r from-[#1E6C8E] to-[#2E7775] text-white",
   },
   {
     id: "country",
     title: "IB Country",
     value: "3",
     message: "Countries available",
-    footer: "Coverage growing",
-    color: "bg-purple-50",
+    color: "bg-gradient-to-r from-[#243748] to-[#4B749F] text-white",
   },
   {
     id: "users",
     title: "IB Users",
     value: "6",
     message: "Active users",
-    footer: "User growth",
-    color: "bg-green-50",
+    color: "bg-gradient-to-r from-[#134E5E] to-[#71B280] text-white",
   },
   {
     id: "customers",
     title: "IB Customers",
     value: "26",
     message: "Customer engagement",
-    footer: "Customers increased",
-    color: "bg-rose-50",
+    color:
+      "bg-gradient-to-r from-[#0F2027] via-[#203A43] to-[#2C5364] text-white",
   },
 ];
 
@@ -47,27 +59,22 @@ export function SectionCards({ onCardClick }: any) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {cardsData.map((card) => (
-        <Card
-          key={card.id}
-          onClick={() => onCardClick(card.id)}
-          className={`p-4 cursor-pointer shadow-xm hover:shadow-xl transition-all duration-300 rounded-xl border shadow-xm ${card.color}`}
-        >
-          <CardHeader className="p-2 flex justify-between items-start">
-            <div className="space-y-1">
-              <CardDescription className="text-sm font-medium text-muted-foreground">
+        <AnimatedCard key={card.id}>
+          <Card
+            onClick={() => onCardClick(card.id)}
+            className={`py-2  shadow-sm ${card.color}`}
+          >
+            <CardHeader className="">
+              <CardDescription className="text-sm font-semibold text-white">
                 {card.title}
               </CardDescription>
 
-              <CardTitle className="text-2xl font-bold tabular-nums tracking-tight">
+              <CardTitle className="text-base font-semibold tabular-nums">
                 {card.value}
               </CardTitle>
-            </div>
-          </CardHeader>
-
-          <CardFooter className="flex-col items-start gap-1 text-xs p-1 mt-1">
-            <div className="text-muted-foreground">{card.message}</div>
-          </CardFooter>
-        </Card>
+            </CardHeader>
+          </Card>
+        </AnimatedCard>
       ))}
     </div>
   );

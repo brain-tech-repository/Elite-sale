@@ -1,3 +1,5 @@
+//
+
 "use client";
 
 import {
@@ -61,7 +63,7 @@ export function CommonDataTable<T>({
 
   return (
     <>
-      <div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-sm flex flex-col h-[330px]">
+      <div className="w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 shadow-sm flex flex-col h-[400px]">
         <div className="w-full overflow-x-auto overflow-y-hidden flex-1">
           <div
             className="h-full overflow-y-auto  rounded-t-xl"
