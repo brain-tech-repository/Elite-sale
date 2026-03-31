@@ -32,7 +32,7 @@ const chartData = [
   { month: "October", desktop: 532 },
   { month: "November", desktop: 803 },
   { month: "December", desktop: 271 },
-   { month: "May", desktop: 458 },
+  { month: "May", desktop: 458 },
   { month: "June", desktop: 781 },
   { month: "July", desktop: 394 },
   { month: "August", desktop: 925 },
@@ -40,7 +40,7 @@ const chartData = [
   { month: "October", desktop: 532 },
   { month: "November", desktop: 803 },
   { month: "December", desktop: 271 },
-   { month: "May", desktop: 458 },
+  { month: "May", desktop: 458 },
   { month: "June", desktop: 781 },
   { month: "July", desktop: 394 },
   { month: "August", desktop: 925 },
@@ -48,10 +48,9 @@ const chartData = [
   { month: "October", desktop: 532 },
   { month: "November", desktop: 803 },
   { month: "December", desktop: 271 },
-   { month: "May", desktop: 458 },
+  { month: "May", desktop: 458 },
   { month: "June", desktop: 781 },
   { month: "July", desktop: 394 },
- 
 ];
 
 const chartConfig = {
@@ -85,7 +84,7 @@ export function HighlightedBarChart() {
         <CardDescription>
           {activeData
             ? `${activeData.month}: ${activeData.desktop}`
-            : "January - June 2025"}
+            : "January - June 2026"}
         </CardDescription>
       </CardHeader>
       <CardContent>

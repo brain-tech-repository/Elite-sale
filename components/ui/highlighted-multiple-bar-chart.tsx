@@ -70,7 +70,7 @@ export function HighlightedMultipleBarChart() {
               {activeData.mobile}, iPhone: {activeData.iphone}
             </div>
           ) : (
-            <span>January - June 2025</span>
+            <span>January - June 2026</span>
           )}
         </CardDescription>
       </CardHeader>

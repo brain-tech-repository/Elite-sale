@@ -50,7 +50,7 @@ export function DuotoneVerticalBarMultipleChart({
     <Card className="shadow-xm">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <CardDescription>January - June 2025</CardDescription>
+        <CardDescription>January - June 2026</CardDescription>
       </CardHeader>
 
       <CardContent>

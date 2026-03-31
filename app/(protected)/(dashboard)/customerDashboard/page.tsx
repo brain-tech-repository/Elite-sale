@@ -40,7 +40,7 @@ export default function CustomerDashboard() {
   });
 
   // 🔹 Year selector for charts
-  const [year, setYear] = useState("2025");
+  const [year, setYear] = useState("2026");
 
   /* =========================
      CHART API CALLS
@@ -163,7 +163,7 @@ export default function CustomerDashboard() {
               height={300}
               title="Monthly Trend of Customers Creation"
               data={monthlyTrend}
-              year={"2025"}
+              year={"2026"}
               setYear={setYear}
             />
           )}

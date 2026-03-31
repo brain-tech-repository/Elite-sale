@@ -65,7 +65,7 @@ export function HighlightedMultipleBarChart() {
               {activeData.mobile}
             </div>
           ) : (
-            <span>January - June 2025</span>
+            <span>January - June 2026</span>
           )}
         </CardDescription>
       </CardHeader>

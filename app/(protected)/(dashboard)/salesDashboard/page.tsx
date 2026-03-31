@@ -39,7 +39,7 @@
 // import { CommonDataTables } from "@/components/table-data/common-tables";
 // export default function Salesdashboa() {
 //   const [filters, setFilters] = React.useState<any>(null);
-//   const [year, setYear] = React.useState("2025");
+//   const [year, setYear] = React.useState("2026");
 //   // Ensure this matches the string format your API/chart expects (e.g., "January")
 //   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
 //     "January",
@@ -462,7 +462,7 @@ import { AdvancedBarChart } from "@/components/ui/advancebar";
 import { AdvancedBarChart1 } from "@/components/ui/advancebar1";
 export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<any>(null);
-  const [year, setYear] = React.useState("2025");
+  const [year, setYear] = React.useState("2026");
   // Ensure this matches the string format your API/chart expects (e.g., "January")
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
     "January",
