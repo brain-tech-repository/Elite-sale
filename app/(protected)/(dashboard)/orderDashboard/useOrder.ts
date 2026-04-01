@@ -70,6 +70,40 @@ export const useSpecificSelection = (orderType?: string) =>
 
 //   summary cards
 
+/* ================= CHART ================= */
+
+type ChartResponse = {
+  success: boolean;
+  message: string;
+  data: { label: string; y: number }[];
+};
+
+type ChartFilters = {
+  order_type?: string;
+  card_type?: string; // ✅ NEW
+};
+
+export const useOrderChart = (filters?: ChartFilters) =>
+  useQuery({
+    queryKey: ["order-chart", filters],
+
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        order_type: filters?.order_type || "",
+        card_type: filters?.card_type || "", // ✅ ADD
+      });
+
+      const { data } = await api.get(
+        `/order-analysis/chart-data?${params.toString()}`,
+      );
+
+      return data;
+    },
+
+    enabled: !!filters?.order_type,
+    refetchOnWindowFocus: false,
+  });
+
 export const useOrderSummary = (filters?: OrderSummaryFilters) =>
   useQuery({
     queryKey: ["order-summary", filters],
@@ -89,7 +123,7 @@ export const useOrderSummary = (filters?: OrderSummaryFilters) =>
       return data as OrderSummaryResponse;
     },
 
-    enabled: !!filters?.order_type, // 🔥 important
+    // enabled: !!filters?.order_type, // 🔥 important
     refetchOnWindowFocus: false,
   });
 
@@ -98,7 +132,9 @@ type TableFilters = OrderSummaryFilters & {
   per_page?: number;
 };
 
-export const useOrderTable = (filters?: TableFilters) =>
+export const useOrderTable = (
+  filters?: TableFilters & { card_type?: string },
+) =>
   useQuery({
     queryKey: ["order-table", filters],
 
@@ -109,15 +145,15 @@ export const useOrderTable = (filters?: TableFilters) =>
         to_date: filters?.to_date || "",
         page: String(filters?.page || 1),
         per_page: String(filters?.per_page || 10),
+        card_type: filters?.card_type || "", // ✅ ADD
       });
 
       const { data } = await api.get(
         `/order-analysis/table-data?${params.toString()}`,
       );
 
-      return data as OrderTableResponse;
+      return data;
     },
 
-    // keepPreviousData: true, // 🔥 smooth pagination
-    enabled: !!filters?.order_type,
+    // enabled: !!filters?.order_type,
   });

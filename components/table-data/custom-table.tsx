@@ -159,7 +159,7 @@ export function CommonDataTable<T>({
                 type="button"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
-                className="rounded-md bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] px-4 py-1.5 text-slate-800 text-sm font-medium shadow-sm transition-all duration-300 hover:brightness-95 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none"
+                className="rounded-md bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] px-4 py-1.5 text-slate-800 text-sm font-medium shadow-sm transition-all duration-300 hover:brightness-95 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               >
                 Previous
               </button>
@@ -168,7 +168,7 @@ export function CommonDataTable<T>({
                 type="button"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
-                className="rounded-md bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] px-4 py-1.5 text-slate-800 text-sm font-medium shadow-sm transition-all duration-300 hover:brightness-95 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none"
+                className="rounded-md bg-gradient-to-br from-[#ACCBEE] to-[#E7F0FE] px-4 py-1.5 text-slate-800 text-sm font-medium shadow-sm transition-all duration-300 hover:brightness-95 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               >
                 Next
               </button>

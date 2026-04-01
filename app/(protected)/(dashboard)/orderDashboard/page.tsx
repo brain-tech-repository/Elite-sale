@@ -11,17 +11,31 @@ import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradi
 import { useEffect, useState } from "react";
 
 import { OrderSummaryFilters } from "./types";
-import { useOrderTable } from "./useOrder";
-import { columns } from "./components/columns";
+import { useOrderChart, useOrderTable } from "./useOrder";
+import { ColumnDef } from "@tanstack/react-table";
 import {
   ChartSkeleton,
   TableSkeleton,
 } from "@/components/ui/dashboard-skeleton";
 import { SectionCardsSkeleton } from "@/components/ui/SectionCardsSkeleton";
 
+export const generateColumns = (headers: string[]): ColumnDef<any>[] => {
+  return headers.map((header) => ({
+    accessorKey: header,
+    header: header,
+    cell: ({ row }: any) => row.getValue(header) || "-",
+  }));
+};
+
 export default function Salesdashboa() {
   /* ================= GLOBAL FILTERS ================= */
-  const [globalFilters, setGlobalFilters] = useState<OrderSummaryFilters>({});
+  const today = new Date().toISOString().split("T")[0];
+
+  const [globalFilters, setGlobalFilters] = useState<OrderSummaryFilters>({
+    order_type: "1",
+    from_date: today,
+    to_date: today,
+  });
 
   /* ================= TABLE FILTERS ================= */
   const [tableFilters, setTableFilters] = useState({
@@ -29,39 +43,59 @@ export default function Salesdashboa() {
     per_page: 10,
   });
 
-  /* ================= GLOBAL LOADING ================= */
+  const [cardType, setCardType] = useState<string>("order");
+
+  /* ================= MANUAL LOADING ================= */
   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
+  /* ================= API ================= */
   const { data, isLoading, isFetching } = useOrderTable({
     ...globalFilters,
     ...tableFilters,
+    card_type: cardType,
   });
+
+  const { data: chartRes, isLoading: chartLoading } = useOrderChart({
+    order_type: globalFilters?.order_type,
+    card_type: cardType,
+  });
+
+  /* ================= DERIVED STATES ================= */
+  const page = tableFilters.page ?? 1;
+
+  const isInitialLoading = isLoading && page === 1;
+
+  const isPageLoading =
+    isFilterLoading || isInitialLoading || (isFetching && page === 1);
+
+  const isFetchingMore = isFetching && page > 1;
 
   /* ================= TABLE DATA ================= */
   const [allData, setAllData] = useState<any[]>([]);
-  const page = tableFilters.page ?? 1;
 
   const tableData = data?.data ?? [];
   const pagination = data?.pagination;
 
-  const isInitialLoading = isLoading && page === 1;
-  const isFetchingMore = isFetching && page > 1;
+  const volumeChartData = chartRes?.data || [];
 
-  /* ================= STOP GLOBAL LOADING ================= */
+  /* ================= STOP FILTER LOADING ================= */
   useEffect(() => {
-    if (!isLoading && !isFetching) {
+    if (!isLoading && !isFetching && !chartLoading) {
       setIsFilterLoading(false);
     }
-  }, [isLoading, isFetching]);
+  }, [isLoading, isFetching, chartLoading]);
 
-  /* ================= ACCUMULATE TABLE DATA ================= */
+  /* ================= ACCUMULATE TABLE ================= */
   useEffect(() => {
-    if (tableData.length) {
-      setAllData((prev) => (page === 1 ? tableData : [...prev, ...tableData]));
-    }
-  }, [tableData]);
+    if (!tableData) return;
 
-  /* ================= SKELETON COMPONENT ================= */
+    setAllData((prev) => {
+      if (page === 1) return tableData;
+      return [...prev, ...tableData];
+    });
+  }, [tableData, page]);
+
+  /* ================= SKELETON BOX ================= */
   const SkeletonBox = ({ height }: { height: number }) => (
     <div
       className="w-full bg-gray-200 animate-pulse rounded-xl"
@@ -69,6 +103,7 @@ export default function Salesdashboa() {
     />
   );
 
+  /* ================= STATIC CHART ================= */
   const mainChartData = [
     { label: "Jan", y: 120 },
     { label: "Feb", y: 200 },
@@ -78,14 +113,9 @@ export default function Salesdashboa() {
     { label: "Jun", y: 239 },
   ];
 
-  const volumeChartData = [
-    { label: "Jan", y: 30 },
-    { label: "Feb", y: 45 },
-    { label: "Mar", y: 28 },
-    { label: "Apr", y: 60 },
-    { label: "May", y: 50 },
-    { label: "Jun", y: 70 },
-  ];
+  const headers = Array.isArray(data?.headers) ? data.headers : [];
+  const dynamicColumns = headers.length > 0 ? generateColumns(headers) : [];
+  const safeData = Array.isArray(allData) ? allData : [];
 
   return (
     <div className="flex flex-1 flex-col">
@@ -100,7 +130,7 @@ export default function Salesdashboa() {
           <Card className="shadow-xm lg:px-5">
             <MyForm
               onApply={(filters) => {
-                setIsFilterLoading(true); // 🔥 start loading
+                setIsFilterLoading(true);
 
                 setGlobalFilters(filters);
 
@@ -109,48 +139,62 @@ export default function Salesdashboa() {
                   per_page: 10,
                 });
 
-                setAllData([]); // reset table
+                setCardType("order");
+                setAllData([]);
               }}
             />
           </Card>
         </div>
 
-        {/* ================= TOP CARDS ================= */}
+        {/* ================= TOP SECTION ================= */}
         <section className="grid gap-2 lg:px-5 px-1 pb-8 grid-cols-1 lg:grid-cols-[30%_40%_30%]">
-          {/* Cards */}
-          {isFilterLoading ? (
+          {/* ✅ CARDS (NO skeleton on card click) */}
+          {isFilterLoading || isInitialLoading ? (
             <SectionCardsSkeleton />
           ) : (
-            <SectionCards filters={globalFilters} />
+            <SectionCards
+              filters={globalFilters}
+              onCardClick={(type) => {
+                setCardType(type);
+
+                setTableFilters((prev) => ({
+                  ...prev,
+                  page: 1,
+                }));
+
+                setAllData([]);
+              }}
+            />
           )}
 
-          {/* Main Chart */}
-          {isFilterLoading ? (
+          {/* ✅ MAIN CHART */}
+          {isPageLoading ? (
             <ChartSkeleton />
           ) : (
             <RainbowGlowGradientLineChart
               height={350}
-              data={mainChartData}
+              title="Drop Size by Volume"
+              data={volumeChartData}
               xKey="label"
               yKey="y"
             />
           )}
 
-          {/* Right Section */}
+          {/* ✅ RIGHT SIDE */}
           <div className="flex flex-col gap-2">
-            {isFilterLoading ? (
+            {isPageLoading ? (
               <SkeletonBox height={150} />
             ) : (
               <GaugePieChartCard />
             )}
 
-            {isFilterLoading ? (
+            {isPageLoading ? (
               <SkeletonBox height={150} />
             ) : (
               <RainbowGlowGradientLineChart
                 height={150}
                 title="Drop Size by Volume"
-                data={volumeChartData}
+                data={mainChartData}
                 xKey="label"
                 yKey="y"
               />
@@ -160,12 +204,12 @@ export default function Salesdashboa() {
 
         {/* ================= TABLE ================= */}
         <section className="lg:px-6 px-1 space-y-4">
-          {isFilterLoading && page === 1 ? (
+          {isPageLoading && page === 1 ? (
             <TableSkeleton />
-          ) : (
+          ) : dynamicColumns.length > 0 ? (
             <CommonDataTables
-              columns={columns}
-              data={allData}
+              columns={dynamicColumns}
+              data={safeData}
               headerTitle="Top Customers"
               pagination={pagination}
               isFetchingMore={isFetchingMore}
@@ -176,7 +220,7 @@ export default function Salesdashboa() {
                 }))
               }
             />
-          )}
+          ) : null}
         </section>
       </div>
     </div>
