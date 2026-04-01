@@ -119,5 +119,5 @@ export const useOrderTable = (filters?: TableFilters) =>
     },
 
     // keepPreviousData: true, // 🔥 smooth pagination
-    // enabled: !!filters?.order_type,
+    enabled: !!filters?.order_type,
   });

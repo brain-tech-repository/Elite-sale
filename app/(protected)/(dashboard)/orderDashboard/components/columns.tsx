@@ -5,7 +5,7 @@ import { OrderTableItem } from "../types";
 
 export const columns: ColumnDef<OrderTableItem>[] = [
   {
-    accessorKey: "Order No.",
+    accessorKey: "Order Number",
     header: "Order No.",
   },
   {
@@ -19,7 +19,7 @@ export const columns: ColumnDef<OrderTableItem>[] = [
     cell: ({ row }) => row.getValue("Approved Date") || "-",
   },
   {
-    accessorKey: "Customer Name",
+    accessorKey: "Distributor Name",
     header: "Customer Name",
   },
   {

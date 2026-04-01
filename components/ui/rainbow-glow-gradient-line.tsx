@@ -33,7 +33,7 @@ import { Button } from "@/components/ui/button";
 interface Props {
   title?: string;
   description?: string;
-  data?: { month: string; desktop: number }[];
+  data?: any[]; // 🔥 make generic
   showYearSelector?: boolean;
   year?: string;
   setYear?: (year: string) => void;

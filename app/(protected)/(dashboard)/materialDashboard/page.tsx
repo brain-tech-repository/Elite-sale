@@ -144,7 +144,7 @@ export default function Salesdashboa() {
                     data={topVolume}
                     xKey="label"
                     yKey="y"
-                    title="Top Volume"
+                    // title="Top Volume"
                     truncateLabel={(val) =>
                       val.length > 25 ? val.slice(0, 25) + "..." : val
                     }
@@ -162,7 +162,7 @@ export default function Salesdashboa() {
                     data={topValue}
                     xKey="label"
                     yKey="y"
-                    title="Top Value"
+                    // title="Top Value"
                     truncateLabel={(val) =>
                       val.length > 25 ? val.slice(0, 25) + "..." : val
                     }

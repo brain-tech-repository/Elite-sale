@@ -143,7 +143,7 @@ export default function GradientBarChart({
 
   return (
     <Card className="shadow-xm p-3">
-      <div className="text-sm font-medium mb-2">{title}</div>
+      {/* <div className="text-sm font-medium mb-2">{title}</div> */}
 
       <div style={{ height }}>
         <Bar ref={chartRef} data={chartData} options={options} />

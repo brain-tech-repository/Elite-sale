@@ -60,15 +60,11 @@ const data = {
           icon: Bot,
         },
         {
-          title: "Finance Dashboard",
-          url: "/financeDashboard",
-          icon: Bot,
-        },
-        {
           title: "Customers Dashboard",
           url: "/customerDashboard",
           icon: Bot,
         },
+
         {
           title: "Route Dashboard",
           url: "/routeDashboard",
@@ -80,15 +76,22 @@ const data = {
           icon: Bot,
         },
         {
-          title: "Survey Dashboard",
-          url: "/surveyDashboard",
-          icon: Bot,
-        },
-        {
           title: "Material Dashboard",
           url: "/materialDashboard",
           icon: Bot,
         },
+        {
+          title: "Finance Dashboard",
+          url: "/financeDashboard",
+          icon: Bot,
+        },
+
+        {
+          title: "Survey Dashboard",
+          url: "/surveyDashboard",
+          icon: Bot,
+        },
+
         {
           title: "Asset Dashboard",
           url: "/assetDashboard",

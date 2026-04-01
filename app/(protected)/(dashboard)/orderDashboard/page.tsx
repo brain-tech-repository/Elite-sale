@@ -8,16 +8,16 @@ import { Card } from "@/components/ui/card";
 import { CommonDataTables } from "@/components/table-data/common-tables";
 import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradient-line";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// ❗ NEW TYPE
 import { OrderSummaryFilters } from "./types";
-
-// (Optional - keep if still needed)
-import { useTopCustomersTable } from "../customerDashboard/useCustomers";
-
 import { useOrderTable } from "./useOrder";
 import { columns } from "./components/columns";
+import {
+  ChartSkeleton,
+  TableSkeleton,
+} from "@/components/ui/dashboard-skeleton";
+import { SectionCardsSkeleton } from "@/components/ui/SectionCardsSkeleton";
 
 export default function Salesdashboa() {
   /* ================= GLOBAL FILTERS ================= */
@@ -29,39 +29,63 @@ export default function Salesdashboa() {
     per_page: 10,
   });
 
+  /* ================= GLOBAL LOADING ================= */
+  const [isFilterLoading, setIsFilterLoading] = useState(false);
+
   const { data, isLoading, isFetching } = useOrderTable({
     ...globalFilters,
     ...tableFilters,
   });
 
   /* ================= TABLE DATA ================= */
+  const [allData, setAllData] = useState<any[]>([]);
+  const page = tableFilters.page ?? 1;
 
   const tableData = data?.data ?? [];
   const pagination = data?.pagination;
 
-  /* ================= PAGINATION ================= */
+  const isInitialLoading = isLoading && page === 1;
+  const isFetchingMore = isFetching && page > 1;
 
-  const handleNext = () => {
-    if (!pagination) return;
-
-    if (pagination.current_page < pagination.total_pages) {
-      setTableFilters((prev) => ({
-        ...prev,
-        page: (prev.page ?? 1) + 1,
-      }));
+  /* ================= STOP GLOBAL LOADING ================= */
+  useEffect(() => {
+    if (!isLoading && !isFetching) {
+      setIsFilterLoading(false);
     }
-  };
+  }, [isLoading, isFetching]);
 
-  const handlePrev = () => {
-    if (!pagination) return;
-
-    if (pagination.current_page > 1) {
-      setTableFilters((prev) => ({
-        ...prev,
-        page: (prev.page ?? 1) - 1,
-      }));
+  /* ================= ACCUMULATE TABLE DATA ================= */
+  useEffect(() => {
+    if (tableData.length) {
+      setAllData((prev) => (page === 1 ? tableData : [...prev, ...tableData]));
     }
-  };
+  }, [tableData]);
+
+  /* ================= SKELETON COMPONENT ================= */
+  const SkeletonBox = ({ height }: { height: number }) => (
+    <div
+      className="w-full bg-gray-200 animate-pulse rounded-xl"
+      style={{ height }}
+    />
+  );
+
+  const mainChartData = [
+    { label: "Jan", y: 120 },
+    { label: "Feb", y: 200 },
+    { label: "Mar", y: 150 },
+    { label: "Apr", y: 278 },
+    { label: "May", y: 189 },
+    { label: "Jun", y: 239 },
+  ];
+
+  const volumeChartData = [
+    { label: "Jan", y: 30 },
+    { label: "Feb", y: 45 },
+    { label: "Mar", y: 28 },
+    { label: "Apr", y: 60 },
+    { label: "May", y: 50 },
+    { label: "Jun", y: 70 },
+  ];
 
   return (
     <div className="flex flex-1 flex-col">
@@ -74,39 +98,85 @@ export default function Salesdashboa() {
         {/* ================= FILTER ================= */}
         <div className="lg:px-6 px-1 pb-4">
           <Card className="shadow-xm lg:px-5">
-            <MyForm onApply={(filters) => setGlobalFilters(filters)} />
+            <MyForm
+              onApply={(filters) => {
+                setIsFilterLoading(true); // 🔥 start loading
+
+                setGlobalFilters(filters);
+
+                setTableFilters({
+                  page: 1,
+                  per_page: 10,
+                });
+
+                setAllData([]); // reset table
+              }}
+            />
           </Card>
         </div>
 
         {/* ================= TOP CARDS ================= */}
         <section className="grid gap-2 lg:px-5 px-1 pb-8 grid-cols-1 lg:grid-cols-[30%_40%_30%]">
-          {/* ✅ UPDATED SUMMARY CARDS */}
-          <SectionCards filters={globalFilters} />
+          {/* Cards */}
+          {isFilterLoading ? (
+            <SectionCardsSkeleton />
+          ) : (
+            <SectionCards filters={globalFilters} />
+          )}
 
-          {/* (Optional static chart) */}
-          <RainbowGlowGradientLineChart height={350} />
-
-          <div className="flex flex-col gap-2">
-            <GaugePieChartCard />
-
-            {/* ⚠️ If you later create API for this → connect with filters */}
+          {/* Main Chart */}
+          {isFilterLoading ? (
+            <ChartSkeleton />
+          ) : (
             <RainbowGlowGradientLineChart
-              height={150}
-              title="Drop Size by Volume"
+              height={350}
+              data={mainChartData}
+              xKey="label"
+              yKey="y"
             />
+          )}
+
+          {/* Right Section */}
+          <div className="flex flex-col gap-2">
+            {isFilterLoading ? (
+              <SkeletonBox height={150} />
+            ) : (
+              <GaugePieChartCard />
+            )}
+
+            {isFilterLoading ? (
+              <SkeletonBox height={150} />
+            ) : (
+              <RainbowGlowGradientLineChart
+                height={150}
+                title="Drop Size by Volume"
+                data={volumeChartData}
+                xKey="label"
+                yKey="y"
+              />
+            )}
           </div>
         </section>
 
         {/* ================= TABLE ================= */}
         <section className="lg:px-6 px-1 space-y-4">
-          <CommonDataTables
-            columns={columns}
-            data={tableData}
-            headerTitle="Top Customers"
-            pagination={pagination}
-            onNext={handleNext}
-            onPrev={handlePrev}
-          />
+          {isFilterLoading && page === 1 ? (
+            <TableSkeleton />
+          ) : (
+            <CommonDataTables
+              columns={columns}
+              data={allData}
+              headerTitle="Top Customers"
+              pagination={pagination}
+              isFetchingMore={isFetchingMore}
+              onNext={() =>
+                setTableFilters((prev) => ({
+                  ...prev,
+                  page: (prev.page ?? 1) + 1,
+                }))
+              }
+            />
+          )}
         </section>
       </div>
     </div>
