@@ -115,13 +115,16 @@ export default function MyForm1({
             />
 
             <div className="flex gap-6 pt-6">
-              <Button type="submit" className="shadow-xm bg-[#022235]">
+              <Button
+                type="submit"
+                className="shadow-xm bg-[#022235] cursor-pointer"
+              >
                 Filter
               </Button>
 
               <Button
                 type="button"
-                className="shadow-xm bg-[#022235]"
+                className="shadow-xm bg-[#022235] cursor-pointer"
                 onClick={() => form.reset()}
               >
                 Reset

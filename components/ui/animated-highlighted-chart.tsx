@@ -129,7 +129,7 @@ export function AnimatedHighlightedAreaChart({
                 axisLine={false}
               />
               <YAxis
-                width={55} // 👈 control axis width (increase if labels cut)
+                width={50} // 👈 control axis width (increase if labels cut)
                 tickCount={8} // 👈 control number of ticks (reduce gap)
                 tickLine={false}
                 axisLine={false}

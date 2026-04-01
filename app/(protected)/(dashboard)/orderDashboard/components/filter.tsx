@@ -190,8 +190,14 @@ export default function MyForm({ onApply }: Props) {
 
           {/* Buttons */}
           <div className="flex gap-2 mt-6">
-            <Button type="submit">Filter</Button>
-            <Button type="button" onClick={() => form.reset()}>
+            <Button type="submit" className="cursor-pointer">
+              Filter
+            </Button>
+            <Button
+              type="button"
+              onClick={() => form.reset()}
+              className="cursor-pointer"
+            >
               Reset
             </Button>
           </div>

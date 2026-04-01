@@ -166,7 +166,7 @@ export function RoundedPieChart({
   const updatedData = chartData.filter((item) => !hidden.includes(item.name));
 
   return (
-    <Card className="flex flex-col shadow-xm py-3">
+    <Card className="flex flex-col shadow-sm py-3">
       <CardHeader className="items-center pb-0">
         <CardTitle className="text-sm">{title}</CardTitle>
       </CardHeader>

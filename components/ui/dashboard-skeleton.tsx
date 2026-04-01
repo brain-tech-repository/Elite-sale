@@ -25,13 +25,13 @@ export function TableSkeleton() {
 
 export function CardsSkeleton() {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <Card className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {[1, 2, 3, 4].map((i) => (
         <Card key={i} className="p-4 space-y-3">
           <Skeleton className="h-5 w-32" />
           <Skeleton className="h-8 w-24" />
         </Card>
       ))}
-    </div>
+    </Card>
   );
 }

@@ -549,11 +549,12 @@ export default function Salesdashboa() {
           ) : (
             <div>
               <AnimatedHighlightedAreaChart
-                height={245}
+                height={220}
                 title="Sales By Monthly Trends"
                 data={monthlyData}
                 selectedMonth={selectedMonth}
                 setSelectedMonth={setSelectedMonth}
+                showMonthFilter={true} // ✅ ENABLE
               />
             </div>
           )}

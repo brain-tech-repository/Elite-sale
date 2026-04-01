@@ -33,7 +33,7 @@ import { Button } from "@/components/ui/button";
 interface Props {
   title?: string;
   description?: string;
-  data?: { month: string; desktop: number }[];
+  data?: any[]; // 🔥 make generic
   showYearSelector?: boolean;
   year?: string;
   setYear?: (year: string) => void;
@@ -169,7 +169,7 @@ export function RainbowGlowGradientLineChart({
               interval={isNumeric ? 0 : "preserveStartEnd"}
             /> */}
             <YAxis
-              width={60}
+              width={50}
               tickCount={7}
               tickLine={false}
               axisLine={false}
