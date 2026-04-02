@@ -6,7 +6,7 @@ import { Sale } from "../types";
 import { formatNumber } from "@/lib/format-number";
 
 export const salesColumns: ColumnDef<Sale>[] = [
-  { accessorKey: "sno", header: "S. No." },
+  // { accessorKey: "sno", header: "S. No." },
   { accessorKey: "route", header: "Route" },
   { accessorKey: "warehouse", header: "Warehouse" },
   { accessorKey: "salesman", header: "Salesman" },
@@ -23,7 +23,7 @@ export const salesColumns: ColumnDef<Sale>[] = [
 
   {
     accessorKey: "salesValue",
-    header: "Sales (₹)",
+    header: "Sales ",
     cell: ({ row }) => formatNumber(row.original.salesValue),
   },
 

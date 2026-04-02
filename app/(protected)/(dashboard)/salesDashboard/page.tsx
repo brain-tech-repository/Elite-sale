@@ -478,32 +478,34 @@ export default function Salesdashboa() {
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
     "April",
   );
+
+  const stableFilters = React.useMemo(() => filters, [JSON.stringify(filters)]);
   /* SALES TREND */
   const { data: monthlyData = [], isLoading: monthlyLoading } =
-    useMonthlySalesTrend(year, selectedMonth, filters);
+    useMonthlySalesTrend(year, selectedMonth, stableFilters);
 
   const { data: yearlyData = [], isLoading: yearlyLoading } =
-    useYearlySalesTrend(year, filters);
+    useYearlySalesTrend(year, stableFilters);
 
   /* PERFORMANCE */
 
   const { data: regionPerformance = {}, isLoading: regionLoading } =
-    useRegionPerformance(filters);
+    useRegionPerformance(stableFilters);
   const regionTable = regionPerformance?.table_data ?? [];
   const regionPie = regionPerformance?.pie_chart ?? [];
 
   const { data: brandPerformance = {}, isLoading: brandLoading } =
-    useBrandPerformance(filters);
+    useBrandPerformance(stableFilters);
   const brandTable = brandPerformance?.table_data ?? [];
   const brandPie = brandPerformance?.pie_chart ?? [];
 
   const { data: materialGroupPerformance = {}, isLoading: materialLoading } =
-    useMaterialGroupPerformance(filters);
+    useMaterialGroupPerformance(stableFilters);
   const materialTable = materialGroupPerformance?.table_data ?? [];
   const materialPie = materialGroupPerformance?.pie_chart ?? [];
 
   const { data: customerSegmentPerformance = {}, isLoading: customerLoading } =
-    useCustomerSegmentPerformance(filters);
+    useCustomerSegmentPerformance(stableFilters);
   const customerTable = customerSegmentPerformance?.table_data ?? [];
   const customerPie = customerSegmentPerformance?.pie_chart ?? [];
 

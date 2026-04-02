@@ -135,7 +135,7 @@
 //  */
 // export const useDashboardSummary = (filters?: any) => {
 //   return useQuery<DashboardSummaryResponse>({
-//     queryKey: ["dashboard-summary", filters],
+//     queryKey: ["dashboard-summary", filters?.from_date, filters?.to_date],
 //     queryFn: () => getDashboardSummaryCards(filters),
 //     staleTime: 1000 * 60 * 5,
 //   });
@@ -172,7 +172,7 @@
 //   filters?: any,
 // ) => {
 //   return useQuery({
-//     queryKey: ["monthly-sales-trend", year, month, filters],
+//     queryKey: ["monthly-sales-trend", year, month, filters?.from_date, filters?.to_date],
 
 //     queryFn: () => getMonthlySalesTrend(year, month, filters),
 
@@ -538,7 +538,7 @@ const fetchPerformance = async (endpoint: string, params: any) => {
  */
 export const useDashboardSummary = (filters?: any) => {
   return useQuery<DashboardSummaryResponse>({
-    queryKey: ["dashboard-summary", filters],
+    queryKey: ["dashboard-summary", filters?.from_date, filters?.to_date],
     queryFn: () => getDashboardSummaryCards(filters),
     staleTime: 1000 * 60 * 5,
   });
@@ -575,7 +575,13 @@ export const useMonthlySalesTrend = (
   filters?: any,
 ) => {
   return useQuery({
-    queryKey: ["monthly-sales-trend", year, month, filters],
+    queryKey: [
+      "monthly-sales-trend",
+      year,
+      month,
+      filters?.from_date,
+      filters?.to_date,
+    ],
 
     queryFn: () => getMonthlySalesTrend(year, month, filters),
 
@@ -672,7 +678,7 @@ export const useMaterials = (
  */
 export const useRegionPerformance = (filters: any) => {
   return useQuery({
-    queryKey: ["region-performance", JSON.stringify(filters)],
+    queryKey: ["region-performance", filters?.from_date, filters?.to_date],
 
     queryFn: async () => {
       const cleanedParams = Object.fromEntries(
@@ -699,12 +705,13 @@ export const useRegionPerformance = (filters: any) => {
  */
 export const useBrandPerformance = (filters: any) => {
   return useQuery({
-    queryKey: ["brand-performance", filters],
+    queryKey: ["brand-performance", filters?.from_date, filters?.to_date],
     queryFn: async () => {
       const res = await fetchPerformance("get_brand_performance", filters);
       return res?.Result || [];
     },
-    // enabled: !!filters,
+    enabled: !!filters,
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -713,7 +720,11 @@ export const useBrandPerformance = (filters: any) => {
  */
 export const useMaterialGroupPerformance = (filters: any) => {
   return useQuery({
-    queryKey: ["material-group-performance", filters],
+    queryKey: [
+      "material-group-performance",
+      filters?.from_date,
+      filters?.to_date,
+    ],
     queryFn: async () => {
       const res = await fetchPerformance(
         "get_material_group_performance",
@@ -721,7 +732,8 @@ export const useMaterialGroupPerformance = (filters: any) => {
       );
       return res?.Result || [];
     },
-    // enabled: !!filters,
+    enabled: !!filters,
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -730,7 +742,11 @@ export const useMaterialGroupPerformance = (filters: any) => {
  */
 export const useCustomerSegmentPerformance = (filters: any) => {
   return useQuery({
-    queryKey: ["customer-segment-performance", filters],
+    queryKey: [
+      "customer-segment-performance",
+      filters?.from_date,
+      filters?.to_date,
+    ],
     queryFn: async () => {
       const res = await fetchPerformance(
         "get_customer_segment_performance",
@@ -738,7 +754,8 @@ export const useCustomerSegmentPerformance = (filters: any) => {
       );
       return res?.Result || [];
     },
-    // enabled: !!filters,
+    enabled: !!filters,
+    staleTime: 5 * 60 * 1000,
   });
 };
 export const useRegionLinePerformance = () => {
