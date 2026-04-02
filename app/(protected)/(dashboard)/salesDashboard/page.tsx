@@ -461,11 +461,22 @@ import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
 import { AdvancedBarChart } from "@/components/ui/advancebar";
 import { AdvancedBarChart1 } from "@/components/ui/advancebar1";
 export default function Salesdashboa() {
-  const [filters, setFilters] = React.useState<any>(null);
+  const getDefaultFilters = () => {
+    const today = new Date();
+
+    const formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
+
+    return {
+      from_date: formattedDate,
+      to_date: formattedDate,
+    };
+  };
+
+  const [filters, setFilters] = React.useState<any>(getDefaultFilters());
   const [year, setYear] = React.useState("2026");
   // Ensure this matches the string format your API/chart expects (e.g., "January")
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
-    "January",
+    "April",
   );
   /* SALES TREND */
   const { data: monthlyData = [], isLoading: monthlyLoading } =
@@ -484,7 +495,7 @@ export default function Salesdashboa() {
   const { data: brandPerformance = {}, isLoading: brandLoading } =
     useBrandPerformance(filters);
   const brandTable = brandPerformance?.table_data ?? [];
-  const brandPie = regionPerformance?.pie_chart ?? [];
+  const brandPie = brandPerformance?.pie_chart ?? [];
 
   const { data: materialGroupPerformance = {}, isLoading: materialLoading } =
     useMaterialGroupPerformance(filters);
@@ -493,8 +504,8 @@ export default function Salesdashboa() {
 
   const { data: customerSegmentPerformance = {}, isLoading: customerLoading } =
     useCustomerSegmentPerformance(filters);
-  const customerTable = materialGroupPerformance?.table_data ?? [];
-  const customerPie = materialGroupPerformance?.pie_chart ?? [];
+  const customerTable = customerSegmentPerformance?.table_data ?? [];
+  const customerPie = customerSegmentPerformance?.pie_chart ?? [];
 
   const { data: regionLineData } = useRegionLinePerformance();
   const { data: brandLineData } = useBrandLinePerformance();
@@ -520,7 +531,15 @@ export default function Salesdashboa() {
 
         {/* FILTER */}
         <Card className="shadow-sm p-4">
-          <MyForm onFilter={setFilters} />
+          <MyForm
+            onFilter={(data) => {
+              if (!data) {
+                setFilters(getDefaultFilters());
+              } else {
+                setFilters(data);
+              }
+            }}
+          />
         </Card>
 
         {/* KPI CARDS */}

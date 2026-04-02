@@ -672,12 +672,25 @@ export const useMaterials = (
  */
 export const useRegionPerformance = (filters: any) => {
   return useQuery({
-    queryKey: ["region-performance", filters],
-    queryFn: async () => {
-      const res = await fetchPerformance("get_region_performance", filters);
+    queryKey: ["region-performance", JSON.stringify(filters)],
 
-      return res?.Result || []; // 👈 no fallback, just safe empty array
+    queryFn: async () => {
+      const cleanedParams = Object.fromEntries(
+        Object.entries(filters || {}).filter(
+          ([_, v]) => v !== "" && v !== null && v !== undefined,
+        ),
+      );
+
+      const res = await fetchPerformance(
+        "get_region_performance",
+        cleanedParams,
+      );
+
+      return res?.Result || [];
     },
+
+    enabled: !!filters,
+    staleTime: 1000 * 60 * 5,
   });
 };
 

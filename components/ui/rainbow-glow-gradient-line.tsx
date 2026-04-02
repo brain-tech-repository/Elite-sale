@@ -169,7 +169,7 @@ export function RainbowGlowGradientLineChart({
               interval={isNumeric ? 0 : "preserveStartEnd"}
             /> */}
             <YAxis
-              width={50}
+              width={55}
               tickCount={7}
               tickLine={false}
               axisLine={false}

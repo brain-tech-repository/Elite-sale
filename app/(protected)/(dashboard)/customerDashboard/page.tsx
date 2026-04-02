@@ -78,6 +78,7 @@ export default function CustomerDashboard() {
     data: tableDataRes,
     isLoading,
     isError,
+    isFetching,
   } = useTopCustomersTable(mergedTableFilters);
 
   // Extract table data safely
@@ -120,7 +121,7 @@ export default function CustomerDashboard() {
   };
 
   const page = tableFilters.page ?? 1;
-  const isInitialLoading = isLoading && page === 1;
+  const isInitialLoading = isFetching && allData.length === 0;
   const isFetchingMore = isLoading && page > 1;
 
   return (
@@ -141,6 +142,7 @@ export default function CustomerDashboard() {
                   ...prev,
                   page: 1,
                 }));
+                setAllData([]); // ✅ CLEAR OLD DATA
               }}
             />
           </Card>
@@ -245,14 +247,15 @@ export default function CustomerDashboard() {
               onNext={handleNext}
               onPrev={handlePrev}
               FilterComponent={MyForm1}
-              isFetchingMore={isFetchingMore} // ✅ important
-              onFilter={(filters) =>
+              isFetchingMore={isFetchingMore}
+              onFilter={(filters) => {
+                setAllData([]); // ✅ CLEAR HERE ALSO
                 setTableFilters((prev) => ({
                   ...prev,
                   ...filters,
                   page: 1,
-                }))
-              }
+                }));
+              }}
             />
           )}
           {/* </Card> */}

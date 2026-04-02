@@ -104,103 +104,112 @@ export function AdvancedBarChart1({
       </CardHeader>
 
       <CardContent className="px-2">
-        <ChartContainer
-          config={chartConfig}
-          className="w-full"
-          style={{ height }} // ✅ controlled height
-        >
-          <BarChart
-            data={chartData}
-            barGap={2} // Slightly smaller gap since we have more bars
-            barCategoryGap="8%" // Allows bars to scale properly
-            margin={{ top: 20, right: 1, left: 1, bottom: 5 }}
-            onMouseLeave={() => setActiveIndex(null)}
+        <div className="w-full overflow-x-auto">
+          <div
+            style={{
+              minWidth: `${chartData.length * 80}px`, // 🔥 key part (adjust 70–90 if needed)
+              height,
+            }}
           >
-            {/* Gradient */}
-            <defs>
-              <linearGradient id="TargetGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#0F2027" />
-                <stop offset="50%" stopColor="#203A43" />
-                <stop offset="100%" stopColor="#2C5364" />
-              </linearGradient>
-            </defs>
+            <ChartContainer config={chartConfig} className="w-full h-full">
+              <BarChart
+                data={chartData}
+                barGap={2} // Slightly smaller gap since we have more bars
+                barCategoryGap="8%" // Allows bars to scale properly
+                margin={{ top: 20, right: 1, left: 1, bottom: 5 }}
+                onMouseLeave={() => setActiveIndex(null)}
+              >
+                {/* Gradient */}
+                <defs>
+                  <linearGradient
+                    id="TargetGradient"
+                    x1="0"
+                    y1="0"
+                    x2="1"
+                    y2="0"
+                  >
+                    <stop offset="0%" stopColor="#0F2027" />
+                    <stop offset="50%" stopColor="#203A43" />
+                    <stop offset="100%" stopColor="#2C5364" />
+                  </linearGradient>
+                </defs>
 
-            <CartesianGrid stroke="#e5e7eb" vertical={false} />
+                <CartesianGrid stroke="#e5e7eb" vertical={false} />
 
-            {/* X Axis */}
-            <XAxis
-              dataKey="name"
-              tickLine={false}
-              axisLine={false}
-              interval="preserveStartEnd" // 🔥 Auto-hides overlapping labels on small screens
-              tick={{ fontSize: 12 }}
-              minTickGap={10}
-            />
-
-            {/* Y Axis */}
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              width={35}
-              tickFormatter={formatYAxis}
-              tick={{ fontSize: 12 }}
-            />
-
-            {/* Tooltip */}
-            <ChartTooltip
-              cursor={{ fill: "rgba(0,0,0,0.04)" }}
-              content={<ChartTooltipContent />}
-            />
-
-            {/* Legend */}
-            <Legend
-              verticalAlign="bottom"
-              align="center"
-              wrapperStyle={{ paddingTop: "20px" }}
-              onClick={(e: any) => handleLegendClick(e.dataKey)}
-            />
-
-            {/* Target */}
-            <Bar
-              dataKey="Target"
-              fill="url(#TargetGradient)"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={20} // 🔥 Switched back to maxBarSize so it fits 24 items
-              hide={hiddenKeys.includes("Target")}
-            >
-              {chartData.map((_, i) => (
-                <Cell
-                  key={`Target-${i}`}
-                  fillOpacity={
-                    activeIndex === null || activeIndex === i ? 1 : 0.3
-                  }
-                  onMouseEnter={() => setActiveIndex(i)}
-                  className="transition-opacity duration-300"
+                <XAxis
+                  dataKey="name"
+                  tickLine={false}
+                  axisLine={false}
+                  interval={0} // 🔥 show ALL labels
+                  tick={{ fontSize: 12 }}
                 />
-              ))}
-            </Bar>
 
-            {/* Achievment */}
-            <Bar
-              dataKey="Achievment"
-              fill="var(--chart-2)"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={20} // 🔥 Switched back to maxBarSize so it fits 24 items
-              hide={hiddenKeys.includes("Achievment")}
-            >
-              {chartData.map((_, i) => (
-                <Cell
-                  key={`Achievment-${i}`}
-                  fillOpacity={
-                    activeIndex === null || activeIndex === i ? 1 : 0.3
-                  }
-                  onMouseEnter={() => setActiveIndex(i)}
-                  className="transition-opacity duration-300"
+                {/* Y Axis */}
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  width={35}
+                  tickFormatter={formatYAxis}
+                  tick={{ fontSize: 12 }}
                 />
-              ))}
-            </Bar>
-          </BarChart>
-        </ChartContainer>
+
+                {/* Tooltip */}
+                <ChartTooltip
+                  cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                  content={<ChartTooltipContent />}
+                />
+
+                {/* Legend */}
+                <Legend
+                  verticalAlign="bottom"
+                  align="center"
+                  wrapperStyle={{ paddingTop: "20px" }}
+                  onClick={(e: any) => handleLegendClick(e.dataKey)}
+                />
+
+                {/* Target */}
+                <Bar
+                  dataKey="Target"
+                  fill="url(#TargetGradient)"
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={20} // 🔥 Switched back to maxBarSize so it fits 24 items
+                  hide={hiddenKeys.includes("Target")}
+                >
+                  {chartData.map((_, i) => (
+                    <Cell
+                      key={`Target-${i}`}
+                      fillOpacity={
+                        activeIndex === null || activeIndex === i ? 1 : 0.3
+                      }
+                      onMouseEnter={() => setActiveIndex(i)}
+                      className="transition-opacity duration-300"
+                    />
+                  ))}
+                </Bar>
+
+                {/* Achievment */}
+                <Bar
+                  dataKey="Achievment"
+                  fill="var(--chart-2)"
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={20} // 🔥 Switched back to maxBarSize so it fits 24 items
+                  hide={hiddenKeys.includes("Achievment")}
+                >
+                  {chartData.map((_, i) => (
+                    <Cell
+                      key={`Achievment-${i}`}
+                      fillOpacity={
+                        activeIndex === null || activeIndex === i ? 1 : 0.3
+                      }
+                      onMouseEnter={() => setActiveIndex(i)}
+                      className="transition-opacity duration-300"
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

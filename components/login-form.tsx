@@ -97,7 +97,7 @@ export function LoginForm({
 
               {/* Email */}
               <Field>
-                <FieldLabel htmlFor="username">Email</FieldLabel>
+                <FieldLabel htmlFor="username">UserName</FieldLabel>
                 <Input
                   id="username"
                   type="text"
