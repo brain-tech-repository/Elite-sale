@@ -60,7 +60,7 @@ export function DataTableColumns<TData>({
         ) : (
           <TableRow>
             <TableCell colSpan={columnsLength} className="h-24 text-center">
-              No results Fond.
+              No results Found.
             </TableCell>
           </TableRow>
         )}
