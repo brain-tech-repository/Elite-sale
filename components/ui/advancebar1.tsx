@@ -9,10 +9,17 @@ import {
   CartesianGrid,
   Legend,
   Cell,
-  ResponsiveContainer,
 } from "recharts";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 import {
   ChartContainer,
@@ -26,66 +33,87 @@ const chartConfig = {
   Achievment: { label: "Achievment", color: "var(--chart-2)" },
 };
 
-// ✅ Fallback data (Jan to Dec, 2 times)
-// const fallbackData = [
-//   // Year 1
-//   { name: "North Region", Target: 8200, Achievment: 7500 },
-//   { name: "South Region", Target: 8600, Achievment: 7800 },
-//   { name: "East Region", Target: 8900, Achievment: 8100 },
-//   { name: "West Region", Target: 9400, Achievment: 8600 },
-//   { name: "Central Region", Target: 9800, Achievment: 9000 },
-//   { name: "North-East", Target: 10200, Achievment: 9400 },
-//   { name: "North-West", Target: 10000, Achievment: 9200 },
-//   { name: "South-East", Target: 10500, Achievment: 9700 },
-//   { name: "South-West", Target: 11000, Achievment: 10200 },
-//   { name: "Zone A", Target: 11500, Achievment: 10700 },
-//   { name: "Zone B", Target: 12000, Achievment: 11200 },
-//   { name: "Zone C", Target: 12500, Achievment: 11800 },
-//   { name: "Zone D", Target: 12800, Achievment: 12100 },
-//   { name: "Zone E", Target: 13200, Achievment: 12500 },
-//   { name: "Zone F", Target: 13600, Achievment: 12900 },
-//   { name: "Zone G", Target: 14000, Achievment: 13300 },
-//   { name: "Zone H", Target: 14500, Achievment: 13800 },
-//   { name: "Zone I", Target: 15000, Achievment: 14200 },
-//   { name: "Zone J", Target: 14800, Achievment: 14000 },
-//   { name: "Zone K", Target: 15200, Achievment: 14500 },
-//   { name: "Zone L", Target: 15600, Achievment: 14900 },
-//   { name: "Zone M", Target: 16000, Achievment: 15300 },
-//   { name: "Zone N", Target: 16500, Achievment: 15800 },
-//   { name: "Zone O", Target: 17000, Achievment: 16200 },
-//   { name: "Zone P", Target: 17500, Achievment: 16700 },
-//   { name: "Zone Q", Target: 18000, Achievment: 17200 },
-//   { name: "Zone R", Target: 18500, Achievment: 17800 },
-// ];
-
 type ChartItem = {
   name: string;
   Target: number;
   Achievment: number;
 };
 
-const fallbackData = Array.from({ length: 27 }, (_, i) => ({
-  name: `R${i + 1}`,
-  Target: 8000 + i * 300,
-  Achievment: 7000 + i * 280,
-}));
+// ✅ dynamic years (last 50)
+const CURRENT_YEAR = new Date().getFullYear();
+const years = Array.from({ length: 2030 - 1991 + 1 }, (_, i) =>
+  (1991 + i).toString(),
+);
+
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
 export function AdvancedBarChart1({
   data,
-  height = 250, // ✅ default height
-  title = "Target Overview", // ✅ default title
+  height = 250,
+  title = "Target Overview",
+  showFilter = false,
+
+  year,
+  month,
+  sortType,
+
+  setYear,
+  setMonth,
+  setSortType,
 }: {
   data?: ChartItem[];
-  // data?: any[];
   height?: number;
-  title?: string; // ✅ new prop
+  title?: string;
+  showFilter?: boolean;
+
+  year?: string;
+  month?: string;
+  sortType?: string;
+
+  setYear?: (v: string) => void;
+  setMonth?: (v: string) => void;
+  setSortType?: (v: string) => void;
 }) {
-  const chartData: ChartItem[] = data && data.length > 0 ? data : fallbackData;
+  const chartData: ChartItem[] = data || [];
 
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const [hiddenKeys, setHiddenKeys] = React.useState<string[]>([]);
 
+  // ✅ pagination (like line chart)
+  const ITEMS_PER_PAGE = 9;
+  const [page, setPage] = React.useState(0);
+
+  const start = page * ITEMS_PER_PAGE;
+  const visibleYears = years.slice(start, start + ITEMS_PER_PAGE);
+
+  // ✅ sorting
+  let finalData = [...chartData];
+
+  if (sortType === "TARGET") {
+    finalData.sort((a, b) => b.Target - a.Target);
+  }
+
+  if (sortType === "ACHIEVEMENT") {
+    finalData.sort((a, b) => b.Achievment - a.Achievment);
+  }
+
   const formatYAxis = (value: number): string => {
-    if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+    if (value >= 1_000_000_000) return `${Math.round(value / 1_000_000_000)}B`;
+    if (value >= 1_000_000) return `${Math.round(value / 1_000_000)}M`;
+    if (value >= 1_000) return `${Math.round(value / 1_000)}K`;
     return value.toString();
   };
 
@@ -97,29 +125,158 @@ export function AdvancedBarChart1({
     );
   };
 
+  if (!finalData.length) {
+    return (
+      <Card className="p-4">
+        <CardTitle>{title}</CardTitle>
+        <div className="text-center py-10 text-gray-500">No data available</div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full py-3 shadow-sm">
-      <CardHeader>
+      {/* ================= HEADER ================= */}
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{title}</CardTitle>
+
+        {showFilter && (
+          <div className="flex gap-3">
+            {/* YEAR */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  Year: {year}
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-[220px]">
+                {/* 🔽 Years Grid */}
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {visibleYears.map((y) => (
+                    <Button
+                      key={y}
+                      size="sm"
+                      variant={year === y ? "default" : "ghost"}
+                      onClick={() => setYear?.(y)}
+                    >
+                      {y}
+                    </Button>
+                  ))}
+                </div>
+
+                {/* 🔽 Pagination Controls (Bottom) */}
+                <div className="flex justify-between">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    disabled={page === 0}
+                    onClick={() => setPage((p) => Math.max(p - 1, 0))}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    disabled={(page + 1) * ITEMS_PER_PAGE >= years.length}
+                    onClick={() =>
+                      setPage((p) =>
+                        (p + 1) * ITEMS_PER_PAGE < years.length ? p + 1 : p,
+                      )
+                    }
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* MONTH */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  Month: {month}
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-[220px]">
+                <div className="grid grid-cols-3 gap-2">
+                  {months.map((m) => (
+                    <Button
+                      key={m}
+                      size="sm"
+                      variant={month === m ? "default" : "ghost"}
+                      onClick={() => setMonth?.(m)}
+                    >
+                      {m}
+                    </Button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* SORT */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  Sort: {sortType}
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-[180px]">
+                <div className="flex flex-col gap-2">
+                  <Button
+                    size="sm"
+                    variant={sortType === "TARGET" ? "default" : "ghost"}
+                    onClick={() => setSortType?.("TARGET")}
+                  >
+                    Target
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant={sortType === "ACHIEVEMENT" ? "default" : "ghost"}
+                    onClick={() => setSortType?.("ACHIEVEMENT")}
+                  >
+                    Achievement
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        )}
       </CardHeader>
 
+      {/* ================= CHART ================= */}
       <CardContent className="px-2">
         <div className="w-full overflow-x-auto">
           <div
             style={{
-              minWidth: `${chartData.length * 80}px`, // 🔥 key part (adjust 70–90 if needed)
+              minWidth: `${finalData.length * 200}px`, // ✅ reduced width
               height,
             }}
           >
             <ChartContainer config={chartConfig} className="w-full h-full">
-              <BarChart
-                data={chartData}
-                barGap={2} // Slightly smaller gap since we have more bars
-                barCategoryGap="8%" // Allows bars to scale properly
-                margin={{ top: 20, right: 1, left: 1, bottom: 5 }}
-                onMouseLeave={() => setActiveIndex(null)}
-              >
-                {/* Gradient */}
+              <BarChart data={finalData} barGap={1} barCategoryGap="5%">
+                <CartesianGrid stroke="#e5e7eb" vertical={false} />
+
+                <XAxis
+                  dataKey="name"
+                  interval={0} // ✅ show ALL labels
+                  // angle={-45} // ✅ rotate labels
+                  // textAnchor="end"
+                  // height={80} // ✅ give space
+                  tick={{ fontSize: 11 }}
+                />
+
+                <YAxis width={55} tickFormatter={formatYAxis} />
+
+                <ChartTooltip content={<ChartTooltipContent />} />
+
+                <Legend onClick={(e: any) => handleLegendClick(e.dataKey)} />
+
+                {/* ✅ Gradient (unchanged) */}
                 <defs>
                   <linearGradient
                     id="TargetGradient"
@@ -134,76 +291,21 @@ export function AdvancedBarChart1({
                   </linearGradient>
                 </defs>
 
-                <CartesianGrid stroke="#e5e7eb" vertical={false} />
-
-                <XAxis
-                  dataKey="name"
-                  tickLine={false}
-                  axisLine={false}
-                  interval={0} // 🔥 show ALL labels
-                  tick={{ fontSize: 12 }}
-                />
-
-                {/* Y Axis */}
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  width={35}
-                  tickFormatter={formatYAxis}
-                  tick={{ fontSize: 12 }}
-                />
-
-                {/* Tooltip */}
-                <ChartTooltip
-                  cursor={{ fill: "rgba(0,0,0,0.04)" }}
-                  content={<ChartTooltipContent />}
-                />
-
-                {/* Legend */}
-                <Legend
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{ paddingTop: "20px" }}
-                  onClick={(e: any) => handleLegendClick(e.dataKey)}
-                />
-
-                {/* Target */}
+                {/* TARGET */}
                 <Bar
                   dataKey="Target"
                   fill="url(#TargetGradient)"
-                  radius={[4, 4, 0, 0]}
-                  maxBarSize={20} // 🔥 Switched back to maxBarSize so it fits 24 items
-                  hide={hiddenKeys.includes("Target")}
+                  maxBarSize={12}
                 >
-                  {chartData.map((_, i) => (
-                    <Cell
-                      key={`Target-${i}`}
-                      fillOpacity={
-                        activeIndex === null || activeIndex === i ? 1 : 0.3
-                      }
-                      onMouseEnter={() => setActiveIndex(i)}
-                      className="transition-opacity duration-300"
-                    />
+                  {finalData.map((_, i) => (
+                    <Cell key={i} />
                   ))}
                 </Bar>
 
-                {/* Achievment */}
-                <Bar
-                  dataKey="Achievment"
-                  fill="var(--chart-2)"
-                  radius={[4, 4, 0, 0]}
-                  maxBarSize={20} // 🔥 Switched back to maxBarSize so it fits 24 items
-                  hide={hiddenKeys.includes("Achievment")}
-                >
-                  {chartData.map((_, i) => (
-                    <Cell
-                      key={`Achievment-${i}`}
-                      fillOpacity={
-                        activeIndex === null || activeIndex === i ? 1 : 0.3
-                      }
-                      onMouseEnter={() => setActiveIndex(i)}
-                      className="transition-opacity duration-300"
-                    />
+                {/* ACHIEVEMENT */}
+                <Bar dataKey="Achievment" fill="var(--chart-2)" maxBarSize={12}>
+                  {finalData.map((_, i) => (
+                    <Cell key={i} />
                   ))}
                 </Bar>
               </BarChart>

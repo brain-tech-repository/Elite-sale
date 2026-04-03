@@ -13,6 +13,7 @@ import {
   ChartSkeleton,
   TableSkeleton,
 } from "@/components/ui/dashboard-skeleton";
+import { useInView } from "react-intersection-observer";
 /* LOCAL */
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
@@ -23,6 +24,7 @@ import {
   useBrandPerformance,
   useCustomerLinePerformance,
   useCustomerSegmentPerformance,
+  useDistributorChart,
   useMaterialGroupPerformance,
   useMaterialLinePerformance,
   useMonthlySalesTrend,
@@ -51,9 +53,35 @@ export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<any>(getDefaultFilters());
   const [year, setYear] = React.useState("2026");
   // Ensure this matches the string format your API/chart expects (e.g., "January")
+  const [sortType, setSortType] = React.useState("TARGET");
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
     "April",
   );
+
+  // REGION
+  const { ref: regionRef, inView: regionInView } = useInView({
+    triggerOnce: true,
+  });
+
+  // BRAND
+  const { ref: brandRef, inView: brandInView } = useInView({
+    triggerOnce: true,
+  });
+
+  // MATERIAL
+  const { ref: materialRef, inView: materialInView } = useInView({
+    triggerOnce: true,
+  });
+
+  // CUSTOMER
+  const { ref: customerRef, inView: customerInView } = useInView({
+    triggerOnce: true,
+  });
+
+  const { ref: distributorRef, inView: distributorInView } = useInView({
+    triggerOnce: true,
+  });
+
   /* SALES TREND */
   const { data: monthlyData = [], isLoading: monthlyLoading } =
     useMonthlySalesTrend(year, selectedMonth, filters);
@@ -64,40 +92,57 @@ export default function Salesdashboa() {
   /* PERFORMANCE */
 
   const { data: regionPerformance = {}, isLoading: regionLoading } =
-    useRegionPerformance(filters);
+    useRegionPerformance(filters, regionInView);
+
   const regionTable = regionPerformance?.table_data ?? [];
   const regionPie = regionPerformance?.pie_chart ?? [];
 
   const { data: brandPerformance = {}, isLoading: brandLoading } =
-    useBrandPerformance(filters);
+    useBrandPerformance(filters, brandInView);
+
   const brandTable = brandPerformance?.table_data ?? [];
   const brandPie = brandPerformance?.pie_chart ?? [];
 
   const { data: materialGroupPerformance = {}, isLoading: materialLoading } =
-    useMaterialGroupPerformance(filters);
+    useMaterialGroupPerformance(filters, materialInView);
+
   const materialTable = materialGroupPerformance?.table_data ?? [];
   const materialPie = materialGroupPerformance?.pie_chart ?? [];
 
   const { data: customerSegmentPerformance = {}, isLoading: customerLoading } =
-    useCustomerSegmentPerformance(filters);
+    useCustomerSegmentPerformance(filters, customerInView);
+
   const customerTable = customerSegmentPerformance?.table_data ?? [];
   const customerPie = customerSegmentPerformance?.pie_chart ?? [];
 
-  const { data: regionLineData } = useRegionLinePerformance();
-  const { data: brandLineData } = useBrandLinePerformance();
-  const { data: materialLineData } = useMaterialLinePerformance();
-  const { data: customerLineData } = useCustomerLinePerformance();
+  const { data: regionLineData } = useRegionLinePerformance(regionInView);
+  const { data: brandLineData } = useBrandLinePerformance(brandInView);
+  const { data: materialLineData } = useMaterialLinePerformance(materialInView);
+  const { data: customerLineData } = useCustomerLinePerformance(customerInView);
 
   const regionLine = regionLineData?.Result?.line_chart ?? [];
   const brandLine = brandLineData?.Result?.line_chart ?? [];
   const materialLine = materialLineData?.Result?.line_chart ?? [];
   const customerLine = customerLineData?.Result?.line_chart ?? [];
+  const monthMap: Record<string, string> = {
+    Jan: "1",
+    Feb: "2",
+    Mar: "3",
+    Apr: "4",
+    May: "5",
+    Jun: "6",
+    Jul: "7",
+    Aug: "8",
+    Sep: "9",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  };
 
-  const formattedData = (monthlyData || []).map((item: any) => ({
-    month: item.month ?? "",
-    pv: Number(item.desktop ?? 0),
-    uv: Number(item.desktop ?? 0),
-  }));
+  const selectedMonthNumber = monthMap[selectedMonth || "Apr"];
+
+  const { data: distributorData = [], isLoading: distributorLoading } =
+    useDistributorChart(year, selectedMonthNumber);
 
   return (
     <div className="flex flex-1 flex-col  lg:px-2 py-4">
@@ -158,23 +203,39 @@ export default function Salesdashboa() {
             <GaugePieChartCard />
           </div>
         </section>
-        <section>
+        <section ref={distributorRef}>
           <DataTableSubHeader title="Target Overview" />
+
           <div className="grid grid-cols-1 lg:grid-cols-1 gap-1 mt-4">
             <>
-              {/* LINE → ALWAYS SHOW (NO loading) */}
-              <AdvancedBarChart1 height={300} />
+              {!distributorInView || distributorLoading ? (
+                <ChartSkeleton />
+              ) : (
+                <AdvancedBarChart1
+                  height={300}
+                  data={distributorData || []} // ✅ API data
+                  showFilter={true}
+                  title="Distributor Target vs Achieved"
+                  year={year}
+                  month={selectedMonth || "Apr"}
+                  sortType={sortType}
+                  setYear={setYear}
+                  setMonth={setSelectedMonth}
+                  setSortType={setSortType}
+                />
+              )}
             </>
           </div>
         </section>
 
         {/* REGION */}
-        <section>
+        <section ref={regionRef}>
           <DataTableSubHeader title="Region Performance" />
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             <>
-              {/* TABLE */}
-              {regionLoading ? (
+              {/* ================= TABLE ================= */}
+              {!regionInView || regionLoading ? (
                 <TableSkeleton />
               ) : (
                 <CommonDataTable
@@ -185,8 +246,8 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* PIE */}
-              {regionLoading ? (
+              {/* ================= PIE ================= */}
+              {!regionInView || regionLoading ? (
                 <ChartSkeleton />
               ) : (
                 <RoundedPieChart
@@ -195,8 +256,10 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* LINE → ALWAYS SHOW (NO loading) */}
-              {regionLineData ? (
+              {/* ================= LINE ================= */}
+              {!regionInView ? (
+                <ChartSkeleton />
+              ) : regionLineData ? (
                 <RainbowGlowGradientLineChart
                   xKey="label"
                   yKey="y"
@@ -211,12 +274,12 @@ export default function Salesdashboa() {
         </section>
 
         {/* BRAND */}
-        <section>
+        <section ref={brandRef}>
           <DataTableSubHeader title="Brand Performance " />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             <>
-              {/* TABLE */}
-              {brandLoading ? (
+              {/* ================= TABLE ================= */}
+              {!brandInView || brandLoading ? (
                 <TableSkeleton />
               ) : (
                 <CommonDataTable
@@ -227,8 +290,8 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* PIE */}
-              {brandLoading ? (
+              {/* ================= PIE ================= */}
+              {!brandInView || brandLoading ? (
                 <ChartSkeleton />
               ) : (
                 <RoundedPieChart
@@ -237,8 +300,10 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* LINE */}
-              {brandLineData ? (
+              {/* ================= LINE ================= */}
+              {!brandInView ? (
+                <ChartSkeleton />
+              ) : brandLineData ? (
                 <RainbowGlowGradientLineChart
                   xKey="label"
                   yKey="y"
@@ -253,12 +318,12 @@ export default function Salesdashboa() {
         </section>
 
         {/* MATERIAL */}
-        <section>
+        <section ref={materialRef}>
           <DataTableSubHeader title="Material Group" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             <>
-              {/* TABLE */}
-              {materialLoading ? (
+              {/* ================= TABLE ================= */}
+              {!materialInView || materialLoading ? (
                 <TableSkeleton />
               ) : (
                 <CommonDataTable
@@ -269,8 +334,8 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* PIE */}
-              {materialLoading ? (
+              {/* ================= PIE ================= */}
+              {!materialInView || materialLoading ? (
                 <ChartSkeleton />
               ) : (
                 <RoundedPieChart
@@ -279,8 +344,10 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* LINE */}
-              {materialLineData ? (
+              {/* ================= LINE ================= */}
+              {!materialInView ? (
+                <ChartSkeleton />
+              ) : materialLineData ? (
                 <RainbowGlowGradientLineChart
                   xKey="label"
                   yKey="y"
@@ -295,12 +362,12 @@ export default function Salesdashboa() {
         </section>
 
         {/* CUSTOMER */}
-        <section>
+        <section ref={customerRef}>
           <DataTableSubHeader title="Customer Segment Performance" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
             <>
-              {/* TABLE */}
-              {customerLoading ? (
+              {/* ================= TABLE ================= */}
+              {!customerInView || customerLoading ? (
                 <TableSkeleton />
               ) : (
                 <CommonDataTable
@@ -311,8 +378,8 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* PIE */}
-              {customerLoading ? (
+              {/* ================= PIE ================= */}
+              {!customerInView || customerLoading ? (
                 <ChartSkeleton />
               ) : (
                 <RoundedPieChart
@@ -321,8 +388,10 @@ export default function Salesdashboa() {
                 />
               )}
 
-              {/* LINE */}
-              {customerLineData ? (
+              {/* ================= LINE ================= */}
+              {!customerInView ? (
+                <ChartSkeleton />
+              ) : customerLineData ? (
                 <RainbowGlowGradientLineChart
                   xKey="label"
                   yKey="y"
