@@ -119,6 +119,10 @@ const fetchPerformance = async (endpoint: string, params: any) => {
 
   return data;
 };
+const fetchPerformances = async (endpoint: string, params: any) => {
+  const { data } = await api.post(endpoint, params);
+  return data;
+};
 
 /* ========================================================================== */
 /*                             TANSTACK QUERY HOOKS                           */
@@ -261,7 +265,7 @@ export const useMaterials = (
 /**
  * Region Performance
  */
-export const useRegionPerformance = (filters: any) => {
+export const useRegionPerformance = (filters: any, enabled = true) => {
   return useQuery({
     queryKey: ["region-performance", JSON.stringify(filters)],
 
@@ -280,7 +284,7 @@ export const useRegionPerformance = (filters: any) => {
       return res?.Result || [];
     },
 
-    enabled: !!filters,
+    enabled: enabled && !!filters,
     staleTime: 1000 * 60 * 5,
   });
 };
@@ -288,21 +292,21 @@ export const useRegionPerformance = (filters: any) => {
 /**
  * Brand Performance
  */
-export const useBrandPerformance = (filters: any) => {
+export const useBrandPerformance = (filters: any, enabled = true) => {
   return useQuery({
     queryKey: ["brand-performance", filters],
     queryFn: async () => {
       const res = await fetchPerformance("get_brand_performance", filters);
       return res?.Result || [];
     },
-    // enabled: !!filters,
+    enabled: enabled && !!filters,
   });
 };
 
 /**
  * Material Group Performance
  */
-export const useMaterialGroupPerformance = (filters: any) => {
+export const useMaterialGroupPerformance = (filters: any, enabled = true) => {
   return useQuery({
     queryKey: ["material-group-performance", filters],
     queryFn: async () => {
@@ -312,62 +316,101 @@ export const useMaterialGroupPerformance = (filters: any) => {
       );
       return res?.Result || [];
     },
-    // enabled: !!filters,
+    enabled: enabled && !!filters,
   });
 };
 
 /**
  * Customer Segment Performance
  */
-export const useCustomerSegmentPerformance = (filters: any) => {
+export const useCustomerSegmentPerformance = (filters: any, enabled = true) => {
   return useQuery({
     queryKey: ["customer-segment-performance", filters],
     queryFn: async () => {
-      const res = await fetchPerformance(
+      const res = await fetchPerformances(
         "get_customer_segment_performance",
         filters,
       );
       return res?.Result || [];
     },
-    // enabled: !!filters,
+    enabled: enabled && !!filters,
   });
 };
-export const useRegionLinePerformance = () => {
+export const useRegionLinePerformance = (enabled = true) => {
   return useQuery({
     queryKey: ["region-line-performance"],
     queryFn: () => fetchPerformance("get_region_performance", {}),
     staleTime: Infinity, // ✅ no refetch
     refetchOnWindowFocus: false, // ✅ no refetch on tab focus
     refetchOnMount: false, // no filters
+    enabled,
   });
 };
 
-export const useBrandLinePerformance = () => {
+export const useBrandLinePerformance = (enabled = true) => {
   return useQuery({
     queryKey: ["brand-line-performance"],
     queryFn: () => fetchPerformance("get_brand_performance", {}),
     staleTime: Infinity, // ✅ no refetch
     refetchOnWindowFocus: false, // ✅ no refetch on tab focus
     refetchOnMount: false,
+    enabled,
   });
 };
 
-export const useMaterialLinePerformance = () => {
+export const useMaterialLinePerformance = (enabled = true) => {
   return useQuery({
     queryKey: ["material-line-performance"],
     queryFn: () => fetchPerformance("get_material_group_performance", {}),
     staleTime: Infinity, // ✅ no refetch
     refetchOnWindowFocus: false, // ✅ no refetch on tab focus
     refetchOnMount: false,
+    enabled,
   });
 };
 
-export const useCustomerLinePerformance = () => {
+export const useCustomerLinePerformance = (enabled = true) => {
   return useQuery({
     queryKey: ["customer-line-performance"],
-    queryFn: () => fetchPerformance("get_customer_segment_performance", {}),
+    queryFn: () => fetchPerformances("get_customer_segment_performance", {}),
     staleTime: Infinity, // ✅ no refetch
     refetchOnWindowFocus: false, // ✅ no refetch on tab focus
     refetchOnMount: false,
+    enabled,
+  });
+};
+
+/**
+ * Distributor Target vs Achieved Chart
+ */
+export const useDistributorChart = (
+  year?: string,
+  month?: string,
+  enabled = true,
+) => {
+  return useQuery({
+    queryKey: ["distributor-chart", year, month], // ✅ cache per filter
+
+    queryFn: async () => {
+      const { data } = await api.get("distributor-chart-data", {
+        params: {
+          year,
+          month,
+        },
+      });
+
+      const labels = data?.data?.labels || [];
+      const target = data?.data?.datasets?.[0]?.data || [];
+      const achieved = data?.data?.datasets?.[1]?.data || [];
+
+      return labels.map((name: string, index: number) => ({
+        name,
+        Target: target[index] || 0,
+        Achievment: achieved[index] || 0,
+      }));
+    },
+
+    // enabled: enabled && !!year && !!month, // ✅ only run when selected
+    refetchOnWindowFocus: false,
   });
 };

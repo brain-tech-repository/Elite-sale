@@ -24,50 +24,44 @@ export default function Salesdashboa() {
         {/* TABLE SECTION */}
 
         {activeTable === "customers" && (
-          <div className="lg:px-6 px-1">
+          <div className="lg:px-6 px-1 ">
             <CommonDataTables
               columns={sectionColumns}
               data={data}
               pageSize={5}
-              headerTitle="Top Customers By"
+              headerTitle="IB Customers List"
             />
           </div>
         )}
 
         {activeTable === "users" && (
-          <div className="lg:px-6 px-1">
-            <Card className="shadow-xm py-2">
-              <CommonDataTables
-                columns={sectionColumns}
-                data={data}
-                pageSize={5}
-                headerTitle="Top Users"
-              />
-            </Card>
+          <div className="lg:px-6 px-1 ">
+            <CommonDataTables
+              columns={sectionColumns}
+              data={data}
+              pageSize={5}
+              headerTitle="IB Users List"
+            />
           </div>
         )}
         {activeTable === "country" && (
-          <div className="lg:px-6 px-1">
-            <Card className="shadow-xm py-2">
-              <CommonDataTables
-                columns={sectionColumns}
-                data={data}
-                pageSize={5}
-                headerTitle="Top Country"
-              />
-            </Card>
+          <div className="lg:px-6 px-1 ">
+            <CommonDataTables
+              columns={sectionColumns}
+              data={data}
+              pageSize={5}
+              headerTitle="IB Mareket Country"
+            />
           </div>
         )}
         {activeTable === "surveys" && (
-          <div className="lg:px-6 px-1">
-            <Card className="shadow-xm py-2">
-              <CommonDataTables
-                columns={sectionColumns}
-                data={data}
-                pageSize={5}
-                headerTitle="Top Surveys"
-              />
-            </Card>
+          <div className="lg:px-6 px-1 ">
+            <CommonDataTables
+              columns={sectionColumns}
+              data={data}
+              pageSize={5}
+              headerTitle="Surveys Details"
+            />
           </div>
         )}
       </div>

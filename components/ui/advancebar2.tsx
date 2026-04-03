@@ -39,8 +39,7 @@ type ChartItem = {
   Achievment: number;
 };
 
-// ✅ dynamic years (last 50)
-const CURRENT_YEAR = new Date().getFullYear();
+// ✅ dynamic years
 const years = Array.from({ length: 2030 - 1991 + 1 }, (_, i) =>
   (1991 + i).toString(),
 );
@@ -60,16 +59,14 @@ const months = [
   "Dec",
 ];
 
-export function AdvancedBarChart1({
+export function AdvancedBarChart2({
   data,
   height = 250,
   title = "Target Overview",
   showFilter = false,
-
   year,
   month,
   sortType,
-
   setYear,
   setMonth,
   setSortType,
@@ -78,24 +75,19 @@ export function AdvancedBarChart1({
   height?: number;
   title?: string;
   showFilter?: boolean;
-
   year?: string;
   month?: string;
   sortType?: string;
-
   setYear?: (v: string) => void;
   setMonth?: (v: string) => void;
   setSortType?: (v: string) => void;
 }) {
   const chartData: ChartItem[] = data || [];
 
-  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const [hiddenKeys, setHiddenKeys] = React.useState<string[]>([]);
-
-  // ✅ pagination (like line chart)
-  const ITEMS_PER_PAGE = 9;
   const [page, setPage] = React.useState(0);
 
+  const ITEMS_PER_PAGE = 9;
   const start = page * ITEMS_PER_PAGE;
   const visibleYears = years.slice(start, start + ITEMS_PER_PAGE);
 
@@ -151,7 +143,6 @@ export function AdvancedBarChart1({
               </PopoverTrigger>
 
               <PopoverContent className="w-[220px]">
-                {/* 🔽 Years Grid */}
                 <div className="grid grid-cols-3 gap-2 mb-2">
                   {visibleYears.map((y) => (
                     <Button
@@ -165,7 +156,6 @@ export function AdvancedBarChart1({
                   ))}
                 </div>
 
-                {/* 🔽 Pagination Controls (Bottom) */}
                 <div className="flex justify-between">
                   <Button
                     size="icon"
@@ -250,25 +240,18 @@ export function AdvancedBarChart1({
 
       {/* ================= CHART ================= */}
       <CardContent className="px-2">
-        <div className="w-full overflow-x-auto">
+        <div className="w-full">
           <div
             style={{
-              minWidth: `${finalData.length * 200}px`, // ✅ reduced width
+              width: "100%",
               height,
             }}
           >
             <ChartContainer config={chartConfig} className="w-full h-full">
-              <BarChart data={finalData} barGap={1} barCategoryGap="5%">
+              <BarChart data={finalData} barGap={4} barCategoryGap="20%">
                 <CartesianGrid stroke="#e5e7eb" vertical={false} />
 
-                <XAxis
-                  dataKey="name"
-                  interval={0} // ✅ show ALL labels
-                  // angle={-45} // ✅ rotate labels
-                  // textAnchor="end"
-                  // height={80} // ✅ give space
-                  tick={{ fontSize: 11 }}
-                />
+                <XAxis dataKey="name" interval={0} tick={{ fontSize: 11 }} />
 
                 <YAxis width={55} tickFormatter={formatYAxis} />
 
@@ -276,7 +259,6 @@ export function AdvancedBarChart1({
 
                 <Legend onClick={(e: any) => handleLegendClick(e.dataKey)} />
 
-                {/* ✅ Gradient (unchanged) */}
                 <defs>
                   <linearGradient
                     id="TargetGradient"
@@ -291,23 +273,29 @@ export function AdvancedBarChart1({
                   </linearGradient>
                 </defs>
 
-                {/* TARGET */}
-                <Bar
-                  dataKey="Target"
-                  fill="url(#TargetGradient)"
-                  maxBarSize={12}
-                >
-                  {finalData.map((_, i) => (
-                    <Cell key={i} />
-                  ))}
-                </Bar>
+                {!hiddenKeys.includes("Target") && (
+                  <Bar
+                    dataKey="Target"
+                    fill="url(#TargetGradient)"
+                    maxBarSize={40}
+                  >
+                    {finalData.map((_, i) => (
+                      <Cell key={i} />
+                    ))}
+                  </Bar>
+                )}
 
-                {/* ACHIEVEMENT */}
-                <Bar dataKey="Achievment" fill="var(--chart-2)" maxBarSize={12}>
-                  {finalData.map((_, i) => (
-                    <Cell key={i} />
-                  ))}
-                </Bar>
+                {!hiddenKeys.includes("Achievment") && (
+                  <Bar
+                    dataKey="Achievment"
+                    fill="var(--chart-2)"
+                    maxBarSize={40}
+                  >
+                    {finalData.map((_, i) => (
+                      <Cell key={i} />
+                    ))}
+                  </Bar>
+                )}
               </BarChart>
             </ChartContainer>
           </div>

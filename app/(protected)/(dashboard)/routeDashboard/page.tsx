@@ -18,7 +18,7 @@ import {
   RouteSalesCollection,
   SalesFilterPayload,
 } from "./types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react"; // ✅ Added useCallback
 import { useRegionPerformance } from "../customerDashboard/useCustomers";
 import {
   useGrowthPerformance,
@@ -36,12 +36,21 @@ import { routeSalesCollectionColumns } from "./components/column1";
 import { routeExpenseColumns } from "./components/column2";
 import { routeSalesColumns } from "./components/column3";
 import { TableSkeleton } from "@/components/ui/dashboard-skeleton";
+
 export default function Salesdashboa() {
   // 🔹 Global filters → used for charts + table
   const [globalFilters, setGlobalFilters] = useState<SalesFilterPayload>({});
 
   const [performanceType, setPerformanceType] = useState<"routes" | "salesmen">(
     "routes",
+  );
+
+  // ✅ FIX 1: Wrap in useCallback to prevent infinite loops in MyForm1
+  const handlePerformanceTypeChange = useCallback(
+    (type: "routes" | "salesmen") => {
+      setPerformanceType(type);
+    },
+    [],
   );
 
   // 🔹 Table-specific filters → pagination + table form
@@ -51,8 +60,10 @@ export default function Salesdashboa() {
   });
   const { data: regionData, isLoading: regionLoading } =
     useGrowthPerformance(globalFilters);
+
   // 🔹 Year selector for charts
   const [year, setYear] = useState("2026");
+
   /* =========================
          CHART API CALLS
       ========================= */
@@ -65,56 +76,78 @@ export default function Salesdashboa() {
   const { data: CompareDropSizeVolume = [], isLoading: volumeLoading } =
     useMonthlyCompareDropSizeVolume(globalFilters);
 
-  const { data: performance = [] } = useRoutePerformance(
-    globalFilters,
-    performanceType,
-  );
-  const { data: expense = [] } = useRouteExpense(globalFilters);
-  // const { data: sales = [] } = useRouteWiseSales(globalFilters);
-  // const { data: efficiency = [] } = useRouteEfficiency(globalFilters);
+  const { data: performance = [], isLoading: performanceLoading } =
+    useRoutePerformance(globalFilters, performanceType);
+
+  const { data: expense = [], isLoading: expenseLoading } =
+    useRouteExpense(globalFilters);
 
   const { data: performanceGraph } = useRoutePerformanceGraph();
   const { data: expenseGraph } = useRouteExpenseGraph();
 
-  // mvfdnbkgb
-  const { data: efficiencyRes, isLoading: efficiencyloading } =
-    useRouteEfficiency(tableFilters);
+  /* =========================
+      EFFICIENCY TABLE LOGIC
+     ========================= */
+  const {
+    data: efficiencyRes,
+    isLoading: efficiencyloading,
+    isFetching: efficiencyFetching, // ✅ Extracted isFetching for skeletons
+  } = useRouteEfficiency({
+    ...globalFilters,
+    ...tableFilters,
+  });
 
-  const tableData = efficiencyRes?.tableData ?? [];
   const pagination = efficiencyRes?.pagination;
-
   const [allData, setAllData] = useState<any[]>([]);
   const page = tableFilters.page ?? 1;
 
+  // ✅ FIX 2: Depend directly on the API reference to prevent infinite loops
   useEffect(() => {
-    if (tableData.length) {
-      setAllData((prev) =>
-        tableFilters.page === 1 ? tableData : [...prev, ...tableData],
-      );
+    const newData = efficiencyRes?.tableData;
+    if (!newData) return; // Do nothing if undefined (loading)
+
+    if (page === 1) {
+      setAllData(newData);
+    } else if (newData.length > 0) {
+      setAllData((prev) => [...prev, ...newData]);
     }
-  }, [tableData]);
+  }, [efficiencyRes?.tableData, page]); // 🚨 Strict dependency!
 
-  const isInitialLoading = efficiencyloading && page === 1;
-  const isFetchingMore = efficiencyloading && page > 1;
+  // ✅ Trigger skeletons on filters
+  const isInitialLoading =
+    (efficiencyloading || efficiencyFetching) && page === 1;
+  const isFetchingMore = (efficiencyloading || efficiencyFetching) && page > 1;
 
-  const { data: salesRes, isLoading: salesLoading } =
-    useRouteWiseSales(tableFilters);
+  /* =========================
+        SALES TABLE LOGIC
+     ========================= */
+  const {
+    data: salesRes,
+    isLoading: salesLoading,
+    isFetching: salesFetching, // ✅ Extracted isFetching for skeletons
+  } = useRouteWiseSales({
+    ...globalFilters,
+    ...tableFilters,
+  });
 
-  const salesTableData = salesRes?.tableData ?? [];
   const salesPagination = salesRes?.pagination;
-
   const [salesAllData, setSalesAllData] = useState<any[]>([]);
 
+  // ✅ FIX 2: Depend directly on the API reference to prevent infinite loops
   useEffect(() => {
-    if (salesTableData.length) {
-      setSalesAllData((prev) =>
-        tableFilters.page === 1 ? salesTableData : [...prev, ...salesTableData],
-      );
-    }
-  }, [salesTableData]);
+    const newSalesData = salesRes?.tableData;
+    if (!newSalesData) return; // Do nothing if undefined (loading)
 
-  const isSalesInitialLoading = salesLoading && page === 1;
-  const isSalesFetchingMore = salesLoading && page > 1;
+    if (page === 1) {
+      setSalesAllData(newSalesData);
+    } else if (newSalesData.length > 0) {
+      setSalesAllData((prev) => [...prev, ...newSalesData]);
+    }
+  }, [salesRes?.tableData, page]); // 🚨 Strict dependency!
+
+  // ✅ Trigger skeletons on filters
+  const isSalesInitialLoading = (salesLoading || salesFetching) && page === 1;
+  const isSalesFetchingMore = (salesLoading || salesFetching) && page > 1;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -145,7 +178,11 @@ export default function Salesdashboa() {
         <section className="grid px-2 lg:pe-6 mb-6 gap-2 grid-cols-1 lg:grid-cols-[20%_40%_40%]">
           <GrowthLines data={regionData} isLoading={regionLoading} />
 
-          <AdvancedBarChart data={monthlyTrend} />
+          {isLoading ? (
+            <TableSkeleton />
+          ) : (
+            <AdvancedBarChart data={monthlyTrend} />
+          )}
 
           <div className="flex flex-col gap-2">
             <RainbowGlowGradientLineChart
@@ -169,11 +206,8 @@ export default function Salesdashboa() {
           </div>
 
           <Card className="shadow-xs lg:px-2">
-            <MyForm1
-              onTypeChange={(type) => {
-                setPerformanceType(type);
-              }}
-            />
+            {/* ✅ Applied the useCallback function here */}
+            <MyForm1 onTypeChange={handlePerformanceTypeChange} />
           </Card>
 
           <div className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-2">
@@ -182,15 +216,20 @@ export default function Salesdashboa() {
               columns={routeSalesCollectionColumns}
               data={performance}
               pageSize={5}
+              isFetching={performanceLoading}
             />
 
-            <RainbowGlowGradientLineChart
-              height={280}
-              title="Monthly Route Performance"
-              data={performanceGraph?.chart_data}
-              xKey="label"
-              yKey="y"
-            />
+            {!performanceGraph ? (
+              <TableSkeleton />
+            ) : (
+              <RainbowGlowGradientLineChart
+                height={280}
+                title="Monthly Route Performance"
+                data={performanceGraph?.chart_data}
+                xKey="label"
+                yKey="y"
+              />
+            )}
           </div>
         </section>
 
@@ -207,15 +246,19 @@ export default function Salesdashboa() {
               columns={routeExpenseColumns}
               data={expense}
               pageSize={5}
+              isFetching={expenseLoading}
             />
-
-            <RainbowGlowGradientLineChart
-              height={280}
-              title="Monthly Expense by Route"
-              data={expenseGraph?.chart_data}
-              xKey="label"
-              yKey="y"
-            />
+            {!expenseGraph ? (
+              <TableSkeleton />
+            ) : (
+              <RainbowGlowGradientLineChart
+                height={280}
+                title="Monthly Expense by Route"
+                data={expenseGraph?.chart_data}
+                xKey="label"
+                yKey="y"
+              />
+            )}
           </div>
         </section>
 
