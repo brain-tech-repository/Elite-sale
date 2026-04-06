@@ -13,125 +13,43 @@ import {
   ChartSkeleton,
   TableSkeleton,
 } from "@/components/ui/dashboard-skeleton";
-import { useInView } from "react-intersection-observer";
 /* LOCAL */
 import MyForm from "./components/filter";
 import { SectionCards } from "./components/section-cards";
 import { performanceColumns } from "./components/columns";
 /* API */
 import {
-  useBrandLinePerformance,
   useBrandPerformance,
-  useCustomerLinePerformance,
   useCustomerSegmentPerformance,
+  useDashboardSummary,
   useDistributorChart,
   useMaterialGroupPerformance,
-  useMaterialLinePerformance,
   useMonthlySalesTrend,
-  useRegionLinePerformance,
   useRegionPerformance,
   useYearlySalesTrend,
 } from "./useSales";
 
-import { fallbackTableData } from "./components/data/fallback";
-// import { GaugeChart } from "@/components/ui/PieChartWithNeedle";
 import { GaugePieChartCard } from "@/components/ui/PieChartWithNeedle";
-import { AdvancedBarChart } from "@/components/ui/advancebar";
 import { AdvancedBarChart1 } from "@/components/ui/advancebar1";
+
 export default function Salesdashboa() {
   const getDefaultFilters = () => {
     const today = new Date();
-
-    const formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
-
     return {
-      from_date: formattedDate,
-      to_date: formattedDate,
+      from_date: today.toISOString().split("T")[0],
+      to_date: today.toISOString().split("T")[0],
     };
   };
 
+  // State
   const [filters, setFilters] = React.useState<any>(getDefaultFilters());
   const [year, setYear] = React.useState("2026");
-  // Ensure this matches the string format your API/chart expects (e.g., "January")
-  const [sortType, setSortType] = React.useState("TARGET");
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
     "April",
   );
+  const [sortType, setSortType] = React.useState("TARGET");
+  const [loadStep, setLoadStep] = React.useState(0);
 
-  // REGION
-  const { ref: regionRef, inView: regionInView } = useInView({
-    triggerOnce: true,
-  });
-
-  // BRAND
-  const { ref: brandRef, inView: brandInView } = useInView({
-    triggerOnce: true,
-  });
-
-  // MATERIAL
-  const { ref: materialRef, inView: materialInView } = useInView({
-    triggerOnce: true,
-  });
-
-  // CUSTOMER
-  const { ref: customerRef, inView: customerInView } = useInView({
-    triggerOnce: true,
-  });
-
-  const { ref: distributorRef, inView: distributorInView } = useInView({
-    triggerOnce: true,
-  });
-
-  const { ref: yearlyRef, inView: yearlyInView } = useInView({
-    triggerOnce: true,
-  });
-
-  const { ref: monthlyRef, inView: monthlyInView } = useInView({
-    triggerOnce: true,
-  });
-
-  /* SALES TREND */
-  const { data: monthlyData = [], isLoading: monthlyLoading } =
-    useMonthlySalesTrend(year, selectedMonth, filters, monthlyInView);
-
-  const { data: yearlyData = [], isLoading: yearlyLoading } =
-    useYearlySalesTrend(year, filters, yearlyInView);
-
-  /* PERFORMANCE */
-
-  const { data: regionPerformance = {}, isLoading: regionLoading } =
-    useRegionPerformance(filters, regionInView);
-
-  const regionTable = regionPerformance?.table_data ?? [];
-  const regionPie = regionPerformance?.pie_chart ?? [];
-
-  const { data: brandPerformance = {}, isLoading: brandLoading } =
-    useBrandPerformance(filters, brandInView);
-
-  const brandTable = brandPerformance?.table_data ?? [];
-  const brandPie = brandPerformance?.pie_chart ?? [];
-
-  const { data: materialGroupPerformance = {}, isLoading: materialLoading } =
-    useMaterialGroupPerformance(filters, materialInView);
-
-  const materialTable = materialGroupPerformance?.table_data ?? [];
-  const materialPie = materialGroupPerformance?.pie_chart ?? [];
-
-  const { data: customerSegmentPerformance = {}, isLoading: customerLoading } =
-    useCustomerSegmentPerformance(filters, customerInView);
-
-  const customerTable = customerSegmentPerformance?.table_data ?? [];
-  const customerPie = customerSegmentPerformance?.pie_chart ?? [];
-
-  const { data: regionLineData } = useRegionLinePerformance(regionInView);
-  const { data: brandLineData } = useBrandLinePerformance(brandInView);
-  const { data: materialLineData } = useMaterialLinePerformance(materialInView);
-  const { data: customerLineData } = useCustomerLinePerformance(customerInView);
-
-  const regionLine = regionLineData?.Result?.line_chart ?? [];
-  const brandLine = brandLineData?.Result?.line_chart ?? [];
-  const materialLine = materialLineData?.Result?.line_chart ?? [];
-  const customerLine = customerLineData?.Result?.line_chart ?? [];
   const monthMap: Record<string, string> = {
     Jan: "1",
     Feb: "2",
@@ -146,46 +64,89 @@ export default function Salesdashboa() {
     Nov: "11",
     Dec: "12",
   };
-
   const selectedMonthNumber = monthMap[selectedMonth || "Apr"];
 
-  const { data: distributorData = [], isLoading: distributorLoading } =
-    useDistributorChart(year, selectedMonthNumber);
+  // 1. FILTER HANDLER (Triggers Reset)
+  const handleFilter = (data: any) => {
+    setLoadStep(-1);
+    if (!data) {
+      setFilters(getDefaultFilters());
+    } else {
+      setFilters(data);
+    }
+    setTimeout(() => setLoadStep(0), 50);
+  };
+
+  // ================= API CALLS (Strict Sequential) =================
+
+  const { data: summaryData, isFetching: summaryLoading } = useDashboardSummary(
+    filters,
+    loadStep >= 0,
+  );
+  const { data: yearlyData = [], isFetching: yearlyLoading } =
+    useYearlySalesTrend(year, filters, loadStep >= 1);
+  const { data: monthlyData = [], isFetching: monthlyLoading } =
+    useMonthlySalesTrend(year, selectedMonth, filters, loadStep >= 2);
+  const { data: distributorData = [], isFetching: distributorLoading } =
+    useDistributorChart(year, selectedMonthNumber, loadStep >= 3);
+  const { data: regionPerformance = {}, isFetching: regionLoading } =
+    useRegionPerformance(filters, loadStep >= 4);
+  const { data: brandPerformance = {}, isFetching: brandLoading } =
+    useBrandPerformance(filters, loadStep >= 5);
+  const { data: materialGroupPerformance = {}, isFetching: materialLoading } =
+    useMaterialGroupPerformance(filters, loadStep >= 6);
+  const { data: customerSegmentPerformance = {}, isFetching: customerLoading } =
+    useCustomerSegmentPerformance(filters, loadStep >= 7);
+
+  // ================= SEQUENCE CONTROLLER =================
+
+  React.useEffect(() => {
+    if (loadStep === 0 && !summaryLoading) setLoadStep(1);
+  }, [summaryLoading, loadStep]);
+  React.useEffect(() => {
+    if (loadStep === 1 && !yearlyLoading) setLoadStep(2);
+  }, [yearlyLoading, loadStep]);
+  React.useEffect(() => {
+    if (loadStep === 2 && !monthlyLoading) setLoadStep(3);
+  }, [monthlyLoading, loadStep]);
+  React.useEffect(() => {
+    if (loadStep === 3 && !distributorLoading) setLoadStep(4);
+  }, [distributorLoading, loadStep]);
+  React.useEffect(() => {
+    if (loadStep === 4 && !regionLoading) setLoadStep(5);
+  }, [regionLoading, loadStep]);
+  React.useEffect(() => {
+    if (loadStep === 5 && !brandLoading) setLoadStep(6);
+  }, [brandLoading, loadStep]);
+  React.useEffect(() => {
+    if (loadStep === 6 && !materialLoading) setLoadStep(7);
+  }, [materialLoading, loadStep]);
 
   return (
-    <div className="flex flex-1 flex-col  lg:px-2 py-4">
+    <div className="flex flex-1 flex-col lg:px-2 py-4">
       <div className="flex flex-col space-y-4">
-        {/* HEADER */}
         <DataTableHeader title="Sales Dashboard" />
 
-        {/* FILTER */}
         <Card className="shadow-sm p-4">
-          <MyForm
-            onFilter={(data) => {
-              if (!data) {
-                setFilters(getDefaultFilters());
-              } else {
-                setFilters(data);
-              }
-            }}
-          />
+          <MyForm onFilter={handleFilter} />
         </Card>
 
         {/* KPI CARDS */}
-        <SectionCards filters={filters} />
+        <SectionCards
+          data={summaryData}
+          isLoading={loadStep < 1 && summaryLoading}
+        />
 
         {/* TOP CHARTS */}
-        <section className="grid grid-cols-1 lg:pe-2  lg:grid-cols-[38%_38%_24%] gap-1 items-stretch">
-          {/* YEARLY */}
-          <div ref={yearlyRef}>
-            {yearlyLoading || !yearlyInView ? (
+        <section className="grid grid-cols-1 lg:pe-2 lg:grid-cols-[38%_38%_24%] gap-1 items-stretch">
+          <div>
+            {loadStep < 1 || (yearlyLoading && loadStep === 1) ? (
               <ChartSkeleton />
             ) : (
               <RainbowGlowGradientLineChart
                 showYearSelector
                 height={220}
                 title="Sales By Yearly Trends"
-                description={`Sales overview for ${year}`}
                 data={yearlyData}
                 year={year}
                 setYear={setYear}
@@ -193,8 +154,8 @@ export default function Salesdashboa() {
             )}
           </div>
 
-          <div ref={monthlyRef}>
-            {monthlyLoading || !monthlyInView ? (
+          <div>
+            {loadStep < 2 || (monthlyLoading && loadStep === 2) ? (
               <ChartSkeleton />
             ) : (
               <AnimatedHighlightedAreaChart
@@ -212,207 +173,97 @@ export default function Salesdashboa() {
             <GaugePieChartCard />
           </div>
         </section>
-        <section ref={distributorRef}>
+
+        {/* TARGET OVERVIEW */}
+        <section>
           <DataTableSubHeader title="Target Overview" />
-
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-1 mt-4">
-            <>
-              {!distributorInView || distributorLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <AdvancedBarChart1
-                  height={300}
-                  data={distributorData || []} // ✅ API data
-                  showFilter={true}
-                  title="Distributor Target vs Achieved"
-                  year={year}
-                  month={selectedMonth || "Apr"}
-                  sortType={sortType}
-                  setYear={setYear}
-                  setMonth={setSelectedMonth}
-                  setSortType={setSortType}
-                />
-              )}
-            </>
+          <div className="grid grid-cols-1 gap-1 mt-4">
+            {loadStep < 3 || (distributorLoading && loadStep === 3) ? (
+              <ChartSkeleton />
+            ) : (
+              <AdvancedBarChart1
+                height={300}
+                data={distributorData}
+                showFilter={true}
+                title="Distributor Target vs Achieved"
+                year={year}
+                month={selectedMonth || "Apr"}
+                sortType={sortType}
+                setYear={setYear}
+                setMonth={setSelectedMonth}
+                setSortType={setSortType}
+              />
+            )}
           </div>
         </section>
 
-        {/* REGION */}
-        <section ref={regionRef}>
-          <DataTableSubHeader title="Region Performance" />
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
-            <>
-              {/* ================= TABLE ================= */}
-              {!regionInView || regionLoading ? (
-                <TableSkeleton />
+        {/* PERFORMANCE SECTIONS */}
+        {[
+          {
+            title: "Region",
+            step: 4,
+            loading: regionLoading,
+            table: regionPerformance?.table_data ?? [],
+            pie: regionPerformance?.pie_chart ?? [],
+            line: regionPerformance?.line_chart,
+          },
+          {
+            title: "Brand",
+            step: 5,
+            loading: brandLoading,
+            table: brandPerformance?.table_data ?? [],
+            pie: brandPerformance?.pie_chart ?? [],
+            line: brandPerformance?.line_chart,
+          },
+          {
+            title: "Material Group",
+            step: 6,
+            loading: materialLoading,
+            table: materialGroupPerformance?.table_data ?? [],
+            pie: materialGroupPerformance?.pie_chart ?? [],
+            line: materialGroupPerformance?.line_chart,
+          },
+          {
+            title: "Customer Segment",
+            step: 7,
+            loading: customerLoading,
+            table: customerSegmentPerformance?.table_data ?? [],
+            pie: customerSegmentPerformance?.pie_chart ?? [],
+            line: customerSegmentPerformance?.line_chart,
+          },
+        ].map((sec) => (
+          <section key={sec.title}>
+            <DataTableSubHeader title={`${sec.title} Performance`} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
+              {loadStep < sec.step || (sec.loading && loadStep === sec.step) ? (
+                <>
+                  <TableSkeleton />
+                  <ChartSkeleton />
+                  <ChartSkeleton />
+                </>
               ) : (
-                <CommonDataTable
-                  columns={performanceColumns}
-                  data={regionTable}
-                  pageSize={5}
-                  title="Region Performance"
-                />
+                <>
+                  <CommonDataTable
+                    columns={performanceColumns}
+                    data={sec.table}
+                    pageSize={5}
+                    title={sec.title}
+                  />
+                  <RoundedPieChart
+                    title={`Sales By ${sec.title} Contribution`}
+                    data={sec.pie}
+                  />
+                  <RainbowGlowGradientLineChart
+                    xKey="label"
+                    yKey="y"
+                    title={`${sec.title} Monthly Sales Trend`}
+                    data={sec.line || []}
+                  />
+                </>
               )}
-
-              {/* ================= PIE ================= */}
-              {!regionInView || regionLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <RoundedPieChart
-                  title="Sales By Region Contribution"
-                  data={regionPie}
-                />
-              )}
-
-              {/* ================= LINE ================= */}
-              {!regionInView ? (
-                <ChartSkeleton />
-              ) : regionLineData ? (
-                <RainbowGlowGradientLineChart
-                  xKey="label"
-                  yKey="y"
-                  title="Region Monthly Sales Trend"
-                  data={regionLine}
-                />
-              ) : (
-                <ChartSkeleton />
-              )}
-            </>
-          </div>
-        </section>
-
-        {/* BRAND */}
-        <section ref={brandRef}>
-          <DataTableSubHeader title="Brand Performance " />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
-            <>
-              {/* ================= TABLE ================= */}
-              {!brandInView || brandLoading ? (
-                <TableSkeleton />
-              ) : (
-                <CommonDataTable
-                  columns={performanceColumns}
-                  data={brandTable}
-                  pageSize={5}
-                  title="Brand Performance"
-                />
-              )}
-
-              {/* ================= PIE ================= */}
-              {!brandInView || brandLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <RoundedPieChart
-                  title="Sales By Brand Contribution"
-                  data={brandPie}
-                />
-              )}
-
-              {/* ================= LINE ================= */}
-              {!brandInView ? (
-                <ChartSkeleton />
-              ) : brandLineData ? (
-                <RainbowGlowGradientLineChart
-                  xKey="label"
-                  yKey="y"
-                  title="Brand Monthly Sales Trend"
-                  data={brandLine}
-                />
-              ) : (
-                <ChartSkeleton />
-              )}
-            </>
-          </div>
-        </section>
-
-        {/* MATERIAL */}
-        <section ref={materialRef}>
-          <DataTableSubHeader title="Material Group" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
-            <>
-              {/* ================= TABLE ================= */}
-              {!materialInView || materialLoading ? (
-                <TableSkeleton />
-              ) : (
-                <CommonDataTable
-                  columns={performanceColumns}
-                  data={materialTable}
-                  pageSize={5}
-                  title="Material Group"
-                />
-              )}
-
-              {/* ================= PIE ================= */}
-              {!materialInView || materialLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <RoundedPieChart
-                  title="Sales By Material Group Contribution"
-                  data={materialPie}
-                />
-              )}
-
-              {/* ================= LINE ================= */}
-              {!materialInView ? (
-                <ChartSkeleton />
-              ) : materialLineData ? (
-                <RainbowGlowGradientLineChart
-                  xKey="label"
-                  yKey="y"
-                  title="Material Group Monthly Sales Trend"
-                  data={materialLine}
-                />
-              ) : (
-                <ChartSkeleton />
-              )}
-            </>
-          </div>
-        </section>
-
-        {/* CUSTOMER */}
-        <section ref={customerRef}>
-          <DataTableSubHeader title="Customer Segment Performance" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 mt-4">
-            <>
-              {/* ================= TABLE ================= */}
-              {!customerInView || customerLoading ? (
-                <TableSkeleton />
-              ) : (
-                <CommonDataTable
-                  columns={performanceColumns}
-                  data={customerTable}
-                  pageSize={5}
-                  title="Customer Segment"
-                />
-              )}
-
-              {/* ================= PIE ================= */}
-              {!customerInView || customerLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <RoundedPieChart
-                  title="Sales By Customer Segment Contribution"
-                  data={customerPie}
-                />
-              )}
-
-              {/* ================= LINE ================= */}
-              {!customerInView ? (
-                <ChartSkeleton />
-              ) : customerLineData ? (
-                <RainbowGlowGradientLineChart
-                  xKey="label"
-                  yKey="y"
-                  title="Customer Segment Monthly Sales Trend"
-                  data={customerLine}
-                />
-              ) : (
-                <ChartSkeleton />
-              )}
-            </>
-          </div>
-        </section>
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );

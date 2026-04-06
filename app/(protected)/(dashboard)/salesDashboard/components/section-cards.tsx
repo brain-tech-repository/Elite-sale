@@ -43,11 +43,11 @@ function AnimatedCard({
 }
 
 interface Props {
-  filters?: any;
+  data?: any;
+  isLoading?: boolean;
 }
 
-export function SectionCards({ filters }: Props) {
-  const { data, isLoading } = useDashboardSummary(filters);
+export function SectionCards({ data, isLoading }: Props) {
   const result = data?.Result;
 
   const cardsData = [

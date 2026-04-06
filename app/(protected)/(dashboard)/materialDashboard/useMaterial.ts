@@ -55,7 +55,7 @@ const fetchMaster = async (
     transformMaterialFilters(params) as any,
   ).toString();
 
-  const { data } = await api.get(`${endpoint}?${query}`);
+  const { data } = await api.post(`${endpoint}?${query}`);
 
   return data;
 };
@@ -66,7 +66,7 @@ const fetchMaster = async (
 const fetchPerformance = async (endpoint: string, params: any) => {
   const query = new URLSearchParams(params).toString();
 
-  const { data } = await api.get(`${endpoint}?${query}`);
+  const { data } = await api.post(`${endpoint}?${query}`);
 
   return data;
 };
@@ -156,7 +156,7 @@ const getDashboardSummaryCards = async (
 ): Promise<DashboardSummaryResponse> => {
   const query = params ? `?${new URLSearchParams(params).toString()}` : "";
 
-  const { data } = await api.get(
+  const { data } = await api.post(
     `material_analysis/fetch_summary_cards${query}`,
   );
 
@@ -193,7 +193,7 @@ export const useMaterialPerformance = (
         length: String(length),
       } as Record<string, string>).toString();
 
-      const { data } = await api.get(
+      const { data } = await api.post(
         `${BASE}/fetch_material_performance?${query}`,
       );
 
@@ -226,7 +226,7 @@ export const useActiveSkus = (filters?: SalesFilterPayload) =>
         ),
       ).toString();
 
-      const { data } = await api.get(`${BASE}/fetch_active_skus?${query}`);
+      const { data } = await api.post(`${BASE}/fetch_active_skus?${query}`);
 
       return data?.data || [];
     },
@@ -253,7 +253,7 @@ export const useInactiveSkus = (filters?: SalesFilterPayload) =>
         ),
       ).toString();
 
-      const { data } = await api.get(`${BASE}/fetch_inactive_skus?${query}`);
+      const { data } = await api.post(`${BASE}/fetch_inactive_skus?${query}`);
 
       return data?.data || [];
     },
@@ -273,7 +273,7 @@ export const useMaterialSummary = (filters?: SalesFilterPayload) =>
         (filters ?? {}) as Record<string, string>,
       ).toString();
 
-      const { data } = await api.get(`${BASE}/fetch_summary_cards?${query}`);
+      const { data } = await api.post(`${BASE}/fetch_summary_cards?${query}`);
 
       return data?.data;
     },
@@ -303,7 +303,7 @@ export const useVolumeGrowthChart = (filters?: SalesFilterPayload) =>
         ? `${BASE}/fetch_volume_growth_charts?${query}`
         : `${BASE}/fetch_volume_growth_charts`;
 
-      const { data } = await api.get(url);
+      const { data } = await api.post(url);
 
       return data?.data || { daily: [], monthly: [], yearly: [] };
     },
@@ -334,7 +334,7 @@ export const useValueGrowthChart = (filters?: SalesFilterPayload) =>
         ? `${BASE}/fetch_value_growth_charts?${query}`
         : `${BASE}/fetch_value_growth_charts`;
 
-      const { data } = await api.get(url);
+      const { data } = await api.post(url);
 
       return data?.data || { daily: [], monthly: [], yearly: [] };
     },
@@ -358,7 +358,7 @@ export const useTopMaterialByVolume = (filters?: SalesFilterPayload) =>
         ),
       ).toString();
 
-      const { data } = await api.get(
+      const { data } = await api.post(
         `/material_analysis/fetch_top_material_by_volume?${query}`,
       );
 
@@ -382,7 +382,7 @@ export const useTopMaterialByValue = (filters?: SalesFilterPayload) =>
         ),
       ).toString();
 
-      const { data } = await api.get(
+      const { data } = await api.post(
         `/material_analysis/fetch_top_material_by_value?${query}`,
       );
 
