@@ -82,12 +82,20 @@ export default function Salesdashboa() {
     triggerOnce: true,
   });
 
+  const { ref: yearlyRef, inView: yearlyInView } = useInView({
+    triggerOnce: true,
+  });
+
+  const { ref: monthlyRef, inView: monthlyInView } = useInView({
+    triggerOnce: true,
+  });
+
   /* SALES TREND */
   const { data: monthlyData = [], isLoading: monthlyLoading } =
-    useMonthlySalesTrend(year, selectedMonth, filters);
+    useMonthlySalesTrend(year, selectedMonth, filters, monthlyInView);
 
   const { data: yearlyData = [], isLoading: yearlyLoading } =
-    useYearlySalesTrend(year, filters);
+    useYearlySalesTrend(year, filters, yearlyInView);
 
   /* PERFORMANCE */
 
@@ -168,12 +176,13 @@ export default function Salesdashboa() {
 
         {/* TOP CHARTS */}
         <section className="grid grid-cols-1 lg:pe-2  lg:grid-cols-[38%_38%_24%] gap-1 items-stretch">
-          {yearlyLoading ? (
-            <ChartSkeleton />
-          ) : (
-            <div>
+          {/* YEARLY */}
+          <div ref={yearlyRef}>
+            {yearlyLoading || !yearlyInView ? (
+              <ChartSkeleton />
+            ) : (
               <RainbowGlowGradientLineChart
-                showYearSelector={true}
+                showYearSelector
                 height={220}
                 title="Sales By Yearly Trends"
                 description={`Sales overview for ${year}`}
@@ -181,23 +190,23 @@ export default function Salesdashboa() {
                 year={year}
                 setYear={setYear}
               />
-            </div>
-          )}
+            )}
+          </div>
 
-          {monthlyLoading ? (
-            <ChartSkeleton />
-          ) : (
-            <div>
+          <div ref={monthlyRef}>
+            {monthlyLoading || !monthlyInView ? (
+              <ChartSkeleton />
+            ) : (
               <AnimatedHighlightedAreaChart
                 height={220}
                 title="Sales By Monthly Trends"
                 data={monthlyData}
                 selectedMonth={selectedMonth}
                 setSelectedMonth={setSelectedMonth}
-                showMonthFilter={true} // ✅ ENABLE
+                showMonthFilter
               />
-            </div>
-          )}
+            )}
+          </div>
 
           <div>
             <GaugePieChartCard />
