@@ -1,5 +1,5 @@
 import api from "@/lib/apiClient";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import {
   AutoCompleteOption,
@@ -142,10 +142,13 @@ export const useDashboardSummary = (filters?: any) => {
 /**
  * Yearly Sales Trend Hook
  */
-export const useYearlySalesTrend = (year: string, filters?: any) => {
+export const useYearlySalesTrend = (
+  year: string,
+  filters?: any,
+  enabled = true, // ✅ add this
+) => {
   const yearlyFilters = React.useMemo(() => {
     if (!filters) return {};
-
     const { month, ...rest } = filters;
     return rest;
   }, [filters]);
@@ -157,7 +160,9 @@ export const useYearlySalesTrend = (year: string, filters?: any) => {
 
     select: (data) => transformChartData(data.Result),
 
-    // keepPreviousData: true,
+    enabled: enabled && !!year, // ✅ lazy control
+
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -168,6 +173,7 @@ export const useMonthlySalesTrend = (
   year: string,
   month?: string | null,
   filters?: any,
+  enabled = true, // ✅ add this
 ) => {
   return useQuery({
     queryKey: ["monthly-sales-trend", year, month, filters],
@@ -175,6 +181,10 @@ export const useMonthlySalesTrend = (
     queryFn: () => getMonthlySalesTrend(year, month, filters),
 
     select: (data) => transformChartData(data.Result),
+
+    enabled: enabled && !!year && !!month, // ✅ lazy
+
+    placeholderData: keepPreviousData,
   });
 };
 
