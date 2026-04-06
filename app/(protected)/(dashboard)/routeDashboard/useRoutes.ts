@@ -172,7 +172,7 @@ export const useMonthlyTrend = (filters?: SalesFilterPayload) =>
         (filters ?? {}) as Record<string, string>,
       ).toString();
 
-      const { data } = await api.get(`/route-analysis/monthly-trend?${query}`);
+      const { data } = await api.post(`/route-analysis/monthly-trend?${query}`);
 
       const completion = data?.data?.completion || [];
       const success = data?.data?.success || [];
@@ -359,7 +359,7 @@ export const useRouteWiseSales = (filters?: SalesFilterPayload) =>
     queryFn: async () => {
       const query = new URLSearchParams((filters ?? {}) as any).toString();
 
-      const { data } = await api.get(`/route-analysis/wise-sales?${query}`);
+      const { data } = await api.post(`/route-analysis/wise-sales?${query}`);
 
       return {
         tableData:
@@ -389,7 +389,7 @@ export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
     queryFn: async () => {
       const query = new URLSearchParams((filters ?? {}) as any).toString();
 
-      const { data } = await api.get(
+      const { data } = await api.post(
         `/route-analysis/efficiency-overview?${query}`,
       );
 
