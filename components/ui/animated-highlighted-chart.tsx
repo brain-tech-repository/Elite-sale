@@ -105,13 +105,13 @@ export function AnimatedHighlightedAreaChart({
         )}
       </CardHeader>
 
-      <CardContent style={{ height }} className="w-full">
+      <CardContent style={{ height }} className="w-full lg:px-0">
         {chartData.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             No sales data available
           </div>
         ) : (
-          <ResponsiveContainer width="105%" height="100%">
+          <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={chartData}
               margin={{

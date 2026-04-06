@@ -239,7 +239,7 @@ export function AdvancedBarChart2({
       </CardHeader>
 
       {/* ================= CHART ================= */}
-      <CardContent className="px-2">
+      <CardContent className="lg:px-0  px-0">
         <div className="w-full">
           <div
             style={{

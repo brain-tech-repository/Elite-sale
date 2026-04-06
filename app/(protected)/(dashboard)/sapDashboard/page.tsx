@@ -3,6 +3,7 @@ import DataTableHeader from "@/components/table-data/data-table-header";
 import { SectionCards } from "./components/section-cards";
 import { HighlightedMultipleBarChart } from "@/components/ui/highlighted-double-bar-chart";
 import { AdvancedBarChart1 } from "@/components/ui/advancebar1";
+import { AdvancedBarChart2 } from "@/components/ui/advancebar2";
 type Sale = {
   id: string;
   customer: string;
@@ -18,10 +19,6 @@ export default function Salesdashboa() {
     { name: "13-03-2026", Target: 8600, Achievment: 7500 },
     { name: "14-03-2026", Target: 8900, Achievment: 7800 },
     { name: "15-03-2026", Target: 9200, Achievment: 8100 },
-    { name: "16-03-2026", Target: 9500, Achievment: 8400 },
-    { name: "12-03-2026", Target: 8250, Achievment: 7200 },
-    { name: "13-03-2026", Target: 8600, Achievment: 7500 },
-
     { name: "16-03-2026", Target: 9500, Achievment: 8400 },
   ];
   return (
@@ -39,17 +36,17 @@ export default function Salesdashboa() {
           {/* SECTION 3 */}
           <div className="lg:px-6 px-1 pb-10">
             <section className="grid gap-6 mt-4 grid-cols-1 lg:grid-cols-2">
-              <AdvancedBarChart1
+              <AdvancedBarChart2
                 data={apiData}
                 height={250}
                 title="Good Receipt Note (GRN)"
               />
-              <AdvancedBarChart1
+              <AdvancedBarChart2
                 data={apiData}
                 height={250}
                 title="Good Receipt Note (GRN)"
               />
-              <AdvancedBarChart1
+              <AdvancedBarChart2
                 data={apiData}
                 height={250}
                 title="Good Receipt Note (GRN)"

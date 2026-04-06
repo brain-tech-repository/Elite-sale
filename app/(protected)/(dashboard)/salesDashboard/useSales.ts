@@ -50,7 +50,7 @@ const getDashboardSummaryCards = async (
 ): Promise<DashboardSummaryResponse> => {
   const query = params ? `?${new URLSearchParams(params).toString()}` : "";
 
-  const { data } = await api.get(`get_dashboard_summary_cards${query}`);
+  const { data } = await api.post(`get_dashboard_summary_cards${query}`);
 
   return data;
 };
@@ -104,7 +104,7 @@ const fetchMaster = async (
 
   const query = new URLSearchParams(filteredParams).toString();
 
-  const { data } = await api.get(`${endpoint}?${query}`);
+  const { data } = await api.post(`${endpoint}?${query}`);
 
   return data;
 };
@@ -115,7 +115,7 @@ const fetchMaster = async (
 const fetchPerformance = async (endpoint: string, params: any) => {
   const query = new URLSearchParams(params).toString();
 
-  const { data } = await api.get(`${endpoint}?${query}`);
+  const { data } = await api.post(`${endpoint}?${query}`);
 
   return data;
 };
@@ -392,7 +392,7 @@ export const useDistributorChart = (
     queryKey: ["distributor-chart", year, month], // ✅ cache per filter
 
     queryFn: async () => {
-      const { data } = await api.get("distributor-chart-data", {
+      const { data } = await api.post("distributor-chart-data", {
         params: {
           year,
           month,

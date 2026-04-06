@@ -132,7 +132,7 @@ export function GaugePieChartCard() {
         </ChartContainer>
       </CardContent>
 
-      <CardFooter className="flex flex-col items-start text-sm z-10 relative bg-white/50 pt-2">
+      <CardFooter className="flex flex-col items-start text-sm z-10 relative bg-white/50 ">
         <div className="font-medium">
           Score: <span className="text-emerald-600">{score}%</span>
         </div>
