@@ -18,13 +18,13 @@ import { useState } from "react";
 import { CookieManager } from "@/lib/cookieUtils";
 import api from "@/lib/apiClient";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -71,8 +71,8 @@ export function LoginForm({
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
+      <Card className="overflow-hidden ">
+        <CardContent className="grid  md:grid-cols-2">
           {/* Animation */}
           <div className="bg-muted relative hidden md:block">
             <div className="flex items-center justify-center h-full">
@@ -90,9 +90,16 @@ export function LoginForm({
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-muted-foreground">
+                <Image
+                  src="/elitesale-login.png" // place image inside /public folder
+                  alt="Logo"
+                  width={130}
+                  height={50}
+                  className="mb-2"
+                />
+                {/* <p className="text-muted-foreground">
                   Login to your Acme Inc account
-                </p>
+                </p> */}
               </div>
 
               {/* Email */}
@@ -141,7 +148,11 @@ export function LoginForm({
 
               {/* Login Button */}
               <Field>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-[#022235]"
+                  disabled={loading}
+                >
                   {loading ? "Logging in..." : "Login"}
                 </Button>
               </Field>

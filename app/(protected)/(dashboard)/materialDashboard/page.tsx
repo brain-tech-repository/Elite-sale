@@ -21,7 +21,10 @@ import {
 } from "./useMaterial";
 import { SalesFilterPayload } from "./types";
 import { skuColumns } from "./components/columns1";
-import { ChartSkeleton } from "@/components/ui/dashboard-skeleton";
+import {
+  ChartSkeleton,
+  TableSkeleton,
+} from "@/components/ui/dashboard-skeleton";
 import GradientBarChart from "@/components/ui/BarChart";
 type Sale = {
   id: string;
@@ -33,6 +36,16 @@ type Sale = {
 };
 export default function Salesdashboa() {
   const [filters, setFilters] = React.useState<SalesFilterPayload>({});
+  useEffect(() => {
+    // Reset page to 1
+    setTableFilters((prev) => ({
+      ...prev,
+      page: 1,
+    }));
+
+    // Clear old table data
+    setAllData([]);
+  }, [filters]);
 
   const [tableFilters, setTableFilters] = useState({
     page: 1,
@@ -48,9 +61,28 @@ export default function Salesdashboa() {
     tableFilters.page,
     tableFilters.length,
   );
-
   const materialData = materialRes?.tableData ?? [];
   const pagination = materialRes?.pagination;
+
+  // 👉 Move to next page
+  const handleNext = () => {
+    if (pagination?.current_page < pagination?.total_pages) {
+      setTableFilters((prev) => ({
+        ...prev,
+        page: pagination.current_page + 1,
+      }));
+    }
+  };
+
+  // 👉 Move to previous page
+  const handlePrev = () => {
+    if (pagination?.current_page > 1) {
+      setTableFilters((prev) => ({
+        ...prev,
+        page: pagination.current_page - 1,
+      }));
+    }
+  };
 
   /* =========================
      APPEND DATA (IMPORTANT)
@@ -59,12 +91,15 @@ export default function Salesdashboa() {
   const [allData, setAllData] = useState<any[]>([]);
 
   useEffect(() => {
-    if (materialData.length) {
-      setAllData((prev) =>
-        tableFilters.page === 1 ? materialData : [...prev, ...materialData],
-      );
-    }
-  }, [materialData]);
+    if (!materialData) return;
+
+    setAllData((prev) => {
+      if (tableFilters.page === 1) {
+        return materialData; // fresh data
+      }
+      return [...prev, ...materialData]; // append for next pages
+    });
+  }, [materialData, tableFilters.page]);
 
   /* =========================
      LOADING STATES
@@ -73,6 +108,7 @@ export default function Salesdashboa() {
   const page = tableFilters.page ?? 1;
 
   const isInitialLoading = isLoading && page === 1;
+
   const isFetchingMore = isLoading && page > 1;
 
   const { data: activeSkus = [], isLoading: activeLoading } =
@@ -173,26 +209,24 @@ export default function Salesdashboa() {
           </div>
 
           {/* SECTION 3 */}
-          <div className="lg:px-6 px-1 pb-10">
-            <DataTableSubHeader title="Material Performance" />
-            <section className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-1">
-              <div className="lg:col-span-1">
-                <CommonDataTables
-                  headerTitle="Material Performance"
-                  columns={salesColumns}
-                  data={allData} // ✅ APPENDED DATA
-                  pagination={pagination}
-                  isFetchingMore={isFetchingMore} // ✅ SCROLL LOADER
-                  onNext={() =>
-                    setTableFilters((prev) => ({
-                      ...prev,
-                      page: (prev.page ?? 1) + 1,
-                    }))
-                  }
-                />
-              </div>
-            </section>
-          </div>
+          <section className="px-2 pb-12">
+            {/* <Card className="shadow-xm"> */}
+            {isInitialLoading ? (
+              <TableSkeleton />
+            ) : (
+              <CommonDataTables
+                headerTitle="Material Performance"
+                columns={salesColumns}
+                data={allData} // ✅ APPENDED DATA
+                pagination={pagination}
+                isFetchingMore={isFetchingMore} // ✅ SCROLL LOADER
+                onNext={handleNext}
+                onPrev={handlePrev}
+              />
+            )}
+            {/* </Card> */}
+          </section>
+
           <div className="lg:px-6 px-1 pb-10">
             <DataTableSubHeader title="Material Volume Growth" />
             <section className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-3">

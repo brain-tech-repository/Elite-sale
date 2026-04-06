@@ -135,7 +135,7 @@ export function RainbowGlowGradientLineChart({
       </CardHeader>
 
       <CardContent
-        className="w-full"
+        className="w-full lg:px-0 px-0"
         style={{ height: typeof height === "number" ? `${height}px` : height }}
       >
         <ResponsiveContainer width="100%" height="100%">

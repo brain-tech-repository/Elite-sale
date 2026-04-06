@@ -186,7 +186,6 @@ export const useMaterialPerformance = (
 ) =>
   useQuery({
     queryKey: ["material-performance", filters, page, length],
-
     queryFn: async () => {
       const query = new URLSearchParams({
         ...(filters ?? {}),
@@ -204,7 +203,7 @@ export const useMaterialPerformance = (
       };
     },
 
-    // keepPreviousData: true, // 🔥 important for smooth pagination
+    placeholderData: keepPreviousData, // ✅ correct
     refetchOnWindowFocus: false,
   });
 

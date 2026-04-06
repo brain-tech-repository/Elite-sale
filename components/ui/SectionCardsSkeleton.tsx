@@ -5,7 +5,7 @@ import { Card } from "./card";
 
 export function SectionCardsSkeleton() {
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-2">
       {[1, 2, 3, 4].map((i) => (
         <div
           key={i}
