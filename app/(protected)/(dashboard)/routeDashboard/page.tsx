@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState, useCallback } from "react";
 import DataTableHeader from "@/components/table-data/data-table-header";
 import MyForm from "./components/filter";
 import MyForm1 from "./components/filter1";
@@ -13,13 +14,12 @@ import { Card } from "@/components/ui/card";
 import GrowthLines from "@/components/growthlines";
 import { AdvancedBarChart } from "@/components/ui/advancebar";
 import {
-  RouteExpense,
-  RouteSales,
-  RouteSalesCollection,
-  SalesFilterPayload,
-} from "./types";
-import { useEffect, useState, useCallback } from "react"; // ✅ Added useCallback
-import { useRegionPerformance } from "../customerDashboard/useCustomers";
+  ChartSkeleton,
+  TableSkeleton,
+} from "@/components/ui/dashboard-skeleton";
+
+// Types and Hooks
+import { SalesFilterPayload } from "./types";
 import {
   useGrowthPerformance,
   useMonthlyCompareDropSizeRevenue,
@@ -32,20 +32,34 @@ import {
   useRoutePerformanceGraph,
   useRouteWiseSales,
 } from "./useRoutes";
+
+// Column Definitions
 import { routeSalesCollectionColumns } from "./components/column1";
 import { routeExpenseColumns } from "./components/column2";
 import { routeSalesColumns } from "./components/column3";
-import { TableSkeleton } from "@/components/ui/dashboard-skeleton";
 
 export default function Salesdashboa() {
-  // 🔹 Global filters → used for charts + table
+  // 🔹 Global filters (Charts & Data reset)
   const [globalFilters, setGlobalFilters] = useState<SalesFilterPayload>({});
-
   const [performanceType, setPerformanceType] = useState<"routes" | "salesmen">(
     "routes",
   );
 
-  // ✅ FIX 1: Wrap in useCallback to prevent infinite loops in MyForm1
+  // 🔹 Table Pagination States
+  const [tableFilters, setTableFilters] = useState<SalesFilterPayload>({
+    page: 1,
+    length: 10,
+  });
+
+  // 🔹 Local state for appended data
+  const [efficiencyData, setEfficiencyData] = useState<any[]>([]);
+  const [salesReportData, setSalesReportData] = useState<any[]>([]);
+
+  const currentPage = tableFilters.page ?? 1;
+
+  /* =========================
+        CALLBACK HANDLERS
+     ========================= */
   const handlePerformanceTypeChange = useCallback(
     (type: "routes" | "salesmen") => {
       setPerformanceType(type);
@@ -53,121 +67,81 @@ export default function Salesdashboa() {
     [],
   );
 
-  // 🔹 Table-specific filters → pagination + table form
-  const [tableFilters, setTableFilters] = useState<SalesFilterPayload>({
-    page: 1,
-    length: 10,
-  });
-  const { data: regionData, isLoading: regionLoading } =
-    useGrowthPerformance(globalFilters);
+  const handleGlobalFilterChange = (filters: SalesFilterPayload) => {
+    setGlobalFilters(filters);
+    setTableFilters((prev) => ({ ...prev, page: 1 }));
+    setEfficiencyData([]);
+    setSalesReportData([]);
+  };
 
-  // 🔹 Year selector for charts
-  const [year, setYear] = useState("2026");
+  const handleLoadMore = () => {
+    setTableFilters((prev) => ({
+      ...prev,
+      page: (prev.page ?? 1) + 1,
+    }));
+  };
 
   /* =========================
-         CHART API CALLS
-      ========================= */
-  // Monthly trend (depends on global filters)
-  const { data: monthlyTrend = [], isLoading } = useMonthlyTrend(globalFilters);
-
-  const { data: CompareDropSizeRevenue = [], isLoading: revenueLoading } =
+          API FETCHING
+     ========================= */
+  // Chart & Summary Data (Now all passing globalFilters)
+  const { data: regionData, isLoading: regionLoading } =
+    useGrowthPerformance(globalFilters);
+  const { data: monthlyTrend = [], isLoading: trendLoading } =
+    useMonthlyTrend(globalFilters);
+  const { data: revenueData = [] } =
     useMonthlyCompareDropSizeRevenue(globalFilters);
-
-  const { data: CompareDropSizeVolume = [], isLoading: volumeLoading } =
+  const { data: volumeData = [] } =
     useMonthlyCompareDropSizeVolume(globalFilters);
 
-  const { data: performance = [], isLoading: performanceLoading } =
+  const { data: performance = [], isLoading: perfLoading } =
     useRoutePerformance(globalFilters, performanceType);
-
   const { data: expense = [], isLoading: expenseLoading } =
     useRouteExpense(globalFilters);
 
-  const { data: performanceGraph } = useRoutePerformanceGraph();
-  const { data: expenseGraph } = useRouteExpenseGraph();
+  // ✅ FIX: Passing globalFilters to these hooks
+  const { data: performanceGraph, isLoading: perfGraphLoading } =
+    useRoutePerformanceGraph(globalFilters, performanceType);
+  const { data: expenseGraph, isLoading: expenseGraphLoading } =
+    useRouteExpenseGraph(globalFilters);
 
-  /* =========================
-      EFFICIENCY TABLE LOGIC
-     ========================= */
-  const {
-    data: efficiencyRes,
-    isLoading: efficiencyloading,
-    isFetching: efficiencyFetching, // ✅ Extracted isFetching for skeletons
-  } = useRouteEfficiency({
+  const { data: efficiencyRes, isFetching: efficiencyFetching } =
+    useRouteEfficiency({ ...globalFilters, ...tableFilters });
+  const { data: salesRes, isFetching: salesFetching } = useRouteWiseSales({
     ...globalFilters,
     ...tableFilters,
   });
 
-  const pagination = efficiencyRes?.pagination;
-  const [allData, setAllData] = useState<any[]>([]);
-  const page = tableFilters.page ?? 1;
-
-  // ✅ FIX 2: Depend directly on the API reference to prevent infinite loops
+  /* =========================
+        DATA SYNC EFFECTS
+     ========================= */
   useEffect(() => {
     const newData = efficiencyRes?.tableData;
-    if (!newData) return; // Do nothing if undefined (loading)
+    if (!newData) return;
+    if (currentPage === 1) setEfficiencyData(newData);
+    else setEfficiencyData((prev) => [...prev, ...newData]);
+  }, [efficiencyRes?.tableData, currentPage]);
 
-    if (page === 1) {
-      setAllData(newData);
-    } else if (newData.length > 0) {
-      setAllData((prev) => [...prev, ...newData]);
-    }
-  }, [efficiencyRes?.tableData, page]); // 🚨 Strict dependency!
-
-  // ✅ Trigger skeletons on filters
-  const isInitialLoading =
-    (efficiencyloading || efficiencyFetching) && page === 1;
-  const isFetchingMore = (efficiencyloading || efficiencyFetching) && page > 1;
-
-  /* =========================
-        SALES TABLE LOGIC
-     ========================= */
-  const {
-    data: salesRes,
-    isLoading: salesLoading,
-    isFetching: salesFetching, // ✅ Extracted isFetching for skeletons
-  } = useRouteWiseSales({
-    ...globalFilters,
-    ...tableFilters,
-  });
-
-  const salesPagination = salesRes?.pagination;
-  const [salesAllData, setSalesAllData] = useState<any[]>([]);
-
-  // ✅ FIX 2: Depend directly on the API reference to prevent infinite loops
   useEffect(() => {
-    const newSalesData = salesRes?.tableData;
-    if (!newSalesData) return; // Do nothing if undefined (loading)
+    const newData = salesRes?.tableData;
+    if (!newData) return;
+    if (currentPage === 1) setSalesReportData(newData);
+    else setSalesReportData((prev) => [...prev, ...newData]);
+  }, [salesRes?.tableData, currentPage]);
 
-    if (page === 1) {
-      setSalesAllData(newSalesData);
-    } else if (newSalesData.length > 0) {
-      setSalesAllData((prev) => [...prev, ...newSalesData]);
-    }
-  }, [salesRes?.tableData, page]); // 🚨 Strict dependency!
-
-  // ✅ Trigger skeletons on filters
-  const isSalesInitialLoading = (salesLoading || salesFetching) && page === 1;
-  const isSalesFetchingMore = (salesLoading || salesFetching) && page > 1;
+  const isEfficiencyInitialLoading = efficiencyFetching && currentPage === 1;
+  const isSalesInitialLoading = salesFetching && currentPage === 1;
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col">
-        {/* ================= HEADER ================= */}
         <header className="py-4 px-2">
           <DataTableHeader title="Route Dashboard" />
         </header>
 
         <div className="px-2">
-          <Card className="shadow-xs lg:px-4  mb-4">
-            <MyForm
-              onFilter={(f) => {
-                setGlobalFilters(f);
-                setTableFilters((prev) => ({
-                  ...prev,
-                  page: 1,
-                }));
-              }}
-            />
+          <Card className="shadow-xs lg:px-4 mb-4">
+            <MyForm onFilter={handleGlobalFilterChange} />
           </Card>
         </div>
 
@@ -175,11 +149,12 @@ export default function Salesdashboa() {
           <SectionCards filters={globalFilters} />
         </section>
 
+        {/* TOP CHARTS */}
         <section className="grid px-2 lg:pe-6 mb-6 gap-2 grid-cols-1 lg:grid-cols-[20%_40%_40%]">
           <GrowthLines data={regionData} isLoading={regionLoading} />
 
-          {isLoading ? (
-            <TableSkeleton />
+          {trendLoading ? (
+            <ChartSkeleton />
           ) : (
             <AdvancedBarChart data={monthlyTrend} />
           )}
@@ -188,44 +163,41 @@ export default function Salesdashboa() {
             <RainbowGlowGradientLineChart
               title="Drop Size by Revenue"
               height={150}
-              data={CompareDropSizeRevenue}
+              data={revenueData}
             />
-
             <RainbowGlowGradientLineChart
-              height={150}
-              data={CompareDropSizeVolume}
               title="Drop Size by Volume"
+              height={150}
+              data={volumeData}
             />
           </div>
         </section>
 
-        {/* ================= ROUTE PERFORMANCE ================= */}
+        {/* PERFORMANCE SECTION */}
         <section className="px-2 mb-6">
           <div className="mb-4">
             <DataTableSubHeader title="Route Performance" />
           </div>
 
-          <Card className="shadow-xs lg:px-2">
-            {/* ✅ Applied the useCallback function here */}
+          <Card className="shadow-xs lg:px-2 mb-4">
             <MyForm1 onTypeChange={handlePerformanceTypeChange} />
           </Card>
 
-          <div className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-2">
+          <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
             <CommonDataTable
               title="TOP PERFORMER"
               columns={routeSalesCollectionColumns}
               data={performance}
               pageSize={5}
-              isFetching={performanceLoading}
+              isFetching={perfLoading}
             />
-
-            {!performanceGraph ? (
-              <TableSkeleton />
+            {perfGraphLoading ? (
+              <ChartSkeleton />
             ) : (
               <RainbowGlowGradientLineChart
                 height={280}
-                title="Monthly Route Performance"
-                data={performanceGraph?.chart_data}
+                title={`Monthly ${performanceType === "routes" ? "Route" : "Salesmen"} Performance`}
+                data={performanceGraph?.chart_data || []}
                 xKey="label"
                 yKey="y"
               />
@@ -233,7 +205,7 @@ export default function Salesdashboa() {
           </div>
         </section>
 
-        {/* ================= EXPENSE ================= */}
+        {/* EXPENSE SECTION */}
         <section className="px-2 mb-6">
           <div className="mb-4">
             <DataTableSubHeader title="Route Expense Analysis" />
@@ -248,13 +220,13 @@ export default function Salesdashboa() {
               pageSize={5}
               isFetching={expenseLoading}
             />
-            {!expenseGraph ? (
-              <TableSkeleton />
+            {expenseGraphLoading ? (
+              <ChartSkeleton />
             ) : (
               <RainbowGlowGradientLineChart
                 height={280}
-                title="Monthly Expense by Route"
-                data={expenseGraph?.chart_data}
+                title="Monthly Expense Trends"
+                data={expenseGraph?.chart_data || []}
                 xKey="label"
                 yKey="y"
               />
@@ -262,49 +234,33 @@ export default function Salesdashboa() {
           </div>
         </section>
 
-        {/* ================= SALES REPORT ================= */}
+        {/* TABLES */}
         <section className="px-2 mb-6">
-          <div className="mb-4">
-            <DataTableSubHeader title="Route Wise Sales Report" />
-          </div>
+          <DataTableSubHeader title="Route Wise Sales Report" />
           {isSalesInitialLoading ? (
             <TableSkeleton />
           ) : (
             <CommonDataTables
               columns={routeSalesColumns}
-              data={salesAllData}
-              pagination={salesPagination}
-              isFetchingMore={isSalesFetchingMore}
-              onNext={() =>
-                setTableFilters((prev) => ({
-                  ...prev,
-                  page: (prev.page ?? 1) + 1,
-                }))
-              }
+              data={salesReportData}
+              pagination={salesRes?.pagination}
+              isFetchingMore={salesFetching && currentPage > 1}
+              onNext={handleLoadMore}
             />
           )}
         </section>
 
-        {/* ================= EFFICIENCY ================= */}
         <section className="px-2 pb-12">
-          <div className="mb-4">
-            <DataTableSubHeader title="Route Efficiency Overview" />
-          </div>
-
-          {isInitialLoading ? (
+          <DataTableSubHeader title="Route Efficiency Overview" />
+          {isEfficiencyInitialLoading ? (
             <TableSkeleton />
           ) : (
             <CommonDataTables
               columns={salesColumns}
-              data={allData}
-              pagination={pagination}
-              isFetchingMore={isFetchingMore}
-              onNext={() =>
-                setTableFilters((prev) => ({
-                  ...prev,
-                  page: (prev.page ?? 1) + 1,
-                }))
-              }
+              data={efficiencyData}
+              pagination={efficiencyRes?.pagination}
+              isFetchingMore={efficiencyFetching && currentPage > 1}
+              onNext={handleLoadMore}
             />
           )}
         </section>

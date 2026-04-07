@@ -1,16 +1,15 @@
 import api from "@/lib/apiClient";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-
 import { ApiResponse, SelectOption, SalesFilterPayload } from "./types";
 
 /* ========================================================================== */
-/*                              HELPER FUNCTION                               */
+/* HELPER FUNCTIONS                             */
 /* ========================================================================== */
 
 const mapOptions = (data: ApiResponse<any[]>): SelectOption[] => {
   if (!data?.data) return [];
   return data.data.map((item: any) => ({
-    value: String(item.id),
+    value: String(item.id || ""),
     label:
       item.region_name ??
       item.sub_region_name ??
@@ -20,176 +19,134 @@ const mapOptions = (data: ApiResponse<any[]>): SelectOption[] => {
   }));
 };
 
-/* ========================================================================== */
-/*                               MASTER FETCHER                               */
-/* ========================================================================== */
+const serializeFilters = (
+  filters?: SalesFilterPayload,
+): Record<string, string> => {
+  if (!filters) return {};
+  return Object.entries(filters).reduce(
+    (acc, [key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        acc[key] = value instanceof Date ? value.toISOString() : String(value);
+      }
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+};
 
 const fetchMaster = async (
   endpoint: string,
   params: Record<string, string> = {},
 ) => {
-  const filteredParams = Object.fromEntries(
-    Object.entries(params).filter(([_, value]) => value),
-  );
-
-  const query = new URLSearchParams(filteredParams).toString();
+  const query = new URLSearchParams(params).toString();
   const url = query ? `${endpoint}?${query}` : endpoint;
   const { data } = await api.get(url);
   return data;
 };
 
 /* ========================================================================== */
-/*                           FILTER DROPDOWN HOOKS                            */
+/* FILTER DROPDOWN HOOKS                           */
 /* ========================================================================== */
-
-/* REGIONS */
 
 export const useRegions = () =>
   useQuery<SelectOption[]>({
     queryKey: ["regions"],
-
     queryFn: async () => {
       const data = await fetchMaster("/route-analysis-dropdowns/regions");
-
       return mapOptions(data);
     },
-
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   });
 
-/* WAREHOUSES */
-
 export const useSubregion = (regionId?: string) =>
   useQuery<SelectOption[]>({
     queryKey: ["sub-region", regionId],
-
     queryFn: async () => {
       const data = await fetchMaster("/route-analysis-dropdowns/sub-regions", {
         region_id: regionId || "",
       });
-
       return mapOptions(data);
     },
-
     enabled: !!regionId,
     refetchOnWindowFocus: false,
   });
 
-/* SALES AREAS */
-
 export const useWarehouses = (warehouseId?: string) =>
   useQuery<SelectOption[]>({
     queryKey: ["warehouse", warehouseId],
-
     queryFn: async () => {
       const data = await fetchMaster("/route-analysis-dropdowns/warehouses", {
         warehouse_id: warehouseId || "",
       });
-
       return mapOptions(data);
     },
-
     enabled: !!warehouseId,
     refetchOnWindowFocus: false,
   });
 
-/* ROUTES */
-
 export const useRoutes = (salesAreaId?: string) =>
   useQuery<SelectOption[]>({
     queryKey: ["routes", salesAreaId],
-
     queryFn: async () => {
       const data = await fetchMaster("/route-analysis-dropdowns/routes", {
         sales_area_id: salesAreaId || "",
       });
-
       return mapOptions(data);
     },
-
     enabled: !!salesAreaId,
     refetchOnWindowFocus: false,
   });
 
 /* ========================================================================== */
-/*                             DASHBOARD SUMMARY                              */
+/* DASHBOARD SUMMARY                              */
 /* ========================================================================== */
 
 export const useDashboardSummary = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["customer-summary", filters],
-
+    queryKey: ["customer-summary", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams(
-        (filters ?? {}) as Record<string, string>,
-      ).toString();
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.get(`/route-analysis/summary?${query}`);
-
       return data;
     },
-
     refetchOnWindowFocus: false,
   });
 
 export const useGrowthPerformance = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["region-performance", filters],
-
+    queryKey: ["region-performance", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams(
-        Object.entries(filters ?? {}).reduce(
-          (acc, [key, value]) => {
-            if (value !== undefined && value !== null) {
-              if (value instanceof Date) {
-                acc[key] = value.toISOString();
-              } else {
-                acc[key] = String(value);
-              }
-            }
-            return acc;
-          },
-          {} as Record<string, string>,
-        ),
-      ).toString();
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.get(
         `/route-analysis/route-completion?${query}`,
       );
-
-      return data?.data || null; // ✅ return raw
+      return data?.data || null;
     },
-
     refetchOnWindowFocus: false,
   });
 
 export const useMonthlyTrend = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["route-monthly-trend", filters],
-
+    queryKey: ["route-monthly-trend", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams(
-        (filters ?? {}) as Record<string, string>,
-      ).toString();
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.post(`/route-analysis/monthly-trend?${query}`);
 
       const completion = data?.data?.completion || [];
       const success = data?.data?.success || [];
       const incompletion = data?.data?.incompletion || [];
 
-      const merged = completion.map((item: any, index: number) => ({
+      return completion.map((item: any, index: number) => ({
         name: item.label,
-
-        // ✅ match chart keys
         completion: item.y || 0,
         success: success[index]?.y || 0,
         incompletion: incompletion[index]?.y || 0,
       }));
-
-      return merged;
     },
-
     refetchOnWindowFocus: false,
   });
 
@@ -197,16 +154,13 @@ export const useMonthlyCompareDropSizeRevenue = (
   filters?: SalesFilterPayload,
 ) =>
   useQuery({
-    queryKey: ["customer-monthly-trend", filters],
-
+    queryKey: ["drop-size-revenue", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams(
-        (filters ?? {}) as Record<string, string>,
-      ).toString();
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.get(
         `/route-analysis/drop-size-revenue?${query}`,
       );
-
       return (
         data?.data?.map((item: any) => ({
           month: item.label,
@@ -214,22 +168,18 @@ export const useMonthlyCompareDropSizeRevenue = (
         })) || []
       );
     },
-
     refetchOnWindowFocus: false,
   });
 
 export const useMonthlyCompareDropSizeVolume = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["customer-monthly-trend", filters],
-
+    queryKey: ["drop-size-volume", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams(
-        (filters ?? {}) as Record<string, string>,
-      ).toString();
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.get(
         `/route-analysis/drop-size-volume?${query}`,
       );
-
       return (
         data?.data?.map((item: any) => ({
           month: item.label,
@@ -237,27 +187,8 @@ export const useMonthlyCompareDropSizeVolume = (filters?: SalesFilterPayload) =>
         })) || []
       );
     },
-
     refetchOnWindowFocus: false,
   });
-
-// export const useRoutePerformance = (filters?: SalesFilterPayload) =>
-//   useQuery({
-//     queryKey: ["route-performance", filters],
-//     queryFn: async () => {
-//       const query = new URLSearchParams((filters ?? {}) as any).toString();
-
-//       const { data } = await api.get(`/route-analysis/performance?${query}`);
-
-//       return (
-//         data?.data?.table_data?.map((item: any) => ({
-//           route: item.name,
-//           totalSales: item.total_sales ?? 0,
-//           totalCollection: item.total_collection ?? 0,
-//         })) || []
-//       );
-//     },
-//   });
 
 export const useRoutePerformance = (
   filters?: SalesFilterPayload,
@@ -266,20 +197,19 @@ export const useRoutePerformance = (
   useQuery({
     queryKey: ["route-performance", JSON.stringify(filters), type],
     queryFn: async () => {
-      const query = new URLSearchParams((filters ?? {}) as any).toString();
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const baseUrl =
         type === "salesmen"
           ? "/route-analysis/performance/salesmen"
           : "/route-analysis/performance/routes";
 
-      // ✅ handle empty query properly
-      const endpoint = query ? `${baseUrl}?${query}` : `${baseUrl}?`;
+      const url = query ? `${baseUrl}?${query}` : baseUrl;
+      const { data } = await api.get(url);
 
-      const { data } = await api.get(endpoint);
       return (
         data?.data?.table_data?.map((item: any) => ({
-          route: item.name, // ✅ map correctly
+          route: item.name,
           totalSales: item.total_sales ?? 0,
           totalCollection: item.total_collection ?? 0,
           totalReturn: item.total_return ?? 0,
@@ -287,10 +217,6 @@ export const useRoutePerformance = (
         })) || []
       );
     },
-
-    // ✅ always run on load
-    enabled: true,
-    refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
@@ -300,33 +226,27 @@ export const useRoutePerformanceGraph = (
 ) =>
   useQuery({
     queryKey: ["route-performance-graph", JSON.stringify(filters), type],
-
     queryFn: async () => {
-      const query = new URLSearchParams((filters ?? {}) as any).toString();
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const baseUrl =
         type === "salesmen"
-          ? "route-analysis/performance/salesmen"
-          : "route-analysis/performance/routes";
+          ? "/route-analysis/performance/salesmen"
+          : "/route-analysis/performance/routes";
 
-      const endpoint = query ? `${baseUrl}?${query}` : `${baseUrl}?`;
-
-      const { data } = await api.get(endpoint);
-
+      const url = query ? `${baseUrl}?${query}` : baseUrl;
+      const { data } = await api.get(url);
       return data?.data || {};
     },
-    // ✅ always run on load
-    enabled: true,
-    refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
 export const useRouteExpense = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["route-expense", filters],
+    queryKey: ["route-expense", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams((filters ?? {}) as any).toString();
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.get(
         `/route-analysis/expense-analysis?${query}`,
       );
@@ -338,35 +258,40 @@ export const useRouteExpense = (filters?: SalesFilterPayload) =>
         })) || []
       );
     },
+    refetchOnWindowFocus: false,
   });
 
-export const useRouteExpenseGraph = () =>
+export const useRouteExpenseGraph = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["route-expense-graph"], // 🔥 no filters
-
+    queryKey: ["route-expense-graph", JSON.stringify(filters)],
     queryFn: async () => {
-      const { data } = await api.get(`/route-analysis/expense-analysis`);
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
+      const url = query
+        ? `/route-analysis/expense-analysis?${query}`
+        : `/route-analysis/expense-analysis`;
+      const { data } = await api.get(url);
       return data?.data || {};
     },
-
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 5,
   });
 
 export const useRouteWiseSales = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["route-sales", filters],
+    queryKey: ["route-sales", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams((filters ?? {}) as any).toString();
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.post(`/route-analysis/wise-sales?${query}`);
 
       return {
         tableData:
           data?.data?.map((item: any, index: number) => ({
-            sno: index + 1,
+            sno:
+              (Number(filters?.page || 1) - 1) * Number(filters?.length || 10) +
+              index +
+              1,
             route: item.route_name,
-
             todaySales: item.today_sales ?? 0,
             yesterdaySales: item.yesterday_sales ?? 0,
             weeklySales: item.weekly_sales ?? 0,
@@ -375,20 +300,19 @@ export const useRouteWiseSales = (filters?: SalesFilterPayload) =>
             quarterSales: item.quarter_sales ?? 0,
             yearSales: item.year_sales ?? 0,
           })) || [],
-
-        pagination: data?.pagination, // ✅ IMPORTANT
+        pagination: data?.pagination,
       };
     },
-    placeholderData: keepPreviousData, // ✅ correct
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
 
 export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
   useQuery({
-    queryKey: ["route-efficiency", filters],
+    queryKey: ["route-efficiency", JSON.stringify(filters)],
     queryFn: async () => {
-      const query = new URLSearchParams((filters ?? {}) as any).toString();
-
+      const params = serializeFilters(filters);
+      const query = new URLSearchParams(params).toString();
       const { data } = await api.post(
         `/route-analysis/efficiency-overview?${query}`,
       );
@@ -396,27 +320,26 @@ export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
       return {
         tableData:
           data?.data?.map((item: any, index: number) => ({
-            sno: index + 1,
+            sno:
+              (Number(filters?.page || 1) - 1) * Number(filters?.length || 10) +
+              index +
+              1,
             route: item.route_name,
             warehouse: item.warehouse_name,
             salesman: item.salesman_name,
-
             totalCustomer: item.total_customer ?? 0,
             totalVisitDays: item.total_visit_days ?? 0,
             plannedVisit: item.planned_visit ?? 0,
             dropRate: item.drop_rate ?? 0,
-
             salesValue: item.sales_inv_value ?? 0,
             salesPerDay: item.sales_per_day ?? 0,
-
             totalCollection: item.total_collection ?? 0,
             collectionPerDay: item.collection_per_day ?? 0,
             pendingCollection: item.pending_collection ?? 0,
           })) || [],
-
-        pagination: data?.pagination, // ✅ VERY IMPORTANT
+        pagination: data?.pagination,
       };
     },
-    placeholderData: keepPreviousData, // ✅ correct
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });

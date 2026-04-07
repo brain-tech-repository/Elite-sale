@@ -10,7 +10,9 @@ import { RainbowGlowGradientLineChart } from "@/components/ui/rainbow-glow-gradi
 import { AnimatedHighlightedAreaChart } from "@/components/ui/animated-highlighted-chart";
 /* SKELETON */
 import {
+  BarGraphSkeleton,
   ChartSkeleton,
+  PieChartSkeleton,
   TableSkeleton,
 } from "@/components/ui/dashboard-skeleton";
 /* LOCAL */
@@ -47,6 +49,11 @@ export default function Salesdashboa() {
   const [selectedMonth, setSelectedMonth] = React.useState<string | null>(
     "April",
   );
+
+  // For Distributor chart (BOTTOM) ✅ NEW
+  const [distYear, setDistYear] = React.useState("2026");
+  const [distMonth, setDistMonth] = React.useState<string | null>("April");
+
   const [sortType, setSortType] = React.useState("TARGET");
   const [loadStep, setLoadStep] = React.useState(0);
 
@@ -87,8 +94,10 @@ export default function Salesdashboa() {
     useYearlySalesTrend(year, filters, loadStep >= 1);
   const { data: monthlyData = [], isFetching: monthlyLoading } =
     useMonthlySalesTrend(year, selectedMonth, filters, loadStep >= 2);
+  const selectedDistMonthNumber = monthMap[distMonth || "Apr"];
+
   const { data: distributorData = [], isFetching: distributorLoading } =
-    useDistributorChart(year, selectedMonthNumber, loadStep >= 3);
+    useDistributorChart(distYear, selectedDistMonthNumber, loadStep >= 3);
   const { data: regionPerformance = {}, isFetching: regionLoading } =
     useRegionPerformance(filters, loadStep >= 4);
   const { data: brandPerformance = {}, isFetching: brandLoading } =
@@ -179,18 +188,18 @@ export default function Salesdashboa() {
           <DataTableSubHeader title="Target Overview" />
           <div className="grid grid-cols-1 gap-1 mt-4">
             {loadStep < 3 || (distributorLoading && loadStep === 3) ? (
-              <ChartSkeleton />
+              <BarGraphSkeleton />
             ) : (
               <AdvancedBarChart1
                 height={300}
                 data={distributorData}
                 showFilter={true}
                 title="Distributor Target vs Achieved"
-                year={year}
-                month={selectedMonth || "Apr"}
+                year={distYear} // ✅ changed
+                month={distMonth || "Apr"} // ✅ changed
                 sortType={sortType}
-                setYear={setYear}
-                setMonth={setSelectedMonth}
+                setYear={setDistYear} // ✅ changed
+                setMonth={setDistMonth} // ✅ changed
                 setSortType={setSortType}
               />
             )}
@@ -238,7 +247,7 @@ export default function Salesdashboa() {
               {loadStep < sec.step || (sec.loading && loadStep === sec.step) ? (
                 <>
                   <TableSkeleton />
-                  <ChartSkeleton />
+                  <PieChartSkeleton />
                   <ChartSkeleton />
                 </>
               ) : (

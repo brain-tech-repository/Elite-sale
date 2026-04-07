@@ -33,13 +33,6 @@ const mapSpecificSelection = (data: any): SelectOption[] => {
   }));
 };
 
-/* ================= API CALL ================= */
-
-const fetcher = async (url: string) => {
-  const { data } = await api.get(url);
-  return data;
-};
-
 /* ================= HOOKS ================= */
 
 /* ORDER TYPES */
@@ -47,7 +40,7 @@ export const useOrderTypes = () =>
   useQuery<SelectOption[]>({
     queryKey: ["order-types"],
     queryFn: async () => {
-      const data = await fetcher("/order-analysis/order-types");
+      const { data } = await api.get("/order-analysis/order-types");
       return mapOrderTypes(data);
     },
     staleTime: 1000 * 60 * 5,
@@ -57,30 +50,20 @@ export const useOrderTypes = () =>
 export const useSpecificSelection = (orderType?: string) =>
   useQuery<SelectOption[]>({
     queryKey: ["specific-selection", orderType],
-
     queryFn: async () => {
-      const data = await fetcher(
-        `/order-analysis/specific-selection?order_type=${orderType}`,
-      );
+      const { data } = await api.post("/order-analysis/specific-selection", {
+        order_type: orderType ? Number(orderType) : undefined,
+      });
       return mapSpecificSelection(data);
     },
-
-    enabled: !!orderType, // 🔥 important
+    enabled: !!orderType,
   });
-
-//   summary cards
 
 /* ================= CHART ================= */
 
-type ChartResponse = {
-  success: boolean;
-  message: string;
-  data: { label: string; y: number }[];
-};
-
 type ChartFilters = {
-  order_type?: string;
-  card_type?: string; // ✅ NEW
+  order_type?: number;
+  card_type?: string;
 };
 
 export const useOrderChart = (filters?: ChartFilters) =>
@@ -88,10 +71,15 @@ export const useOrderChart = (filters?: ChartFilters) =>
     queryKey: ["order-chart", filters],
 
     queryFn: async () => {
-      const params = new URLSearchParams({
-        order_type: filters?.order_type || "",
-        card_type: filters?.card_type || "", // ✅ ADD
-      });
+      const params = new URLSearchParams();
+
+      if (filters?.order_type !== undefined) {
+        params.append("order_type", String(filters.order_type));
+      }
+
+      if (filters?.card_type) {
+        params.append("card_type", filters.card_type);
+      }
 
       const { data } = await api.get(
         `/order-analysis/chart-data?${params.toString()}`,
@@ -104,17 +92,30 @@ export const useOrderChart = (filters?: ChartFilters) =>
     refetchOnWindowFocus: false,
   });
 
+/* ================= SUMMARY ================= */
+
 export const useOrderSummary = (filters?: OrderSummaryFilters) =>
   useQuery({
     queryKey: ["order-summary", filters],
 
     queryFn: async () => {
-      const params = new URLSearchParams({
-        order_type: filters?.order_type || "",
-        from_date: filters?.from_date || "",
-        to_date: filters?.to_date || "",
-        specific_ids: filters?.specific_selection || "",
-      });
+      const params = new URLSearchParams();
+
+      if (filters?.order_type !== undefined) {
+        params.append("order_type", String(filters.order_type));
+      }
+
+      if (filters?.from_date) {
+        params.append("from_date", filters.from_date);
+      }
+
+      if (filters?.to_date) {
+        params.append("to_date", filters.to_date);
+      }
+
+      if (filters?.specific_selection !== undefined) {
+        params.append("specific_ids", String(filters.specific_selection));
+      }
 
       const { data } = await api.get(
         `/order-analysis/summary-cards?${params.toString()}`,
@@ -123,9 +124,10 @@ export const useOrderSummary = (filters?: OrderSummaryFilters) =>
       return data as OrderSummaryResponse;
     },
 
-    // enabled: !!filters?.order_type, // 🔥 important
     refetchOnWindowFocus: false,
   });
+
+/* ================= TABLE ================= */
 
 type TableFilters = OrderSummaryFilters & {
   page?: number;
@@ -139,21 +141,36 @@ export const useOrderTable = (
     queryKey: ["order-table", filters],
 
     queryFn: async () => {
-      const params = new URLSearchParams({
-        order_type: filters?.order_type || "",
-        from_date: filters?.from_date || "",
-        to_date: filters?.to_date || "",
-        page: String(filters?.page || 1),
-        per_page: String(filters?.per_page || 10),
-        card_type: filters?.card_type || "", // ✅ ADD
-      });
+      const params = new URLSearchParams();
+
+      if (filters?.order_type !== undefined) {
+        params.append("order_type", String(filters.order_type));
+      }
+
+      if (filters?.from_date) {
+        params.append("from_date", filters.from_date);
+      }
+
+      if (filters?.to_date) {
+        params.append("to_date", filters.to_date);
+      }
+
+      if (filters?.page !== undefined) {
+        params.append("page", String(filters.page));
+      }
+
+      if (filters?.per_page !== undefined) {
+        params.append("per_page", String(filters.per_page));
+      }
+
+      if (filters?.card_type) {
+        params.append("card_type", filters.card_type);
+      }
 
       const { data } = await api.get(
         `/order-analysis/table-data?${params.toString()}`,
       );
 
-      return data;
+      return data as OrderTableResponse;
     },
-
-    // enabled: !!filters?.order_type,
   });

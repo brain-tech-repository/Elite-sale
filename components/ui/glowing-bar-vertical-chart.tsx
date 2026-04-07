@@ -31,21 +31,20 @@ export const description = "A bar chart";
 /* ---------------- REGION COLOR PALETTE ---------------- */
 
 const regionColorMap: Record<string, string> = {
-  "Mid West": "#1f77b4",
-  "North West": "#15427e",
-  "South West": "#2ca02c",
-  Nile: "#d62728",
-  "Central 2": "#9467bd",
-  "Central 1": "#8c564b",
-  Albertine: "#af6ba6",
-  "West Nile": "#7f7f7f",
-  East: "#bcbd22",
-  North: "#17becf",
-  "LAKE ZONE": "#4e79a7",
+  "mid west": "#1f77b4",
+  "north west": "#bcbd22  ",
+  "south west": "#072246 ",
+  nile: "#d62728",
+  CENTRAL: "#8344bd",
+  central: "#0e6c79", // ✅ FIXED
+  albertine: "#ad269b",
+  "west nile": "#7f7f7f",
+  east: "#3fa880",
+  north: "#17becf",
+  "lake zone": "#4e79a7",
   "west w": "#f28e2b",
-  north: "#b35f61",
   south: "#76b7b2",
-  METRO: "#59a14f",
+  metro: "#59a14f",
 };
 
 /* ---------------- CHART CONFIG ---------------- */
@@ -125,6 +124,13 @@ export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
     );
   };
 
+  const normalizeRegion = (r: string) =>
+    r
+      ?.toLowerCase()
+      ?.trim()
+      ?.replace(/[_-]/g, " ") // handle _ and -
+      ?.replace(/\s+/g, " "); // remove extra spaces
+
   return (
     <Card className="p-[0px] m-[0px]">
       {/* <CardHeader>... existing Header content ...</CardHeader> */}
@@ -173,7 +179,7 @@ export function GlowingBarVerticalChart({ data = [], regions = [] }: Props) {
                   dataKey={region}
                   // NEW: Pass the hide prop conditionally based on state
                   hide={hiddenRegions.includes(region)}
-                  fill={regionColorMap[region] || "#ccc"}
+                  fill={regionColorMap[normalizeRegion(region)] || "#ccc"}
                   radius={1}
                   shape={(props: any) => (
                     <CustomGradientBar
