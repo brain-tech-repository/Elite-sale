@@ -23,7 +23,7 @@ interface CommonTableProps<TData, TValue> {
   pageSize?: number;
   headerTitle?: string;
   onFilter?: (filters: any) => void;
-
+  isFetching?: boolean; //
   pagination?: any;
   onNext?: () => void;
   onPrev?: () => void;
@@ -36,6 +36,7 @@ interface CommonTableProps<TData, TValue> {
 export function CommonDataTables<TData, TValue>({
   headerTitle,
   onFilter,
+  isFetching,
   columns,
   data,
   pagination,
@@ -139,7 +140,11 @@ export function CommonDataTables<TData, TValue>({
           }
           height={300}
         >
-          <DataTableColumns table={table} columnsLength={columns.length} />
+          <DataTableColumns
+            table={table}
+            columnsLength={columns.length}
+            isFetching={isFetching || (isFetchingMore && data.length === 0)}
+          />
         </InfiniteScroll>
       </div>
 

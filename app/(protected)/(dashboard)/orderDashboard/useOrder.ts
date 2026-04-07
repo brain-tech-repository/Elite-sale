@@ -1,5 +1,5 @@
 import api from "@/lib/apiClient";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   OrderSummaryFilters,
   OrderSummaryResponse,
@@ -173,4 +173,6 @@ export const useOrderTable = (
 
       return data as OrderTableResponse;
     },
+    placeholderData: keepPreviousData, // ✅ correct
+    refetchOnWindowFocus: false,
   });

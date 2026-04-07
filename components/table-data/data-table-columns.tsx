@@ -15,11 +15,13 @@ import { flexRender } from "@tanstack/react-table";
 interface DataTableColumnsProps<TData> {
   table: Table<TData>;
   columnsLength: number;
+  isFetching?: boolean; // Added isFetching prop
 }
 
 export function DataTableColumns<TData>({
   table,
   columnsLength,
+  isFetching = false, // Default to false
 }: DataTableColumnsProps<TData>) {
   return (
     <UITable>
@@ -47,7 +49,22 @@ export function DataTableColumns<TData>({
 
       {/* BODY */}
       <TableBody>
-        {table.getRowModel().rows?.length ? (
+        {isFetching ? (
+          /* --- LOADER START --- */
+          Array.from({ length: 10 }).map((_, i) => (
+            <TableRow key={i}>
+              {Array.from({ length: columnsLength }).map((_, index) => (
+                <TableCell
+                  key={index}
+                  className="border-r px-4 py-3 last:border-r-0"
+                >
+                  <div className="h-4 w-full animate-pulse rounded bg-gray-200" />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))
+        ) : /* --- LOADER END --- */
+        table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
             <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (

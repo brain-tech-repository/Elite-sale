@@ -21,10 +21,7 @@ import {
 } from "./useMaterial";
 import { SalesFilterPayload } from "./types";
 import { skuColumns } from "./components/columns1";
-import {
-  ChartSkeleton,
-  TableSkeleton,
-} from "@/components/ui/dashboard-skeleton";
+import { ChartSkeleton } from "@/components/ui/dashboard-skeleton";
 import GradientBarChart from "@/components/ui/BarChart";
 
 export default function Salesdashboa() {
@@ -35,36 +32,27 @@ export default function Salesdashboa() {
   });
 
   useEffect(() => {
-    // Reset page to 1 when filters change
     setTableFilters((prev) => ({
       ...prev,
       page: 1,
     }));
-    // Clear old table data
     setAllData([]);
   }, [filters]);
 
   /* =========================
       API CALLS
   ========================= */
-
-  // Main Material Performance Table
-  const {
-    data: materialRes,
-    isLoading: materialLoading,
-    isFetching: materialFetching,
-  } = useMaterialPerformance(filters, tableFilters.page, tableFilters.length);
+  const { data: materialRes, isFetching: materialFetching } =
+    useMaterialPerformance(filters, tableFilters.page, tableFilters.length);
 
   const materialData = materialRes?.tableData ?? [];
   const pagination = materialRes?.pagination;
 
-  // Active/Inactive SKU Tables
   const { data: activeSkus = [], isFetching: activeFetching } =
     useActiveSkus(filters);
   const { data: inactiveSkus = [], isFetching: inactiveFetching } =
     useInactiveSkus(filters);
 
-  // Charts
   const {
     data: volumeGrowth = { daily: [], monthly: [], yearly: [] },
     isLoading: volumeLoading,
@@ -79,8 +67,17 @@ export default function Salesdashboa() {
     useTopMaterialByValue(filters);
 
   /* =========================
-      PAGINATION LOGIC
+      DATA ACCUMULATION
   ========================= */
+  const [allData, setAllData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!materialData) return;
+    setAllData((prev) => {
+      if (tableFilters.page === 1) return materialData;
+      return [...prev, ...materialData];
+    });
+  }, [materialData, tableFilters.page]);
 
   const handleNext = () => {
     if (pagination?.current_page < pagination?.total_pages) {
@@ -100,45 +97,30 @@ export default function Salesdashboa() {
     }
   };
 
-  const [allData, setAllData] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (!materialData) return;
-    setAllData((prev) => {
-      if (tableFilters.page === 1) return materialData;
-      return [...prev, ...materialData];
-    });
-  }, [materialData, tableFilters.page]);
-
   /* =========================
       DERIVED LOADING STATES
   ========================= */
   const page = tableFilters.page ?? 1;
-  // Show skeleton if it's the very first load OR if filters changed (fetching on page 1)
-  const showMainTableSkeleton =
-    materialLoading || (materialFetching && page === 1);
+  // This triggers the inline pulse skeleton for the main table
+  const isMainTableInitialLoading = materialFetching && page === 1;
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col">
-        {/* PAGE HEADER */}
         <div className="py-6 px-6">
           <DataTableHeader title="Material Dashboard" />
         </div>
 
-        {/* FILTERS */}
         <div className="lg:px-6 px-1 pb-4">
           <Card className="shadow-xm">
             <MyForm onFilter={setFilters} />
           </Card>
         </div>
 
-        {/* KPI CARDS */}
         <div className="lg:px-6 px-1 pb-6">
           <SectionCards filters={filters} />
         </div>
 
-        {/* TOP CHARTS */}
         <div className="lg:px-6 px-1 pb-8">
           <section className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-2">
             <div className="lg:col-span-1 space-y-2">
@@ -156,7 +138,6 @@ export default function Salesdashboa() {
                 />
               )}
             </div>
-
             <div className="lg:col-span-1 space-y-2">
               <DataTableSubHeader title="Top Material By Value" />
               {valuesLoading ? (
@@ -175,31 +156,29 @@ export default function Salesdashboa() {
           </section>
         </div>
 
-        {/* MAIN PERFORMANCE TABLE */}
+        {/* MAIN PERFORMANCE TABLE: Skeletons removed in favor of inline loaders */}
         <section className="px-2 lg:px-6 pb-12">
-          {showMainTableSkeleton ? (
-            <TableSkeleton />
-          ) : (
-            <CommonDataTables
-              headerTitle="Material Performance"
-              columns={salesColumns}
-              data={allData}
-              pagination={pagination}
-              isFetchingMore={materialFetching && page > 1}
-              onNext={handleNext}
-              onPrev={handlePrev}
-            />
-          )}
+          <CommonDataTables
+            headerTitle="Material Performance"
+            columns={salesColumns}
+            data={allData}
+            pagination={pagination}
+            // ✅ UPDATED: Trigger inline pulse skeleton
+            isFetching={isMainTableInitialLoading}
+            isFetchingMore={materialFetching && page > 1}
+            onNext={handleNext}
+            onPrev={handlePrev}
+          />
         </section>
 
-        {/* VOLUME GROWTH CHARTS */}
         <div className="lg:px-6 px-1 pb-10">
           <DataTableSubHeader title="Material Volume Growth" />
           <section className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-3">
             {volumeLoading ? (
               <>
-                {" "}
-                <ChartSkeleton /> <ChartSkeleton /> <ChartSkeleton />{" "}
+                <ChartSkeleton />
+                <ChartSkeleton />
+                <ChartSkeleton />
               </>
             ) : (
               <>
@@ -226,14 +205,14 @@ export default function Salesdashboa() {
           </section>
         </div>
 
-        {/* VALUE GROWTH CHARTS */}
         <div className="lg:px-6 px-1 pb-10">
           <DataTableSubHeader title="Material Value Growth" />
           <section className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-3">
             {valueLoading ? (
               <>
-                {" "}
-                <ChartSkeleton /> <ChartSkeleton /> <ChartSkeleton />{" "}
+                <ChartSkeleton />
+                <ChartSkeleton />
+                <ChartSkeleton />
               </>
             ) : (
               <>
@@ -260,33 +239,27 @@ export default function Salesdashboa() {
           </section>
         </div>
 
-        {/* ACTIVE / INACTIVE SKUs */}
+        {/* ACTIVE / INACTIVE SKUs: Skeletons removed in favor of internal pulse loaders */}
         <section className="grid gap-2 mt-4 grid-cols-1 lg:grid-cols-2 lg:px-6 px-1 pb-10">
           <div className="lg:col-span-1 space-y-2">
             <DataTableSubHeader title="Active SKUs (Last 2 Weeks)" />
-            {activeFetching ? (
-              <TableSkeleton />
-            ) : (
-              <CommonDataTable
-                columns={skuColumns}
-                data={activeSkus}
-                pageSize={5}
-                isFetching={activeFetching}
-              />
-            )}
+            <CommonDataTable
+              columns={skuColumns}
+              data={activeSkus}
+              pageSize={5}
+              // ✅ UPDATED: Pass fetching state directly to table rows
+              isFetching={activeFetching}
+            />
           </div>
           <div className="lg:col-span-1 space-y-2">
             <DataTableSubHeader title="Inactive SKUs (Last 2 Weeks)" />
-            {inactiveFetching ? (
-              <TableSkeleton />
-            ) : (
-              <CommonDataTable
-                columns={skuColumns}
-                data={inactiveSkus}
-                pageSize={5}
-                isFetching={inactiveFetching}
-              />
-            )}
+            <CommonDataTable
+              columns={skuColumns}
+              data={inactiveSkus}
+              pageSize={5}
+              // ✅ UPDATED: Pass fetching state directly to table rows
+              isFetching={inactiveFetching}
+            />
           </div>
         </section>
       </div>
