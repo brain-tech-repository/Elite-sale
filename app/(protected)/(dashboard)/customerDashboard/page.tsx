@@ -220,17 +220,6 @@ export default function CustomerDashboard() {
           <div className="mb-4">
             <DataTableSubHeader title="Filter Records" />
           </div>
-          {/* <Card className="shadow-xm">
-            <MyForm1
-              onFilter={(f) =>
-                setTableFilters((prev) => ({
-                  ...prev,
-                  ...f,
-                  page: 1, // reset page on filter change
-                }))
-              }
-            />
-          </Card> */}
         </section>
 
         {/* 6. DATA TABLE SECTION: Bottom padding to finish the page */}

@@ -21,10 +21,10 @@ export type OrderSummaryResponse = {
 };
 
 export type OrderSummaryFilters = {
-  order_type?: string;
+  order_type?: number;
   from_date?: string;
   to_date?: string;
-  specific_selection?: string; // map to specific_ids
+  specific_selection?: number;
 };
 
 export type OrderTableItem = {
@@ -40,6 +40,7 @@ export type OrderTableResponse = {
   success: boolean;
   message: string;
   data: OrderTableItem[];
+  headers: string[]; // ✅ ADD THIS
   pagination: {
     total_records: number;
     total_pages: number;

@@ -32,7 +32,7 @@ export default function Salesdashboa() {
   const today = new Date().toISOString().split("T")[0];
 
   const [globalFilters, setGlobalFilters] = useState<OrderSummaryFilters>({
-    order_type: "1",
+    order_type: 1,
     from_date: today,
     to_date: today,
   });
