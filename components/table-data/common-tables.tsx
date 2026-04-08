@@ -28,6 +28,7 @@ interface CommonTableProps<TData, TValue> {
   onNext?: () => void;
   onPrev?: () => void;
   isFetchingMore?: boolean;
+  tableHeight?: number | string;
   FilterComponent?: React.ComponentType<{
     onFilter: (filters: any) => void;
   }>;
@@ -44,6 +45,7 @@ export function CommonDataTables<TData, TValue>({
   onPrev,
   isFetchingMore,
   FilterComponent, // ✅ ADD THIS
+  tableHeight = 300,
 }: CommonTableProps<TData, TValue>) {
   // ✅ Ensure stable column IDs
   const columnIds = React.useMemo(
@@ -138,7 +140,7 @@ export function CommonDataTables<TData, TValue>({
               </p>
             ) : null
           }
-          height={300}
+          height={tableHeight}
         >
           <DataTableColumns
             table={table}
