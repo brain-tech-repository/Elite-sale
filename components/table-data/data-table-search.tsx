@@ -28,15 +28,23 @@ import {
 
 import { CSS } from "@dnd-kit/utilities";
 
-import { GripVertical, SlidersHorizontal, Columns, Filter } from "lucide-react";
+import {
+  GripVertical,
+  SlidersHorizontal,
+  Columns,
+  Filter,
+  Download,
+} from "lucide-react";
 
 interface DataTableSearchProps<TData> {
   onFilter?: (filters: any) => void;
   table: Table<TData>;
   title?: string;
+  onExport?: () => void; // ✅ optional
 
   FilterComponent?: React.ComponentType<{
     onFilter: (filters: any) => void;
+    // ✅ ADD THIS
   }>;
 }
 
@@ -73,6 +81,7 @@ export function DataTableSearch<TData>({
   table,
   title,
   onFilter,
+  onExport,
   FilterComponent,
 }: DataTableSearchProps<TData>) {
   const sensors = useSensors(useSensor(PointerSensor));
@@ -113,6 +122,11 @@ export function DataTableSearch<TData>({
 
         {/* ✅ RIGHT SIDE → ALWAYS SHOW SEARCH + COLUMN */}
         <div className="flex items-center gap-2 flex-wrap ml-auto">
+          <div className="flex items-center gap-2">
+            {/* ✅ ONLY SHOW IF PASSED */}
+
+            {FilterComponent && <FilterComponent onFilter={onFilter!} />}
+          </div>
           {/* 🔍 SEARCH (ALWAYS) */}
           <Input
             placeholder="Search..."
@@ -124,16 +138,31 @@ export function DataTableSearch<TData>({
             }
             className="w-[200px]"
           />
+          {onExport && (
+            <>
+              <Button
+                type="button"
+                // className="shadow-xm bg-[#022235] cursor-pointer text-white"
+                onClick={onExport}
+                size="sm"
+                variant="outline"
+              >
+                <Download size={16} />
+              </Button>
+            </>
+          )}
 
           {/* 🧪 FILTER (ONLY IF PROVIDED) */}
           {FilterComponent && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setOpenFilter((prev) => !prev)}
-            >
-              <Filter size={16} />
-            </Button>
+            <>
+              <Button
+                type="button"
+                className="shadow-xm bg-[#022235] cursor-pointer"
+                onClick={() => setOpenFilter((prev) => !prev)}
+              >
+                <Filter size={16} />
+              </Button>
+            </>
           )}
 
           {/* ⚙️ COLUMN MANAGER (ALWAYS) */}

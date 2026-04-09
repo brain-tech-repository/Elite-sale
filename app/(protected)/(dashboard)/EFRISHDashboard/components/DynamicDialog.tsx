@@ -13,6 +13,16 @@ type ModalType =
   | "stock_adjustment"
   | "stock_sync_adjustment"
   | "sync_route_invoice"
+  | "pending_grn"
+  | "sync_grn"
+  | "pending_route_return"
+  | "sync_route_return" // ✅ ADD
+  | "pending_order_return"
+  | "sync_order_return"
+  | "pending_sales_invoice"
+  | "sync_sales_invoice"
+  | "pending_counter_sales"
+  | "sync_counter_sales"
   | null;
 
 export function DynamicDialog({

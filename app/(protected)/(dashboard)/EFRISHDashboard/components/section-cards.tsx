@@ -11,9 +11,19 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"; // Optional: UI loading state
 import { DashboardStatsResponse } from "../types";
 import {
+  usePendingCounterSales,
+  usePendingGRN,
+  usePendingOrderReturn,
   usePendingRouteInvoices,
+  usePendingRouteReturn,
+  usePendingSalesInvoice,
   usePendingStockAdjustment,
+  useSyncCounterSales,
+  useSyncGRN,
+  useSyncOrderReturn,
   useSyncRouteInvoices,
+  useSyncRouteReturn,
+  useSyncSalesInvoice,
   useSyncStockAdjustment,
 } from "../usEfris";
 import { useState } from "react";
@@ -26,9 +36,15 @@ import {
 import { CommonDataTables } from "@/components/table-data/common-tables";
 import { DynamicDialog } from "./DynamicDialog";
 import {
+  counterSalesColumns,
+  orderReturnColumns,
+  pendingGRNColumns,
   pendingInvoiceColumns,
+  routeReturnColumns,
+  salesInvoiceColumns,
   stockAdjustmentColumns,
   stockAdjustmentsyncColumns,
+  syncGRNColumns,
 } from "./columns";
 
 type SectionCardsProps = {
@@ -75,6 +91,16 @@ export function SectionCards({
     | "stock_adjustment"
     | "stock_sync_adjustment"
     | "sync_route_invoice"
+    | "pending_grn"
+    | "sync_grn"
+    | "pending_route_return"
+    | "sync_route_return"
+    | "pending_order_return"
+    | "sync_order_return"
+    | "pending_sales_invoice"
+    | "sync_sales_invoice"
+    | "pending_counter_sales"
+    | "sync_counter_sales"
     | null
   >(null);
 
@@ -112,51 +138,61 @@ export function SectionCards({
       title: "Pending GRN",
       value: data?.total_pending_grn ?? 0,
       color: "bg-gradient-to-r from-[#020617] to-[#155e75]",
+      onClick: () => setActiveModal("pending_grn"),
     },
     {
       title: "Sync GRN",
       value: data?.total_sync_grn ?? 0,
       color: "bg-gradient-to-r from-[#134e4a] to-[#115e59]",
+      onClick: () => setActiveModal("sync_grn"),
     },
     {
       title: "Pending Route Return",
       value: data?.total_pending_route_return ?? 0,
       color: "bg-gradient-to-r from-[#1f2937] to-[#111827]",
+      onClick: () => setActiveModal("pending_route_return"),
     },
     {
       title: "Sync Route Return",
       value: data?.total_sync_route_return ?? 0,
       color: "bg-gradient-to-r from-[#134e4a] to-[#115e59]",
+      onClick: () => setActiveModal("sync_route_return"),
     },
     {
       title: "Pending Counter Sale",
       value: data?.total_pending_counter_sales ?? 0,
       color: "bg-gradient-to-r from-[#022c22] to-[#134e4a]",
+      onClick: () => setActiveModal("pending_counter_sales"),
     },
     {
       title: "Sync Counter Sale",
       value: data?.total_sync_counter_sales ?? 0,
       color: "bg-gradient-to-r from-[#083344] to-[#155e75]",
+      onClick: () => setActiveModal("sync_counter_sales"),
     },
     {
       title: "Pending Sales Invoice",
       value: data?.total_pending_sales_invoice,
       color: "bg-gradient-to-r from-[#022c22] to-[#134e4a]",
+      onClick: () => setActiveModal("pending_sales_invoice"),
     },
     {
       title: "Sync Sales Invoice",
       value: data?.total_sync_sales_invoice,
       color: "bg-gradient-to-r from-[#083344] to-[#155e75]",
+      onClick: () => setActiveModal("sync_sales_invoice"),
     },
     {
       title: "Pending Order Return",
       value: data?.total_pending_order_return,
       color: "bg-gradient-to-r from-[#062c30] to-[#0f766e]",
+      onClick: () => setActiveModal("pending_order_return"),
     },
     {
       title: "Sync Order Return",
       value: data?.total_sync_order_return,
       color: "bg-gradient-to-r from-[#021617] to-[#0f766e]",
+      onClick: () => setActiveModal("sync_order_return"),
     },
   ];
   const { data: invoiceData = [], isFetching: isFetchingInvoice } =
@@ -171,30 +207,136 @@ export function SectionCards({
   const { data: syncInvoiceData = [], isFetching: isFetchingSyncInvoice } =
     useSyncRouteInvoices(filters, activeModal === "sync_route_invoice");
 
+  const { data: grnData = [], isFetching: isFetchingGRN } = usePendingGRN(
+    filters,
+    activeModal === "pending_grn",
+  );
+
+  const { data: syncGrnData = [], isFetching: isFetchingSyncGRN } = useSyncGRN(
+    filters,
+    activeModal === "sync_grn",
+  );
+
+  const { data: routeReturnData = [], isFetching: isFetchingRouteReturn } =
+    usePendingRouteReturn(filters, activeModal === "pending_route_return");
+
+  const { data: orderReturnData = [], isFetching: isFetchingOrderReturn } =
+    usePendingOrderReturn(filters, activeModal === "pending_order_return");
+
+  const {
+    data: syncOrderReturnData = [],
+    isFetching: isFetchingSyncOrderReturn,
+  } = useSyncOrderReturn(filters, activeModal === "sync_order_return");
+
+  const { data: pendingSalesData = [], isFetching: isFetchingPendingSales } =
+    usePendingSalesInvoice(filters, activeModal === "pending_sales_invoice");
+
+  const { data: syncSalesData = [], isFetching: isFetchingSyncSales } =
+    useSyncSalesInvoice(filters, activeModal === "sync_sales_invoice");
+
+  const {
+    data: pendingCounterData = [],
+    isFetching: isFetchingPendingCounter,
+  } = usePendingCounterSales(filters, activeModal === "pending_counter_sales");
+
+  const { data: syncCounterData = [], isFetching: isFetchingSyncCounter } =
+    useSyncCounterSales(filters, activeModal === "sync_counter_sales");
+
+  const {
+    data: syncRouteReturnData = [],
+    isFetching: isFetchingSyncRouteReturn,
+  } = useSyncRouteReturn(filters, activeModal === "sync_route_return");
+
   const modalConfig = {
     pending_invoice: {
-      title: "Pending Route Invoices Details",
+      title: "Pending Route Invoices",
       columns: pendingInvoiceColumns,
       data: invoiceData,
       isFetching: isFetchingInvoice,
     },
     stock_sync_adjustment: {
-      title: "Sync Stock Adjustment Details",
+      title: "Sync Stock Adjustment ",
       columns: stockAdjustmentsyncColumns,
       data: stocSynckData,
       isFetching: isFetchingSyncStock,
     },
     stock_adjustment: {
-      title: "Pending Stock Adjustment Details",
+      title: "Pending Stock Adjustment",
       columns: stockAdjustmentColumns,
       data: stockData,
       isFetching: isFetchingStock,
     },
     sync_route_invoice: {
-      title: "Sync Route Invoice Details",
+      title: "Sync Route Invoice ",
       columns: pendingInvoiceColumns, // or create new columns if needed
       data: syncInvoiceData,
       isFetching: isFetchingSyncInvoice,
+    },
+    pending_grn: {
+      title: "Pending GRN ",
+      columns: pendingGRNColumns,
+      data: grnData,
+      isFetching: isFetchingGRN,
+    },
+    sync_grn: {
+      title: "Sync GRN Details",
+      columns: syncGRNColumns,
+      data: syncGrnData,
+      isFetching: isFetchingSyncGRN,
+    },
+
+    pending_route_return: {
+      title: "Pending Route Return Details",
+      columns: routeReturnColumns,
+      data: routeReturnData,
+      isFetching: isFetchingRouteReturn,
+    },
+    sync_route_return: {
+      title: "Sync Route Return Details",
+      columns: routeReturnColumns,
+      data: syncRouteReturnData,
+      isFetching: isFetchingSyncRouteReturn,
+    },
+
+    pending_order_return: {
+      title: "Pending Order Return Details",
+      columns: orderReturnColumns,
+      data: orderReturnData,
+      isFetching: isFetchingOrderReturn,
+    },
+
+    sync_order_return: {
+      title: "Sync Order Return Details",
+      columns: orderReturnColumns,
+      data: syncOrderReturnData,
+      isFetching: isFetchingSyncOrderReturn,
+    },
+    pending_sales_invoice: {
+      title: "Pending Sales Invoice Details",
+      columns: salesInvoiceColumns,
+      data: pendingSalesData,
+      isFetching: isFetchingPendingSales,
+    },
+
+    sync_sales_invoice: {
+      title: "Sync Sales Invoice Details",
+      columns: salesInvoiceColumns,
+      data: syncSalesData,
+      isFetching: isFetchingSyncSales,
+    },
+
+    pending_counter_sales: {
+      title: "Pending Counter Sales Details",
+      columns: counterSalesColumns,
+      data: pendingCounterData,
+      isFetching: isFetchingPendingCounter,
+    },
+
+    sync_counter_sales: {
+      title: "Sync Counter Sales Details",
+      columns: counterSalesColumns,
+      data: syncCounterData,
+      isFetching: isFetchingSyncCounter,
     },
   };
 

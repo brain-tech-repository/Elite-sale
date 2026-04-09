@@ -138,3 +138,223 @@ export function useSyncRouteInvoices(filters?: any, enabled: boolean = false) {
     enabled,
   });
 }
+
+export function usePendingGRN(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["pending-grn", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_total_pending_grn", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch sync route invoices");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function useSyncGRN(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["sync-grn", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_total_sync_grn", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch sync GRN");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function usePendingRouteReturn(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["pending-route-return", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_pending_route_return", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch pending route return");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function usePendingOrderReturn(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["pending-order-return", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_pending_order_return", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch pending order return");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function useSyncOrderReturn(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["sync-order-return", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_sync_order_return", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch sync order return");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function usePendingSalesInvoice(
+  filters?: any,
+  enabled: boolean = false,
+) {
+  return useQuery({
+    queryKey: ["pending-sales-invoice", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_pending_sales_invoice", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(
+          data.Message || "Failed to fetch pending sales invoice",
+        );
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function useSyncSalesInvoice(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["sync-sales-invoice", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_sync_sales_invoice", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch sync sales invoice");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function usePendingCounterSales(
+  filters?: any,
+  enabled: boolean = false,
+) {
+  return useQuery({
+    queryKey: ["pending-counter-sales", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_pending_counter_sales", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(
+          data.Message || "Failed to fetch pending counter sales",
+        );
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function useSyncCounterSales(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["sync-counter-sales", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_sync_counter_sales", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch sync counter sales");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}
+
+export function useSyncRouteReturn(filters?: any, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["sync-route-return", filters],
+    queryFn: async () => {
+      const payload = {
+        startDate: filters?.startDate || "",
+        endDate: filters?.endDate || "",
+      };
+
+      const { data } = await api.post("/get_sync_route_return", payload);
+
+      if (data.Status !== 1) {
+        throw new Error(data.Message || "Failed to fetch sync route return");
+      }
+
+      return data.Result || [];
+    },
+    enabled,
+  });
+}

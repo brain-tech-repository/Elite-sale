@@ -60,3 +60,85 @@ export const syncRouteInvoiceColumns: ColumnDef<any>[] = [
     header: "Status",
   },
 ];
+
+export const pendingGRNColumns = [
+  {
+    accessorKey: "grn_code",
+    header: "GRN Code",
+  },
+  {
+    accessorKey: "journal_entry_code",
+    header: "Journal Code",
+  },
+  {
+    accessorKey: "delivery_date",
+    header: "Delivery Date",
+  },
+  {
+    accessorKey: "total_grn_value",
+    header: "GRN Value",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+  },
+];
+
+export const syncGRNColumns = [
+  {
+    accessorKey: "grn_code",
+    header: "GRN Code",
+  },
+  {
+    accessorKey: "journal_entry_code",
+    header: "Journal Code",
+  },
+  {
+    accessorKey: "delivery_date",
+    header: "Delivery Date",
+  },
+  {
+    accessorKey: "total_grn_value",
+    header: "GRN Value",
+  },
+  {
+    accessorKey: "vbln",
+    header: "VBLN",
+  },
+  {
+    accessorKey: "sync_to_sap",
+    header: "SAP Sync",
+  },
+];
+
+export const routeReturnColumns = [
+  { accessorKey: "return_number", header: "Return No" },
+  { accessorKey: "invoice_date", header: "Invoice Date" },
+  { accessorKey: "total_invoice_value", header: "Invoice Value" },
+  { accessorKey: "status", header: "Status" },
+  { accessorKey: "efris_posted", header: "EFRIS" },
+];
+
+export const orderReturnColumns = [
+  { accessorKey: "return_order_number", header: "Order No" },
+  { accessorKey: "delevary_date", header: "Delivery Date" },
+  { accessorKey: "total_order_value", header: "Order Value" },
+  { accessorKey: "status", header: "Status" },
+  { accessorKey: "stock_sync", header: "Stock Sync" },
+];
+
+export const salesInvoiceColumns = [
+  { accessorKey: "company_invoice_number", header: "Invoice No" },
+  { accessorKey: "delivery_date", header: "Delivery Date" },
+  { accessorKey: "total_invoice_value", header: "Invoice Value" },
+  { accessorKey: "journal_entry_code", header: "Journal Code" },
+  { accessorKey: "efris_posted", header: "EFRIS" },
+];
+
+export const counterSalesColumns = [
+  { accessorKey: "counter_sales_code", header: "Counter Code" },
+  { accessorKey: "invoice_date", header: "Invoice Date" },
+  { accessorKey: "total_invoice_value", header: "Invoice Value" },
+  { accessorKey: "status", header: "Status" },
+  { accessorKey: "payment_method", header: "Payment" },
+];

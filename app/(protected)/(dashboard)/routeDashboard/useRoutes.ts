@@ -330,6 +330,7 @@ export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
             totalCustomer: item.total_customer ?? 0,
             totalVisitDays: item.total_visit_days ?? 0,
             plannedVisit: item.planned_visit ?? 0,
+            unplanned_visit: item.unplanned_visit ?? 0,
             dropRate: item.drop_rate ?? 0,
             salesValue: item.sales_inv_value ?? 0,
             salesPerDay: item.sales_per_day ?? 0,

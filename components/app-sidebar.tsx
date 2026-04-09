@@ -109,6 +109,19 @@ const data = {
         },
       ],
     },
+    {
+      title: "Report",
+      url: "#",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "Stock Laser Report",
+          url: "/stock-laser-report",
+          icon: Bot,
+        },
+      ],
+    },
   ],
 };
 
