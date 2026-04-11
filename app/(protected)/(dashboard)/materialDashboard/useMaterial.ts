@@ -144,6 +144,8 @@ export const useMaterialPerformance = (
     // We use keepPreviousData for pagination, but in the component
     // we manually trigger skeleton when page is 1
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 
@@ -158,6 +160,8 @@ export const useActiveSkus = (filters?: SalesFilterPayload) =>
       const { data } = await api.post(`${BASE}/fetch_active_skus?${query}`);
       return data?.data || [];
     },
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 
@@ -172,6 +176,8 @@ export const useInactiveSkus = (filters?: SalesFilterPayload) =>
       const { data } = await api.post(`${BASE}/fetch_inactive_skus?${query}`);
       return data?.data || [];
     },
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 

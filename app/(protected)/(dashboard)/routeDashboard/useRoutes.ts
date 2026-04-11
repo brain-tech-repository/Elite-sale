@@ -147,6 +147,8 @@ export const useMonthlyTrend = (filters?: SalesFilterPayload) =>
         incompletion: incompletion[index]?.y || 0,
       }));
     },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 
@@ -168,6 +170,8 @@ export const useMonthlyCompareDropSizeRevenue = (
         })) || []
       );
     },
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 
@@ -187,6 +191,9 @@ export const useMonthlyCompareDropSizeVolume = (filters?: SalesFilterPayload) =>
         })) || []
       );
     },
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
+
     refetchOnWindowFocus: false,
   });
 
@@ -217,6 +224,8 @@ export const useRoutePerformance = (
         })) || []
       );
     },
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 
@@ -238,6 +247,8 @@ export const useRoutePerformanceGraph = (
       const { data } = await api.get(url);
       return data?.data || {};
     },
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 
@@ -273,7 +284,10 @@ export const useRouteExpenseGraph = (filters?: SalesFilterPayload) =>
       const { data } = await api.get(url);
       return data?.data || {};
     },
-    staleTime: 1000 * 60 * 5,
+
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
+    refetchOnWindowFocus: false,
   });
 
 export const useRouteWiseSales = (filters?: SalesFilterPayload) =>
@@ -304,6 +318,8 @@ export const useRouteWiseSales = (filters?: SalesFilterPayload) =>
       };
     },
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });
 
@@ -342,5 +358,7 @@ export const useRouteEfficiency = (filters?: SalesFilterPayload) =>
       };
     },
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });

@@ -125,7 +125,7 @@ export function DataTableSearch<TData>({
           <div className="flex items-center gap-2">
             {/* ✅ ONLY SHOW IF PASSED */}
 
-            {FilterComponent && <FilterComponent onFilter={onFilter!} />}
+            {/* {FilterComponent && <FilterComponent onFilter={onFilter!} />} */}
           </div>
           {/* 🔍 SEARCH (ALWAYS) */}
           <Input

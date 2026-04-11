@@ -174,5 +174,7 @@ export const useOrderTable = (
       return data as OrderTableResponse;
     },
     placeholderData: keepPreviousData, // ✅ correct
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
     refetchOnWindowFocus: false,
   });

@@ -53,21 +53,6 @@ export default function CustomerDashboard() {
       dzn: 0,
       pcs: 5,
     },
-    {
-      material_code: "Total",
-      material_name: "",
-      uom: "",
-      unit_price: "",
-      opening_qty: "",
-      receipt_qty: "",
-      issued_qty: "",
-      closing_qty: "",
-      closing_value: 9553.3,
-      packing_size: "",
-      ctn: "",
-      dzn: "",
-      pcs: "",
-    },
   ];
 
   const handleExport = () => {
