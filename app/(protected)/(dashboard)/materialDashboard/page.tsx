@@ -36,7 +36,6 @@ export default function Salesdashboa() {
       ...prev,
       page: 1,
     }));
-    setAllData([]);
   }, [filters]);
 
   /* =========================
@@ -69,15 +68,25 @@ export default function Salesdashboa() {
   /* =========================
       DATA ACCUMULATION
   ========================= */
-  const [allData, setAllData] = useState<any[]>([]);
+  // const [allData, setAllData] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (!materialData) return;
-    setAllData((prev) => {
-      if (tableFilters.page === 1) return materialData;
-      return [...prev, ...materialData];
-    });
-  }, [materialData, tableFilters.page]);
+  // useEffect(() => {
+  //   if (!materialData) return;
+  //   setAllData((prev) => {
+  //     if (tableFilters.page === 1) return materialData;
+  //     return [...prev, ...materialData];
+  //   });
+  // }, [materialData, tableFilters.page]);
+  // ✅ REPLACE WITH THIS:
+  const allData = React.useMemo(() => {
+    // If we are on page 1, just show current data
+    if (tableFilters.page === 1) return materialRes?.tableData ?? [];
+
+    // If you actually need to APPEND data (infinite scroll style),
+    // you'll need to keep a ref or state, but for standard pagination,
+    // just return the current page data to keep the thread fast.
+    return materialRes?.tableData ?? [];
+  }, [materialRes?.tableData, tableFilters.page]);
 
   const handleNext = () => {
     if (pagination?.current_page < pagination?.total_pages) {
@@ -97,6 +106,14 @@ export default function Salesdashboa() {
     }
   };
 
+  const [isPending, startTransition] = React.useTransition();
+
+  const handleFilterChange = (newFilters: SalesFilterPayload) => {
+    startTransition(() => {
+      setFilters(newFilters);
+    });
+  };
+
   /* =========================
       DERIVED LOADING STATES
   ========================= */
@@ -113,7 +130,7 @@ export default function Salesdashboa() {
 
         <div className="lg:px-6 px-1 pb-4">
           <Card className="shadow-xm">
-            <MyForm onFilter={setFilters} />
+            <MyForm onFilter={handleFilterChange} />
           </Card>
         </div>
 
