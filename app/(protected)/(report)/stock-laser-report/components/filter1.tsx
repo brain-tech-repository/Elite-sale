@@ -40,7 +40,6 @@ export default function MyForm({ onFilter }: Props) {
     resolver: zodResolver(salesFilterSchema),
     defaultValues: {
       dateRange: undefined,
-      sales_area: "",
     },
   });
   /* API */
@@ -54,7 +53,7 @@ export default function MyForm({ onFilter }: Props) {
     const filters: SalesFilterPayload = {
       fromdate: format(values.dateRange.from, "yyyy-MM-dd"),
       todate: format(values.dateRange.to, "yyyy-MM-dd"),
-      sales_area_id: values.sales_area || "0",
+
       page: 1,
       length: 10,
     };
@@ -116,23 +115,6 @@ export default function MyForm({ onFilter }: Props) {
 
           {/* SALES */}
 
-          <FormField
-            control={form.control}
-            name="sales_area"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sales</FormLabel>
-                <AutoComplete
-                  enableSelectAll
-                  options={salesAreas}
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  placeholder="Select sales"
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <div className="flex gap-2 pt-6">
             <Button
               type="submit"
