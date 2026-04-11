@@ -237,32 +237,28 @@ export default function Salesdashboa() {
         {/* TABLES */}
         <section className="px-2 mb-6">
           <DataTableSubHeader title="Route Wise Sales Report" />
-          {isSalesInitialLoading ? (
-            <TableSkeleton />
-          ) : (
-            <CommonDataTables
-              columns={routeSalesColumns}
-              data={salesReportData}
-              pagination={salesRes?.pagination}
-              isFetchingMore={salesFetching && currentPage > 1}
-              onNext={handleLoadMore}
-            />
-          )}
+
+          <CommonDataTables
+            columns={routeSalesColumns}
+            data={salesReportData}
+            pagination={salesRes?.pagination}
+            isFetching={isSalesInitialLoading}
+            isFetchingMore={salesFetching && currentPage > 1}
+            onNext={handleLoadMore}
+          />
         </section>
 
         <section className="px-2 pb-12">
           <DataTableSubHeader title="Route Efficiency Overview" />
-          {isEfficiencyInitialLoading ? (
-            <TableSkeleton />
-          ) : (
-            <CommonDataTables
-              columns={salesColumns}
-              data={efficiencyData}
-              pagination={efficiencyRes?.pagination}
-              isFetchingMore={efficiencyFetching && currentPage > 1}
-              onNext={handleLoadMore}
-            />
-          )}
+
+          <CommonDataTables
+            columns={salesColumns}
+            data={efficiencyData}
+            pagination={efficiencyRes?.pagination}
+            isFetching={isEfficiencyInitialLoading}
+            isFetchingMore={efficiencyFetching && currentPage > 1}
+            onNext={handleLoadMore}
+          />
         </section>
       </div>
     </div>

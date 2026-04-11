@@ -1,5 +1,5 @@
 import api from "@/lib/apiClient";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   OrderSummaryFilters,
   OrderSummaryResponse,
@@ -173,4 +173,8 @@ export const useOrderTable = (
 
       return data as OrderTableResponse;
     },
+    placeholderData: keepPreviousData, // ✅ correct
+    staleTime: 1000 * 60 * 5, // Data stays "fresh" for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes even if unused
+    refetchOnWindowFocus: false,
   });

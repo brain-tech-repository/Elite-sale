@@ -124,6 +124,12 @@ export default function CustomerDashboard() {
   const isInitialLoading = isFetching && allData.length === 0;
   const isFetchingMore = isLoading && page > 1;
 
+  // Inside CustomerDashboard component...
+
+  // 1. isFetching comes from TanStack Query
+  // 2. allData.length === 0 happens during initial load OR when you call setAllData([]) in onFilter
+  const isInitialOrFilterLoading = isFetching && allData.length === 0;
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col">
@@ -225,28 +231,28 @@ export default function CustomerDashboard() {
         {/* 6. DATA TABLE SECTION: Bottom padding to finish the page */}
         <section className="px-2 pb-12">
           {/* <Card className="shadow-xm"> */}
-          {isInitialLoading ? (
-            <TableSkeleton />
-          ) : (
-            <CommonDataTables
-              columns={performanceColumns}
-              data={allData}
-              headerTitle="Top Customers"
-              pagination={pagination}
-              onNext={handleNext}
-              onPrev={handlePrev}
-              FilterComponent={MyForm1}
-              isFetchingMore={isFetchingMore}
-              onFilter={(filters) => {
-                setAllData([]); // ✅ CLEAR HERE ALSO
-                setTableFilters((prev) => ({
-                  ...prev,
-                  ...filters,
-                  page: 1,
-                }));
-              }}
-            />
-          )}
+
+          <CommonDataTables
+            columns={performanceColumns}
+            data={allData}
+            headerTitle="Top Customers"
+            pagination={pagination}
+            onNext={handleNext}
+            onPrev={handlePrev}
+            FilterComponent={MyForm1}
+            // isFetchingMore={isFetching}
+            isFetching={isInitialOrFilterLoading} // Skeleton ke liye
+            isFetchingMore={isFetching}
+            onFilter={(filters) => {
+              setAllData([]); // ✅ CLEAR HERE ALSO
+              setTableFilters((prev) => ({
+                ...prev,
+                ...filters,
+                page: 1,
+              }));
+            }}
+          />
+
           {/* </Card> */}
         </section>
       </div>

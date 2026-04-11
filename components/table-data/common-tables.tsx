@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   ColumnDef,
+  flexRender,
 } from "@tanstack/react-table";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { DataTableSearch } from "./data-table-search";
@@ -23,11 +24,13 @@ interface CommonTableProps<TData, TValue> {
   pageSize?: number;
   headerTitle?: string;
   onFilter?: (filters: any) => void;
-
+  isFetching?: boolean; //
   pagination?: any;
   onNext?: () => void;
   onPrev?: () => void;
   isFetchingMore?: boolean;
+  tableHeight?: number | string;
+  onExport?: () => void; // ✅ add here
   FilterComponent?: React.ComponentType<{
     onFilter: (filters: any) => void;
   }>;
@@ -36,13 +39,16 @@ interface CommonTableProps<TData, TValue> {
 export function CommonDataTables<TData, TValue>({
   headerTitle,
   onFilter,
+  isFetching,
   columns,
   data,
   pagination,
   onNext,
   onPrev,
   isFetchingMore,
-  FilterComponent, // ✅ ADD THIS
+  FilterComponent,
+  onExport, // ✅ ADD THIS
+  tableHeight = 300,
 }: CommonTableProps<TData, TValue>) {
   // ✅ Ensure stable column IDs
   const columnIds = React.useMemo(
@@ -109,6 +115,30 @@ export function CommonDataTables<TData, TValue>({
   //   pagination?.current_page < pagination?.total_pages ||
   //   pagination?.current_page < pagination?.last_page;
 
+  // const handleExport = () => {
+  //   const rows = table.getRowModel().rows;
+
+  //   const exportData = rows.map((row) => row.original);
+
+  //   console.log("Export Data:", exportData);
+
+  //   // Simple CSV export
+  //   const csv = [
+  //     Object.keys(exportData[0] || {}).join(","), // headers
+  //     ...exportData.map((row) => Object.values(row as any).join(",")),
+  //   ].join("\n");
+
+  //   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  //   const url = URL.createObjectURL(blob);
+
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.setAttribute("download", "table_data.csv");
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
   const hasMore = pagination?.current_page < pagination?.total_pages;
 
   return (
@@ -118,6 +148,7 @@ export function CommonDataTables<TData, TValue>({
         onFilter={onFilter}
         title={headerTitle}
         FilterComponent={FilterComponent}
+        onExport={onExport}
       />
 
       <div className="rounded-lg border">
@@ -137,9 +168,29 @@ export function CommonDataTables<TData, TValue>({
               </p>
             ) : null
           }
-          height={300}
+          height={tableHeight}
         >
-          <DataTableColumns table={table} columnsLength={columns.length} />
+          <DataTableColumns
+            table={table}
+            columnsLength={columns.length}
+            isFetching={isFetching || (isFetchingMore && data.length === 0)}
+          />
+          <tfoot>
+            {table.getFooterGroups().map((footerGroup) => (
+              <tr key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <td key={header.id} className="p-2">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.footer,
+                          header.getContext(),
+                        )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tfoot>
         </InfiniteScroll>
       </div>
 

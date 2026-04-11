@@ -19,6 +19,9 @@ import {
 } from "@/components/ui/dashboard-skeleton";
 import { SectionCardsSkeleton } from "@/components/ui/SectionCardsSkeleton";
 
+/**
+ * Helper to generate columns dynamically based on API headers
+ */
 export const generateColumns = (headers: string[]): ColumnDef<any>[] => {
   return headers.map((header) => ({
     accessorKey: header,
@@ -48,7 +51,7 @@ export default function Salesdashboa() {
   /* ================= MANUAL LOADING ================= */
   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
-  /* ================= API ================= */
+  /* ================= API CALLS ================= */
   const { data, isLoading, isFetching } = useOrderTable({
     ...globalFilters,
     ...tableFilters,
@@ -63,14 +66,15 @@ export default function Salesdashboa() {
   /* ================= DERIVED STATES ================= */
   const page = tableFilters.page ?? 1;
   const isInitialLoading = isLoading && page === 1;
+
+  // Logic to trigger the inline skeleton rows (Pulse effect)
   const isPageLoading =
     isFilterLoading || isInitialLoading || (isFetching && page === 1);
+
   const isFetchingMore = isFetching && page > 1;
 
-  /* ================= TABLE DATA ================= */
+  /* ================= TABLE DATA STATE ================= */
   const [allData, setAllData] = useState<any[]>([]);
-
-  // ✅ FIX 1: Create a state to cache headers so they don't disappear on pagination
   const [savedHeaders, setSavedHeaders] = useState<string[]>([]);
 
   const tableData = data?.data;
@@ -84,7 +88,7 @@ export default function Salesdashboa() {
     }
   }, [isLoading, isFetching, chartLoading]);
 
-  /* ================= ACCUMULATE TABLE DATA ================= */
+  /* ================= DATA ACCUMULATION ================= */
   useEffect(() => {
     if (!tableData) return;
 
@@ -95,14 +99,13 @@ export default function Salesdashboa() {
   }, [tableData, page]);
 
   /* ================= CACHE HEADERS ================= */
-  // ✅ FIX 2: Save headers whenever they exist. This prevents the table from unmounting.
   useEffect(() => {
     if (Array.isArray(data?.headers) && data.headers.length > 0) {
       setSavedHeaders(data.headers);
     }
   }, [data?.headers]);
 
-  /* ================= SKELETON BOX ================= */
+  /* ================= UI HELPERS ================= */
   const SkeletonBox = ({ height }: { height: number }) => (
     <div
       className="w-full bg-gray-200 animate-pulse rounded-xl"
@@ -110,7 +113,6 @@ export default function Salesdashboa() {
     />
   );
 
-  /* ================= STATIC CHART ================= */
   const mainChartData = [
     { label: "Jan", y: 120 },
     { label: "Feb", y: 200 },
@@ -120,7 +122,7 @@ export default function Salesdashboa() {
     { label: "Jun", y: 239 },
   ];
 
-  // ✅ FIX 3: Base your columns on `savedHeaders`, not `data?.headers` directly.
+  /* ================= MEMOIZED COLUMNS ================= */
   const dynamicColumns = useMemo(() => {
     return savedHeaders.length > 0 ? generateColumns(savedHeaders) : [];
   }, [savedHeaders]);
@@ -135,30 +137,25 @@ export default function Salesdashboa() {
           <DataTableHeader title="Orders Dashboard" />
         </div>
 
-        {/* ================= FILTER ================= */}
+        {/* ================= GLOBAL FILTERS ================= */}
         <div className="lg:px-6 px-1 pb-4">
           <Card className="shadow-xm lg:px-5">
             <MyForm
               onApply={(filters) => {
                 setIsFilterLoading(true);
                 setGlobalFilters(filters);
-                setTableFilters({
-                  page: 1,
-                  per_page: 10,
-                });
+                setTableFilters({ page: 1, per_page: 10 });
                 setCardType("order");
                 setAllData([]);
-
-                // ✅ FIX 4: Clear the cached headers on new filter so it forces a clean rebuild
-                setSavedHeaders([]);
+                setSavedHeaders([]); // Reset headers to force fresh column generation
               }}
             />
           </Card>
         </div>
 
-        {/* ================= TOP SECTION ================= */}
+        {/* ================= CHARTS & KPI CARDS ================= */}
         <section className="grid gap-2 lg:px-5 px-1 pb-8 grid-cols-1 lg:grid-cols-[30%_40%_30%]">
-          {/* CARDS */}
+          {/* KPI CARDS */}
           {isFilterLoading ? (
             <SectionCardsSkeleton />
           ) : (
@@ -172,7 +169,7 @@ export default function Salesdashboa() {
             />
           )}
 
-          {/* MAIN CHART */}
+          {/* MAIN VOLUME CHART */}
           {isPageLoading ? (
             <ChartSkeleton />
           ) : (
@@ -185,7 +182,7 @@ export default function Salesdashboa() {
             />
           )}
 
-          {/* RIGHT SIDE */}
+          {/* SIDE CHARTS */}
           <div className="flex flex-col gap-2">
             {isPageLoading ? (
               <SkeletonBox height={150} />
@@ -198,7 +195,7 @@ export default function Salesdashboa() {
             ) : (
               <RainbowGlowGradientLineChart
                 height={150}
-                title="Drop Size by Volume"
+                title="Secondary Trend"
                 data={mainChartData}
                 xKey="label"
                 yKey="y"
@@ -207,16 +204,16 @@ export default function Salesdashboa() {
           </div>
         </section>
 
-        {/* ================= TABLE ================= */}
-        <section className="lg:px-6 px-1 space-y-4">
-          {isPageLoading && page === 1 ? (
-            <TableSkeleton />
-          ) : dynamicColumns.length > 0 ? (
+        {/* ================= UPDATED TABLE SECTION ================= */}
+        <section className="lg:px-6 px-1 space-y-4 pb-12">
+          {dynamicColumns.length > 0 ? (
             <CommonDataTables
               columns={dynamicColumns}
               data={safeData}
-              headerTitle="Top Customers"
+              headerTitle={`${cardType.toUpperCase()} Details`}
               pagination={pagination}
+              // ✅ Pass isPageLoading to trigger inline row skeletons
+              isFetching={isPageLoading}
               isFetchingMore={isFetchingMore}
               onNext={() =>
                 setTableFilters((prev) => ({
@@ -225,7 +222,12 @@ export default function Salesdashboa() {
                 }))
               }
             />
-          ) : null}
+          ) : (
+            /* Only show the big TableSkeleton if we don't even 
+               have the header structure yet (First Load). 
+            */
+            isPageLoading && <TableSkeleton />
+          )}
         </section>
       </div>
     </div>

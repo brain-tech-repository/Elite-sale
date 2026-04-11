@@ -86,6 +86,8 @@ export const useDashboardSummary = (filters?: any, enabled = true) => {
     queryFn: () => getDashboardSummaryCards(filters),
     staleTime: 1000 * 60 * 5,
     enabled,
+    refetchOnMount: false, // Prevents refetching just because the tab/component was clicked
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -106,6 +108,8 @@ export const useYearlySalesTrend = (
     select: (data) => transformChartData(data.Result),
     enabled: enabled && !!year,
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 10, // 10 minutes: Consider data fresh for 10 mins
+    gcTime: 1000 * 60 * 15, // 15 minutes: Keep in cache even if unused
   });
 };
 
@@ -121,6 +125,8 @@ export const useMonthlySalesTrend = (
     select: (data) => transformChartData(data.Result),
     enabled: enabled && !!year && !!month,
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 10, // 10 minutes: Consider data fresh for 10 mins
+    gcTime: 1000 * 60 * 15, // 15 minutes: Keep in cache even if unused
   });
 };
 
@@ -144,7 +150,9 @@ export const useRegionPerformance = (filters: any, enabled = true) => {
       return res?.Result || [];
     },
     enabled: enabled && !!filters,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 10, // 10 minutes: Consider data fresh for 10 mins
+    gcTime: 1000 * 60 * 15, // 15 minutes: Keep in cache even if unused
   });
 };
 
@@ -156,6 +164,8 @@ export const useBrandPerformance = (filters: any, enabled = true) => {
       return res?.Result || [];
     },
     enabled: enabled && !!filters,
+    staleTime: 1000 * 60 * 10, // 10 minutes: Consider data fresh for 10 mins
+    gcTime: 1000 * 60 * 15, // 15 minutes: Keep in cache even if unused
   });
 };
 
@@ -170,6 +180,8 @@ export const useMaterialGroupPerformance = (filters: any, enabled = true) => {
       return res?.Result || [];
     },
     enabled: enabled && !!filters,
+    staleTime: 1000 * 60 * 10, // 10 minutes: Consider data fresh for 10 mins
+    gcTime: 1000 * 60 * 15, // 15 minutes: Keep in cache even if unused
   });
 };
 
@@ -184,6 +196,8 @@ export const useCustomerSegmentPerformance = (filters: any, enabled = true) => {
       return res?.Result || [];
     },
     enabled: enabled && !!filters,
+    staleTime: 1000 * 60 * 10, // 10 minutes: Consider data fresh for 10 mins
+    gcTime: 1000 * 60 * 15, // 15 minutes: Keep in cache even if unused
   });
 };
 
@@ -213,7 +227,8 @@ export const useDistributorChart = (
       }));
     },
     enabled: enabled && !!year,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 10, // 10 minutes: Consider data fresh for 10 mins
+    gcTime: 1000 * 60 * 15, // 15 minutes: Keep in cache even if unused
   });
 };
 

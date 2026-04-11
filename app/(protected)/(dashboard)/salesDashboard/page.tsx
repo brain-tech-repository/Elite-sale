@@ -109,27 +109,58 @@ export default function Salesdashboa() {
 
   // ================= SEQUENCE CONTROLLER =================
 
+  // ================= SEQUENCE CONTROLLER =================
+  // This block ensures that if data is already in the cache,
+  // the waterfall jumps ahead immediately without flashing skeletons.
   React.useEffect(() => {
-    if (loadStep === 0 && !summaryLoading) setLoadStep(1);
-  }, [summaryLoading, loadStep]);
-  React.useEffect(() => {
-    if (loadStep === 1 && !yearlyLoading) setLoadStep(2);
-  }, [yearlyLoading, loadStep]);
-  React.useEffect(() => {
-    if (loadStep === 2 && !monthlyLoading) setLoadStep(3);
-  }, [monthlyLoading, loadStep]);
-  React.useEffect(() => {
-    if (loadStep === 3 && !distributorLoading) setLoadStep(4);
-  }, [distributorLoading, loadStep]);
-  React.useEffect(() => {
-    if (loadStep === 4 && !regionLoading) setLoadStep(5);
-  }, [regionLoading, loadStep]);
-  React.useEffect(() => {
-    if (loadStep === 5 && !brandLoading) setLoadStep(6);
-  }, [brandLoading, loadStep]);
-  React.useEffect(() => {
-    if (loadStep === 6 && !materialLoading) setLoadStep(7);
-  }, [materialLoading, loadStep]);
+    // Step 0 -> 1: Dashboard Summary
+    if (loadStep === 0 && (summaryData || !summaryLoading)) {
+      setLoadStep(1);
+    }
+    // Step 1 -> 2: Yearly Sales Trend
+    if (loadStep === 1 && (yearlyData.length > 0 || !yearlyLoading)) {
+      setLoadStep(2);
+    }
+    // Step 2 -> 3: Monthly Sales Trend
+    if (loadStep === 2 && (monthlyData.length > 0 || !monthlyLoading)) {
+      setLoadStep(3);
+    }
+    // Step 3 -> 4: Distributor Chart
+    if (loadStep === 3 && (distributorData.length > 0 || !distributorLoading)) {
+      setLoadStep(4);
+    }
+    // Step 4 -> 5: Region Performance
+    if (loadStep === 4 && (regionPerformance?.table_data || !regionLoading)) {
+      setLoadStep(5);
+    }
+    // Step 5 -> 6: Brand Performance
+    if (loadStep === 5 && (brandPerformance?.table_data || !brandLoading)) {
+      setLoadStep(6);
+    }
+    // Step 6 -> 7: Material Group Performance
+    if (
+      loadStep === 6 &&
+      (materialGroupPerformance?.table_data || !materialLoading)
+    ) {
+      setLoadStep(7);
+    }
+  }, [
+    loadStep,
+    summaryData,
+    summaryLoading,
+    yearlyData,
+    yearlyLoading,
+    monthlyData,
+    monthlyLoading,
+    distributorData,
+    distributorLoading,
+    regionPerformance,
+    regionLoading,
+    brandPerformance,
+    brandLoading,
+    materialGroupPerformance,
+    materialLoading,
+  ]);
 
   return (
     <div className="flex flex-1 flex-col lg:px-2 py-4">
@@ -187,7 +218,7 @@ export default function Salesdashboa() {
         <section>
           <DataTableSubHeader title="Target Overview" />
           <div className="grid grid-cols-1 gap-1 mt-4">
-            {loadStep < 3 || (distributorLoading && loadStep === 3) ? (
+            {distributorLoading ? (
               <BarGraphSkeleton />
             ) : (
               <AdvancedBarChart1

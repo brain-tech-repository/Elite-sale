@@ -14,6 +14,7 @@ export const salesColumns: ColumnDef<Sale>[] = [
   { accessorKey: "totalCustomer", header: "Customers" },
   { accessorKey: "totalVisitDays", header: "Visit Days" },
   { accessorKey: "plannedVisit", header: "Planned Visit" },
+  { accessorKey: "unplanned_visit", header: "Unplanned Visit" },
 
   {
     accessorKey: "dropRate",
